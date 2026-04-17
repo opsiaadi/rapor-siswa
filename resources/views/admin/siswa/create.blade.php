@@ -66,7 +66,7 @@
                     <input type="text" name="nis" id="nis" value="{{ old('nis') }}"
                         class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                         placeholder="Contoh: 2025001" required>
-                    <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">Harus unik (Primary Key)</p>
+                    <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">Harus memasukkan dalam bentuk angka</p>
                 </div>
 
                 <!-- Nama Siswa -->
