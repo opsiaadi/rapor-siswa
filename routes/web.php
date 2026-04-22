@@ -18,6 +18,10 @@ Route::get('/homepage', function () {
     return view('homepage');
 });
 
+Route::get('/input_nilai', function () {
+    return view('input_nilai');
+});
+
 // Login
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.post');
