@@ -31,9 +31,8 @@
 
     <!-- Login Container -->
     <div class="w-full max-w-sm mx-4">
-
+        <div class="mb-5">
         <!-- Brand Header -->
-        <div class="mb-7 text-center">
             <div class="flex flex-col items-center gap-2.5">
                 <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-2xl shadow-xl shadow-blue-500/20 flex items-center justify-center">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,11 +46,9 @@
 
         <!-- Login Card -->
         <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6">
-
-            <!-- Header -->
-            <div class="mb-5">
+            <div class="flex flex-col items-center gap-2.5">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">Selamat Datang</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Silahkan masuk untuk mengakses portal Anda.</p>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">Silahkan masuk untuk mengakses portal Anda.</p>
             </div>
 
             <!-- Form -->

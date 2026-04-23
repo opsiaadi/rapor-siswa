@@ -71,6 +71,15 @@ class FakeDataHelper
         return null;
     }
 
+    public static function getMapelByGuru($guruId)
+    {
+        $guru = self::findById(self::getGuru(), $guruId);
+        if (!$guru) return [];
+        
+        $mapelIds = $guru['mapel_ids'] ?? [];
+        return array_filter(self::getMapel(), fn($m) => in_array($m['id'], $mapelIds));
+    }
+
     // ── KELAS ──
 
     public static function getKelas()

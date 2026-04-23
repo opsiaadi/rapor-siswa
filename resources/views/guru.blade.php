@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Dashboard Admin' }} - Sistem Pengolahan Rapor Siswa</title>
+    <title>{{ $title ?? 'Dashboard Guru' }} - Sistem Pengolahan Rapor Siswa</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
-        // Dark mode init - check localStorage or system preference
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -30,7 +29,6 @@
         }
     </script>
     <style>
-        /* Gradient icons for sidebar */
         .icon-gradient {
             stroke: url(#iconGradient);
         }
@@ -41,13 +39,13 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans transition-colors duration-300">
     <!-- Mobile Header -->
-    <header class="lg:hidden bg-gradient-to-r from-emerald-700 via-emerald-800 to-green-900 dark:from-emerald-900 dark:via-green-900 dark:to-gray-900 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-60 shadow-lg">
+    <header class="lg:hidden bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 dark:from-blue-900 dark:via-indigo-900 dark:to-gray-900 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-60 shadow-lg">
         <button onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
-        <div class="flex items-center gap-2"> <img src="{{ asset('storage/icons/icons8-school-building-64.png') }}" alt="Kelas" class="w-8 h-8">
+        <div class="flex items-center gap-2">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
             </svg>
@@ -65,7 +63,7 @@
 
     <div class="flex">
         <!-- Sidebar -->
-        <aside id="sidebar" class="fixed lg:fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col shadow-sm">
+         <aside id="sidebar" class="fixed lg:fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col shadow-sm">
             <!-- SVG Gradient Definition -->
             <svg class="absolute w-0 h-0">
                 <defs>
@@ -153,43 +151,38 @@
         <!-- Main Content -->
         <div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
             <!-- Desktop Navbar -->
-            <header class="hidden lg:flex bg-gradient-to-r from-emerald-700 to-green-800 dark:from-emerald-900 dark:to-green-950 text-white border-b border-emerald-600 dark:border-emerald-800 px-6 py-4 items-center justify-between sticky top-0 z-30 shadow-lg">
+            <header class="hidden lg:flex bg-gradient-to-r from-blue-700 to-indigo-800 dark:from-blue-900 dark:to-indigo-950 text-white border-b border-blue-600 dark:border-blue-800 px-6 py-4 items-center justify-between sticky top-0 z-30 shadow-lg">
                 <div>
                     <h1 class="text-xl font-bold text-white">{{ $pageTitle ?? 'Dashboard' }}</h1>
-                    <p class="text-sm text-emerald-100/80">{{ $breadcrumb ?? 'Selamat datang di sistem pengolahan rapor siswa' }}</p>
+                    <p class="text-sm text-blue-100/80">{{ $breadcrumb ?? 'Selamat datang di portal guru' }}</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <!-- Theme Toggle -->
-                    <button onclick="toggleTheme()" class="p-2 rounded-lg text-emerald-100 hover:text-white hover:bg-white/10 transition-colors relative" title="Toggle Dark/Light Mode">
-                        <!-- Sun icon (light mode) -->
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg text-blue-100 hover:text-white hover:bg-white/10 transition-colors" title="Toggle Dark/Light Mode">
                         <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                        </svg>
-                        <!-- Moon icon (dark mode) -->
-                        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
                     </button>
 
                     <!-- Notifications -->
-                    <button class="p-2 rounded-lg text-emerald-100 hover:text-white hover:bg-white/10 transition-colors relative">
+                    <button class="p-2 rounded-lg text-blue-100 hover:text-white hover:bg-white/10 transition-colors relative">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
                         <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full"></span>
                     </button>
-                    <!-- Dashboard Admin Link -->
-                    <a href="/admin/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-100 hover:text-white hover:bg-white/20 transition-colors ml-4">
-                    </a>
 
                     <!-- User Avatar -->
                     <div class="flex items-center gap-3 pl-4 border-l border-white/20">
                         <div class="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-white/30">
-                            {{ strtoupper(substr($userName ?? 'A', 0, 1)) }}
+                            {{ strtoupper(substr($userName ?? 'G', 0, 1)) }}
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-white">{{ $userName ?? 'Admin' }}</p>
-                            <p class="text-xs text-emerald-100/70">Admin TU</p>
+                            <p class="text-sm font-semibold text-white">{{ $userName ?? 'Guru' }}</p>
+                            <p class="text-xs text-blue-100/70">Guru Pengajar</p>
                         </div>
                     </div>
                 </div>
