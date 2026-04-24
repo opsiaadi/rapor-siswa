@@ -30,9 +30,15 @@ class LoginController extends Controller
         if ($role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($role === 'guru') {
-            return redirect('/dashboard_guru/1/guru');
+            return redirect()->route('guru.dashboard', ['id' => 1, 'namaGuru' => 'guru']);
         } else {
             return redirect('/dashboard_walikelas/1/walikelas');
         }
+    }
+
+    public function logout()
+    {
+        session()->flush();
+        return redirect('/login');
     }
 }
