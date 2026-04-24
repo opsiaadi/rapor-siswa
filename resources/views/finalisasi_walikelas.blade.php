@@ -105,7 +105,6 @@
 </body>
 </html>
 
-{{-- ROUTE (web.php) --}}
 {{-- Route::get('/rapor/finalisasi', fn() => view('rapor.finalisasi')); --}}
 {{-- Route::post('/rapor/simpan', [RaporController::class, 'simpan'])->name('rapor.simpan'); --}}
 
