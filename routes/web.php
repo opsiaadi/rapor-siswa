@@ -59,4 +59,8 @@ Route::delete('/admin/siswa/{id}', [SiswaController::class, 'destroy'])->name('a
 
 // Guru & Wali Kelas
 Route::get('/dashboard_guru/{id?}/{namaGuru?}', [GuruController::class, 'nama']);
-Route::get('/dashboard_walikelas/{id?}/{nama?}', [WalikelasController::class, 'nama']);
+Route::get('/finalisasi', [WalikelasController::class, 'nama'])->name('finalisasi.tampil');
+
+Route::get('/blade', function () {
+    return view('blade');
+});
