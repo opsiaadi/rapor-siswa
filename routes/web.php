@@ -8,18 +8,20 @@ use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WalikelasController;
+use App\Http\Controllers\RaporController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('pages.home.welcome');
 });
 
 Route::get('/homepage', function () {
-    return view('homepage');
+    return view('pages.home.homepage');
 });
 
+// Redirect input_nilai ke guru dashboard (karena sudah diganti)
 Route::get('/input_nilai', function () {
-    return view('input_nilai');
+    return redirect()->route('guru.dashboard');
 });
 
 // Login
@@ -71,5 +73,15 @@ Route::prefix('dashboard_guru')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-// walikelas
-Route::get('/finalisasi_walikelas/{id?}/{nama?}', [WalikelasController::class, 'nama']);
+// Walikelas
+Route::prefix('walikelas')->group(function () {
+    Route::get('/dashboard/{id?}/{nama?}', [WalikelasController::class, 'dashboard'])->name('walikelas.dashboard');
+    Route::get('/siswa/{id?}/{nama?}', [WalikelasController::class, 'siswa'])->name('walikelas.siswa');
+    Route::get('/nilai/{id?}/{nama?}', [WalikelasController::class, 'nilai'])->name('walikelas.nilai');
+    Route::post('/nilai/{id?}/{nama?}', [WalikelasController::class, 'nilai'])->name('walikelas.nilai.post');
+    Route::get('/rapot/{id?}/{nama?}', [WalikelasController::class, 'rapot'])->name('walikelas.rapot');
+});
+
+// Rapor
+Route::get('/rapor/finalisasi/{id?}/{nama?}', [RaporController::class, 'finalisasi'])->name('rapor.finalisasi');
+Route::post('/rapor/simpan', [RaporController::class, 'simpan'])->name('rapor.simpan');

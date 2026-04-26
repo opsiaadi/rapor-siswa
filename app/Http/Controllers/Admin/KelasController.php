@@ -26,14 +26,14 @@ class KelasController extends Controller
             'mapel' => collect([]),
         ]), FakeDataHelper::getKelas());
         $data = collect($kelas);
-        return view('admin.kelas.index', compact('data'));
+        return view('pages.admin.kelas.index', compact('data'));
     }
 
     public function create()
     {
         $guruList = collect(FakeDataHelper::getGuruOptions());
         $mapelList = collect(FakeDataHelper::getMapelOptions());
-        return view('admin.kelas.create', compact('guruList', 'mapelList'));
+        return view('pages.admin.kelas.create', compact('guruList', 'mapelList'));
     }
 
     public function store(Request $request)
@@ -79,7 +79,7 @@ class KelasController extends Controller
         $guruList = collect(FakeDataHelper::getGuruOptions());
         $mapelList = collect(FakeDataHelper::getMapelOptions());
         $currentMapelGuru = $mapelGuru;
-        return view('admin.kelas.edit', compact('kelas', 'guruList', 'mapelList', 'currentMapelGuru', 'siswaList'));
+        return view('pages.admin.kelas.edit', compact('kelas', 'guruList', 'mapelList', 'currentMapelGuru', 'siswaList'));
     }
 
     public function update(Request $request, $id)

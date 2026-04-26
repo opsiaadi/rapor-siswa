@@ -19,14 +19,14 @@ class SiswaController extends Controller
             ]);
         }, FakeDataHelper::getSiswa());
         $data = collect($siswa);
-        return view('admin.siswa.index', compact('data'));
+        return view('pages.admin.siswa.index', compact('data'));
     }
 
     public function create()
     {
         // Always get latest kelas from shared session
         $kelasList = collect(FakeDataHelper::getKelasOptions());
-        return view('admin.siswa.create', compact('kelasList'));
+        return view('pages.admin.siswa.create', compact('kelasList'));
     }
 
     public function store(Request $request)
@@ -68,7 +68,7 @@ class SiswaController extends Controller
             'kelas' => (object) ['id' => $item['kelas_id'] ?? null, 'nama_kelas' => $item['kelas_nama'] ?? '-'],
         ]);
         $kelasList = collect(FakeDataHelper::getKelasOptions());
-        return view('admin.siswa.edit', compact('siswa', 'kelasList'));
+        return view('pages.admin.siswa.edit', compact('siswa', 'kelasList'));
     }
 
     public function update(Request $request, $id)

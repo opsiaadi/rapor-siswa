@@ -11,13 +11,13 @@ class GuruDataController extends Controller
     public function index()
     {
         $data = collect(array_map(fn($g) => (object) $g, FakeDataHelper::getGuru()));
-        return view('admin.guru.index', compact('data'));
+        return view('pages.admin.guru.index', compact('data'));
     }
 
     public function create()
     {
         $mapelList = collect(FakeDataHelper::getMapelOptions());
-        return view('admin.guru.create', compact('mapelList'));
+        return view('pages.admin.guru.create', compact('mapelList'));
     }
 
     public function store(Request $request)
@@ -40,7 +40,7 @@ class GuruDataController extends Controller
         if (!$item) return redirect()->route('admin.guru.index')->with('error', 'Data tidak ditemukan.');
         $guru = (object) $item;
         $mapelList = collect(FakeDataHelper::getMapelOptions());
-        return view('admin.guru.edit', compact('guru', 'mapelList'));
+        return view('pages.admin.guru.edit', compact('guru', 'mapelList'));
     }
 
     public function update(Request $request, $id)

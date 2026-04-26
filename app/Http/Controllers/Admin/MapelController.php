@@ -11,12 +11,12 @@ class MapelController extends Controller
     public function index()
     {
         $data = collect(array_map(fn($m) => (object) $m, FakeDataHelper::getMapel()));
-        return view('admin.mapel.index', compact('data'));
+        return view('pages.admin.mapel.index', compact('data'));
     }
 
     public function create()
     {
-        return view('admin.mapel.create');
+        return view('pages.admin.mapel.create');
     }
 
     public function store(Request $request)
@@ -37,7 +37,7 @@ class MapelController extends Controller
         $item = FakeDataHelper::findById(FakeDataHelper::getMapel(), $id);
         if (!$item) return redirect()->route('admin.mapel.index')->with('error', 'Data tidak ditemukan.');
         $mapel = (object) $item;
-        return view('admin.mapel.edit', compact('mapel'));
+        return view('pages.admin.mapel.edit', compact('mapel'));
     }
 
     public function update(Request $request, $id)

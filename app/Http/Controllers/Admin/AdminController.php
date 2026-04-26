@@ -56,7 +56,7 @@ class AdminController extends Controller
             ]);
         }, FakeDataHelper::getRecentSiswa(5));
 
-        return view('admin.dashboard_admin', [
+        return view('pages.admin.dashboard', [
             'id' => $id,
             'nama' => $nama,
             'stats' => $stats,

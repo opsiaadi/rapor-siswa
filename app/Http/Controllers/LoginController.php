@@ -7,33 +7,32 @@ use Illuminate\Http\Request;
 class LoginController extends Controller
 {
     public function index() {
-        return view('login');
+        return view('pages.auth.login');
     }
 
     public function authenticate(Request $request)
     {
-        // TODO: Implement real authentication later
-        // For now, simulate login with session
-        
         $role = $request->input('role', 'admin');
         
-        // Store user info in session (fake auth)
-        session([
-            'user' => [
-                'id' => 1,
-                'name' => 'Admin TU',
-                'role' => $role,
-            ]
-        ]);
-
-        // Redirect based on role
+        $userData = [
+            'id' => 1,
+            'role' => $role,
+        ];
+        
         if ($role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            $userData['name'] = 'Admin TU';
+            $redirect = redirect()->route('admin.dashboard');
         } elseif ($role === 'guru') {
-            return redirect()->route('guru.dashboard', ['id' => 1, 'namaGuru' => 'guru']);
+            $userData['name'] = 'Guru';
+            $redirect = redirect()->route('guru.dashboard', ['id' => 1, 'namaGuru' => 'Guru']);
         } else {
-            return redirect('/dashboard_walikelas/1/walikelas');
+            $userData['name'] = 'Wali Kelas';
+            $redirect = redirect()->route('walikelas.dashboard', ['id' => 1, 'nama' => 'Wali Kelas']);
         }
+        
+        session(['user' => $userData]);
+        
+        return $redirect;
     }
 
     public function logout()

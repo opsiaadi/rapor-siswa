@@ -12,7 +12,7 @@ class GuruController extends Controller
         $kelasList = FakeDataHelper::getKelasOptions();
         $mapelList = FakeDataHelper::getMapelOptions();
 
-        return view('dashboard_guru', [
+        return view('pages.guru.dashboard', [
             'id' => $id,
             'namaGuru' => $namaGuru,
             'kelasList' => $kelasList,
@@ -49,7 +49,7 @@ class GuruController extends Controller
         $kelasList = FakeDataHelper::getKelasOptions();
         $mapelList = FakeDataHelper::getMapelOptions();
 
-        return view('dashboard_guru', [
+        return view('pages.guru.dashboard', [
             'id' => $id,
             'namaGuru' => $namaGuru,
             'kelasList' => $kelasList,
