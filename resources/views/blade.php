@@ -4,3 +4,5 @@
 
 <img src="{{ asset('images/yurt9.jpg') }}" alt="">
 <img src="{{ asset('images/gtw.png') }}" alt="">
+
+@

@@ -31,8 +31,10 @@
     </div>
 
     <div class="flex gap-3">
-        <button>Masuk</button>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg">Daftar</button>
+        <form action="{{route ('login') }}" method="GET">
+            <button>Masuk</button>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg">Daftar</button>
+        </form>
     </div>
 </nav>
 
@@ -50,7 +52,9 @@
         </p>
 
         <div class="mt-6 flex gap-4">
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg">Mulai</button>
+            <Form action="{{route ('login') }}" method="GET">
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg">Mulai</button>
+            </form>
         </div>
 
         <!-- Stats -->
