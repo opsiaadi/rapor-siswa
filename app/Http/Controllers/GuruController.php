@@ -11,12 +11,17 @@ class GuruController extends Controller
     function nama($id = 'GR001', $namaGuru = 'Guru Mapel') {
         $kelasList = FakeDataHelper::getKelasOptions();
         $mapelList = FakeDataHelper::getMapelOptions();
+        $semesterList = FakeDataHelper::getSemesterOptions();
 
         return view('dashboard_guru', [
+            'title' => 'Dashboard Guru',
+            'pageTitle' => 'Dashboard Guru',
+            'breadcrumb' => 'Input Nilai Siswa',
             'id' => $id,
             'namaGuru' => $namaGuru,
             'kelasList' => $kelasList,
             'mapelList' => $mapelList,
+            'semesterList' => $semesterList,
         ]);
     }
 
@@ -24,13 +29,16 @@ class GuruController extends Controller
         $id = $request->input('guru_id', 'GR001');
         $namaGuru = $request->input('guru_nama', 'Guru Mapel');
         $kelasId = $request->input('kelas');
+        $semesterId = $request->input('semester');
+        $mapelId = $request->input('mapel');
 
-        // Ambil data dari FakeDataHelper (sama seperti admin)
+        // Debug
+        \Illuminate\Support\Facades\Log::info('kelasId: ' . $kelasId . ', semesterId: ' . $semesterId . ', mapelId: ' . $mapelId);
+
+        // Ambil data dari FakeDataHelper
         $allSiswa = FakeDataHelper::getSiswa();
         
-        // Debug: cek apa yang diterima
         if (empty($allSiswa)) {
-            // Force initialize dengan default
             $allSiswa = [
                 ['id' => 1, 'nis' => '2024001', 'nama' => 'Ahmad Fauzi', 'jenis_kelamin' => 'L', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1'],
                 ['id' => 2, 'nis' => '2024002', 'nama' => 'Siti Nurhaliza', 'jenis_kelamin' => 'P', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1'],
@@ -38,22 +46,35 @@ class GuruController extends Controller
             ];
         }
         
-        // Filter siswa berdasarkan kelas_id
+        // Filter siswa berdasarkan kelas_id (jika dipilih)
         $siswaList = [];
-        foreach ($allSiswa as $siswa) {
-            if (isset($siswa['kelas_id']) && $siswa['kelas_id'] == $kelasId) {
-                $siswaList[] = $siswa;
+        if ($kelasId) {
+            foreach ($allSiswa as $siswa) {
+                $siswaObj = (object)$siswa;
+                if (isset($siswaObj->kelas_id) && $siswaObj->kelas_id == $kelasId) {
+                    $siswaList[] = $siswaObj;
+                }
+            }
+        } else {
+            // Jika belum pilih kelas, tampilkan semua siswa
+            foreach ($allSiswa as $siswa) {
+                $siswaList[] = (object)$siswa;
             }
         }
 
         $kelasList = FakeDataHelper::getKelasOptions();
         $mapelList = FakeDataHelper::getMapelOptions();
+        $semesterList = FakeDataHelper::getSemesterOptions();
 
         return view('dashboard_guru', [
+            'title' => 'Input Nilai',
+            'pageTitle' => 'Input Nilai Siswa',
+            'breadcrumb' => 'Masukkan nilai harian, UTS, dan UAS',
             'id' => $id,
             'namaGuru' => $namaGuru,
             'kelasList' => $kelasList,
             'mapelList' => $mapelList,
+            'semesterList' => $semesterList,
             'siswaList' => $siswaList,
             'filter' => [
                 'kelasId' => $kelasId,

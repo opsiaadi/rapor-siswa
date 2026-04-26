@@ -32,7 +32,7 @@ class LoginController extends Controller
         } elseif ($role === 'guru') {
             return redirect()->route('guru.dashboard', ['id' => 1, 'namaGuru' => 'guru']);
         } else {
-            return redirect('/dashboard_walikelas/1/walikelas');
+            return redirect()->route('walikelas.dashboard');
         }
     }
 

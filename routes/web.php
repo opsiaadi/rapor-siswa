@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MapelController;
 use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RaporController;
 use App\Http\Controllers\WalikelasController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,8 +20,14 @@ Route::get('/homepage', function () {
 });
 
 Route::get('/input_nilai', function () {
-    return view('input_nilai');
+    $kelasList = \App\Helpers\FakeDataHelper::getKelasOptions();
+    $mapelList = \App\Helpers\FakeDataHelper::getMapelOptions();
+    $semesterList = \App\Helpers\FakeDataHelper::getSemesterOptions();
+    $siswaList = \App\Helpers\FakeDataHelper::getSiswa();
+    return view('input_nilai', compact('kelasList', 'mapelList', 'semesterList', 'siswaList'));
 });
+
+Route::post('/rapor/simpan', [RaporController::class, 'simpan'])->name('rapor.simpan');
 
 // Login
 Route::get('/login', [LoginController::class, 'index'])->name('login');
@@ -66,10 +73,16 @@ Route::prefix('admin')->group(function (){
 
 // Guru 
 Route::prefix('dashboard_guru')->group(function () {
+    Route::get('/guru/nilai', [GuruController::class, 'nilai'])->name('guru.nilai');
     Route::get('/guru/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('guru.dashboard');
-    Route::post('/guru/nilai', [GuruController::class, 'nilai'])->name('guru.nilai');
+    Route::post('/guru/nilai', [GuruController::class, 'nilai'])->name('guru.nilai.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
 // walikelas
-Route::get('/finalisasi_walikelas/{id?}/{nama?}', [WalikelasController::class, 'nama']);
+Route::prefix('walikelas')->group(function () {
+    Route::get('/dashboard', [WalikelasController::class, 'dashboard'])->name('walikelas.dashboard');
+    Route::get('/finalisasi', [WalikelasController::class, 'finalisasi'])->name('walikelas.finalisasi');
+    Route::get('/siswa', [WalikelasController::class, 'siswa'])->name('walikelas.siswa');
+    Route::get('/ringkasan', [WalikelasController::class, 'ringkasan'])->name('walikelas.ringkasan');
+});

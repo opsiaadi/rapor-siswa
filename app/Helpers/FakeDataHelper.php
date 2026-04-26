@@ -8,6 +8,25 @@ namespace App\Helpers;
  */
 class FakeDataHelper
 {
+    // ── SEMESTER ──
+
+    public static function getSemester()
+    {
+        return session('fake_semester', [
+            ['id' => 1, 'nama' => 'I/ Ganjil', 'kategori' => 'PH'],
+            ['id' => 2, 'nama' => 'I/ Ganjil', 'kategori' => 'UTS'],
+            ['id' => 3, 'nama' => 'I/ Ganjil', 'kategori' => 'UAS'],
+            ['id' => 4, 'nama' => 'II/ Genap', 'kategori' => 'PH'],
+            ['id' => 5, 'nama' => 'II/ Genap', 'kategori' => 'UTS'],
+            ['id' => 6, 'nama' => 'II/ Genap', 'kategori' => 'UAS'],
+        ]);
+    }
+
+    public static function getSemesterOptions()
+    {
+        return array_map(fn($s) => (object) $s, self::getSemester());
+    }
+
     // ── MAP ──
 
     public static function getMapel()

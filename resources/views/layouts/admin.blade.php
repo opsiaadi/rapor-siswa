@@ -178,9 +178,6 @@
                         </svg>
                         <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full"></span>
                     </button>
-                    <!-- Dashboard Admin Link -->
-                    <a href="/admin/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-100 hover:text-white hover:bg-white/20 transition-colors ml-4">
-                    </a>
 
                     <!-- User Avatar -->
                     <div class="flex items-center gap-3 pl-4 border-l border-white/20">
