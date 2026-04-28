@@ -7,81 +7,107 @@ use App\Helpers\FakeDataHelper;
 
 class GuruController extends Controller
 {
-
-    function nama($id = 'GR001', $namaGuru = 'Guru Mapel') {
-        $kelasList = FakeDataHelper::getKelasOptions();
-        $mapelList = FakeDataHelper::getMapelOptions();
-        $semesterList = FakeDataHelper::getSemesterOptions();
-
-        return view('dashboard_guru', [
-            'title' => 'Dashboard Guru',
-            'pageTitle' => 'Dashboard Guru',
-            'breadcrumb' => 'Input Nilai Siswa',
-            'id' => $id,
-            'namaGuru' => $namaGuru,
-            'kelasList' => $kelasList,
-            'mapelList' => $mapelList,
-            'semesterList' => $semesterList,
-        ]);
+    private function getBaseData()
+    {
+        return [
+            'kelasList' => FakeDataHelper::getKelasOptions(),
+            'mapelList' => FakeDataHelper::getMapelOptions(),
+            'semesterList' => FakeDataHelper::getSemesterOptions(),
+            'allSiswa' => FakeDataHelper::getSiswa(),
+        ];
     }
 
-    public function nilai(Request $request) {
+    private function filterSiswa($allSiswa, $kelasId = null)
+    {
+        if ($kelasId) {
+            return array_map(fn($s) => (object)$s, 
+                array_filter($allSiswa, fn($s) => ($s['kelas_id'] ?? null) == $kelasId)
+            );
+        }
+        return array_map(fn($s) => (object)$s, $allSiswa);
+    }
+
+    private function buildKelasSummary($kelasList, $allSiswa)
+    {
+        return array_map(fn($kelas) => [
+            'id' => $kelas->id,
+            'nama_kelas' => $kelas->nama_kelas,
+            'siswa_count' => count(array_filter($allSiswa, fn($s) => ($s['kelas_id'] ?? null) == $kelas->id)),
+            'tingkat' => $kelas->tingkat ?? '-',
+        ], $kelasList);
+    }
+
+    private function getFilter(Request $request)
+    {
+        return [
+            'kelasId' => $request->input('kelas'),
+            'semester' => $request->input('semester'),
+            'mapelId' => $request->input('mapel'),
+        ];
+    }
+
+    private function getGuruMapel($guruId)
+    {
+        $guru = FakeDataHelper::findById(FakeDataHelper::getGuru(), $guruId);
+        if (!$guru) return [];
+
+        $mapelIds = $guru['mapel_ids'] ?? [];
+        return array_values(array_filter(FakeDataHelper::getMapel(), fn($m) => in_array($m['id'], $mapelIds)));
+    }
+
+    public function nama($id = 'GR001', $namaGuru = 'Guru Mapel')
+    {
+        $base = $this->getBaseData();
+        $guruMapel = $this->getGuruMapel($id);
+
+        return view('guru.dashboard_guru', array_merge($base, [
+            'title' => 'Dashboard Guru',
+            'pageTitle' => 'Dashboard Guru',
+            'breadcrumb' => 'Dashboard Guru',
+            'id' => $id,
+            'namaGuru' => $namaGuru,
+            'guruMapel' => $guruMapel,
+        ]));
+    }
+
+    public function hasilbelajar(Request $request, $id = 'GR001', $namaGuru = 'Guru Mapel')
+    {
+        $base = $this->getBaseData();
+        $filter = $this->getFilter($request);
+
+        $siswaList = $this->filterSiswa($base['allSiswa'], $filter['kelasId']);
+
+        return view('guru.input-nilai', array_merge($base, [
+            'title' => 'Hasil Belajar Siswa',
+            'pageTitle' => 'Hasil Belajar Siswa',
+            'breadcrumb' => 'Rekap nilai akhir siswa',
+            'id' => $id,
+            'namaGuru' => $namaGuru,
+            'siswaList' => $siswaList,
+            'jumlahSiswa' => count($siswaList),
+            'kelasSummary' => $this->buildKelasSummary($base['kelasList'], $base['allSiswa']),
+            'filter' => $filter,
+        ]));
+    }
+
+    public function nilai(Request $request)
+    {
         $id = $request->input('guru_id', 'GR001');
         $namaGuru = $request->input('guru_nama', 'Guru Mapel');
-        $kelasId = $request->input('kelas');
-        $semesterId = $request->input('semester');
-        $mapelId = $request->input('mapel');
+        $base = $this->getBaseData();
+        $filter = $this->getFilter($request);
 
-        // Debug
-        \Illuminate\Support\Facades\Log::info('kelasId: ' . $kelasId . ', semesterId: ' . $semesterId . ', mapelId: ' . $mapelId);
+        $siswaList = $this->filterSiswa($base['allSiswa'], $filter['kelasId']);
 
-        // Ambil data dari FakeDataHelper
-        $allSiswa = FakeDataHelper::getSiswa();
-        
-        if (empty($allSiswa)) {
-            $allSiswa = [
-                ['id' => 1, 'nis' => '2024001', 'nama' => 'Ahmad Fauzi', 'jenis_kelamin' => 'L', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1'],
-                ['id' => 2, 'nis' => '2024002', 'nama' => 'Siti Nurhaliza', 'jenis_kelamin' => 'P', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1'],
-                ['id' => 3, 'nis' => '2024003', 'nama' => 'Budi Santoso', 'jenis_kelamin' => 'L', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 2, 'kelas_nama' => 'X-RPL 2'],
-            ];
-        }
-        
-        // Filter siswa berdasarkan kelas_id (jika dipilih)
-        $siswaList = [];
-        if ($kelasId) {
-            foreach ($allSiswa as $siswa) {
-                $siswaObj = (object)$siswa;
-                if (isset($siswaObj->kelas_id) && $siswaObj->kelas_id == $kelasId) {
-                    $siswaList[] = $siswaObj;
-                }
-            }
-        } else {
-            // Jika belum pilih kelas, tampilkan semua siswa
-            foreach ($allSiswa as $siswa) {
-                $siswaList[] = (object)$siswa;
-            }
-        }
-
-        $kelasList = FakeDataHelper::getKelasOptions();
-        $mapelList = FakeDataHelper::getMapelOptions();
-        $semesterList = FakeDataHelper::getSemesterOptions();
-
-        return view('dashboard_guru', [
+        return view('guru.input-nilai', array_merge($base, [
             'title' => 'Input Nilai',
             'pageTitle' => 'Input Nilai Siswa',
             'breadcrumb' => 'Masukkan nilai harian, UTS, dan UAS',
             'id' => $id,
             'namaGuru' => $namaGuru,
-            'kelasList' => $kelasList,
-            'mapelList' => $mapelList,
-            'semesterList' => $semesterList,
             'siswaList' => $siswaList,
-            'filter' => [
-                'kelasId' => $kelasId,
-                'semester' => $request->input('semester'),
-                'mapelId' => $request->input('mapel'),
-            ],
-        ]);
+            'filter' => $filter,
+        ]));
     }
 
     public function getGuru()
@@ -94,5 +120,4 @@ class GuruController extends Controller
             ]
         ]);
     }
-
 }

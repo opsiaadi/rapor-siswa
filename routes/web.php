@@ -19,16 +19,6 @@ Route::get('/homepage', function () {
     return view('homepage');
 });
 
-Route::get('/input_nilai', function () {
-    $kelasList = \App\Helpers\FakeDataHelper::getKelasOptions();
-    $mapelList = \App\Helpers\FakeDataHelper::getMapelOptions();
-    $semesterList = \App\Helpers\FakeDataHelper::getSemesterOptions();
-    $siswaList = \App\Helpers\FakeDataHelper::getSiswa();
-    return view('input_nilai', compact('kelasList', 'mapelList', 'semesterList', 'siswaList'));
-});
-
-Route::post('/rapor/simpan', [RaporController::class, 'simpan'])->name('rapor.simpan');
-
 // Login
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.post');
@@ -72,10 +62,12 @@ Route::prefix('admin')->group(function (){
 
 
 // Guru 
-Route::prefix('dashboard_guru')->group(function () {
-    Route::get('/guru/nilai', [GuruController::class, 'nilai'])->name('guru.nilai');
-    Route::get('/guru/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('guru.dashboard');
-    Route::post('/guru/nilai', [GuruController::class, 'nilai'])->name('guru.nilai.post');
+Route::prefix('guru')->group(function () {
+    Route::get('/beranda', [GuruController::class, 'nilai'])->name('guru.beranda');
+    Route::get('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai');
+    Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('guru.dashboard');
+    Route::get('/hasilbelajar/{id?}/{namaGuru?}', [GuruController::class, 'hasilbelajar'])->name('guru.hasilbelajar');
+    Route::post('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
@@ -84,5 +76,16 @@ Route::prefix('walikelas')->group(function () {
     Route::get('/dashboard', [WalikelasController::class, 'dashboard'])->name('walikelas.dashboard');
     Route::get('/finalisasi', [WalikelasController::class, 'finalisasi'])->name('walikelas.finalisasi');
     Route::get('/siswa', [WalikelasController::class, 'siswa'])->name('walikelas.siswa');
-    Route::get('/ringkasan', [WalikelasController::class, 'ringkasan'])->name('walikelas.ringkasan');
+    Route::get('/rapor/{siswaId}', [WalikelasController::class, 'rapor'])->name('walikelas.rapor');
+    Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanKeterangan'])->name('walikelas.rapor.simpan');
 });
+
+Route::get('/input_nilai', function () {
+    $kelasList = \App\Helpers\FakeDataHelper::getKelasOptions();
+    $mapelList = \App\Helpers\FakeDataHelper::getMapelOptions();
+    $semesterList = \App\Helpers\FakeDataHelper::getSemesterOptions();
+    $siswaList = \App\Helpers\FakeDataHelper::getSiswa();
+    return view('input_nilai', compact('kelasList', 'mapelList', 'semesterList', 'siswaList'));
+});
+
+Route::post('/rapor/simpan', [RaporController::class, 'simpan'])->name('rapor.simpan');
