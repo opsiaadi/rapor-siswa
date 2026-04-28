@@ -78,10 +78,8 @@
             <!-- Logo -->
             <div class="p-5 border-b" style="border-color: #e5e7eb;">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm" style="background-color: #ecfeff; border: 1px solid #a5f3fc;">
-                        <svg class="w-6 h-6" style="color: #0891b2;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M9 8h6m3 11H6a2 2 0 01-2-2V7a2 2 0 012-2h2.5a1 1 0 00.8-.4l.9-1.2a1 1 0 01.8-.4h2a1 1 0 01.8.4l.9 1.2a1 1 0 00.8.4H18a2 2 0 012 2v10a2 2 0 01-2 2z"/>
-                        </svg>
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center">
+                        <img src="{{ asset('images/open-book.png')}}">
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-gray-900">EduReport</h2>
@@ -97,11 +95,6 @@
                 <a href="{{ route('walikelas.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors" style="{{ request()->routeIs('walikelas.dashboard') ? 'background-color: rgba(34, 211, 238, 0.12); color: #111827;' : 'color: #4b5563;' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon icon-tabler icons-tabler-outline icon-tabler-home flex-shrink-0 icon-gradient" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
                     Dashboard
-                </a>
-
-                <a href="{{ route('walikelas.ringkasan') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors" style="{{ request()->routeIs('walikelas.ringkasan') ? 'background-color: rgba(34, 211, 238, 0.12); color: #111827;' : 'color: #4b5563;' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon icon-tabler icons-tabler-outline icon-tabler-building-school flex-shrink-0 icon-gradient" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 20v-9l-4 1.125V20h4Zm0 0h8m-8 0V6.66667M16 20v-9l4 1.125V20h-4Zm0 0V6.66667M18 8l-6-4-6 4m5 1h2m-2 3h2"/></svg>
-                    Ringkasan Kelas
                 </a>
 
                 <a href="{{ route('walikelas.siswa') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors" style="{{ request()->routeIs('walikelas.siswa') ? 'background-color: rgba(34, 211, 238, 0.12); color: #111827;' : 'color: #4b5563;' }}">
@@ -130,14 +123,14 @@
             </nav>
 
             <!-- User Profile -->
-            <div class="p-4 border-t border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-cyan-50 dark:bg-cyan-900/30 flex items-center justify-center font-semibold text-sm text-cyan-600 dark:text-cyan-300 shadow-sm border border-cyan-200 dark:border-cyan-800">
-                        {{ strtoupper(substr($namaGuru ?? 'W', 0, 1)) }}
+            <div class="p-4">
+                <div class="flex items-center gap-1">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/30">
+                        <img src="{{ asset('images/User2.png') }}" class="h-full w-full object-contain">
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-semibold text-gray-900 dark:text-gray-200 truncate">{{ $namaGuru ?? 'Wali Kelas' }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Wali Kelas Aktif</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Wali Kelas</p>
                     </div>
                 </div>
             </div>
@@ -174,9 +167,9 @@
                     </button>
 
                     <!-- User Avatar -->
-                    <div class="flex items-center gap-3 pl-4 border-l border-white/20">
-                        <div class="w-9 h-9 rounded-full bg-cyan-700 flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-cyan-400">
-                            {{ strtoupper(substr($namaGuru ?? 'W', 0, 1)) }}
+                    <div class="flex items-center gap-1 pl-4 border-l border-white/20">
+                        <div class="w-14 h-14 rounded-full overflow-hidden">
+                            <img src="{{ asset('images/User2.png') }}" class="h-full w-full object-cover"> 
                         </div>
                         <div>
                             <p class="text-sm font-semibold text-white">{{ $namaGuru ?? 'Wali Kelas' }}</p>

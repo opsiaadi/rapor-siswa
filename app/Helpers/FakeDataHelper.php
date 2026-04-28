@@ -121,11 +121,25 @@ class FakeDataHelper
 
     public static function getSiswa()
     {
-        return session('fake_siswa', [
-            ['id' => 1, 'nis' => '2024001', 'nama' => 'Ahmad Fauzi', 'jenis_kelamin' => 'L', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1'],
-            ['id' => 2, 'nis' => '2024002', 'nama' => 'Siti Nurhaliza', 'jenis_kelamin' => 'P', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1'],
-            ['id' => 3, 'nis' => '2024003', 'nama' => 'Budi Santoso', 'jenis_kelamin' => 'L', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 2, 'kelas_nama' => 'X-RPL 2'],
-        ]);
+        $default = [
+            ['id' => 1, 'nis' => '2024001', 'nama' => 'Ahmad Fauzi', 'jenis_kelamin' => 'L', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1', 'keterangan' => ''],
+            ['id' => 2, 'nis' => '2024002', 'nama' => 'Siti Nurhaliza', 'jenis_kelamin' => 'P', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 1, 'kelas_nama' => 'X-RPL 1', 'keterangan' => ''],
+            ['id' => 3, 'nis' => '2024003', 'nama' => 'Budi Santoso', 'jenis_kelamin' => 'L', 'tahun_ajaran' => '2024/2025', 'kelas_id' => 2, 'kelas_nama' => 'X-RPL 2', 'keterangan' => ''],
+        ];
+        $data = session('fake_siswa', $default);
+        
+        $changed = false;
+        foreach ($data as $key => $siswa) {
+            if (!isset($siswa['keterangan'])) {
+                $data[$key]['keterangan'] = '';
+                $changed = true;
+            }
+        }
+        if ($changed) {
+            session(['fake_siswa' => $data]);
+        }
+        
+        return $data;
     }
 
     public static function saveSiswa($data) { session(['fake_siswa' => $data]); }

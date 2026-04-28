@@ -1,22 +1,13 @@
-@extends('layouts.guru')
+@extends('layouts.guru', [
+    'title' => 'Hasil Belajar Siswa',
+    'pageTitle' => 'Hasil Belajar Siswa',
+    'breadcrumb' => 'Rekap nilai akhir siswa',
+    'id' => $id ?? 1,
+    'namaGuru' => $namaGuru ?? 'Guru Mapel',
+])
 
 @section('content')
-<div class="max-w-7xl mx-auto">
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Input Nilai Siswa</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Masukkan nilai harian, UTS, dan UAS untuk setiap siswa</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-600 dark:text-gray-300">{{ $namaGuru ?? 'Guru Mapel' }}</span>
-                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                    {{ strtoupper(substr($namaGuru ?? 'G', 0, 1)) }}
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl mb-6">
+<div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl mb-6">
             <form action="{{ route('guru.nilai', ['id' => $id ?? 1, 'namaGuru' => $namaGuru ?? 'Guru']) }}" method="GET" class="flex flex-wrap justify-center gap-4 items-end">
                 <div>
                     <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Kelas</label>

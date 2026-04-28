@@ -78,12 +78,10 @@
             </svg>
 
             <!-- Logo -->
-            <div class="p-5 border-b border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-blue-900/30">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
+            <div class="p-5 border-b  border-gray-100 dark:border-gray-700">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center">
+                        <img src="{{asset ('images/open-book.png')}}" class>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400 bg-clip-text text-transparent">EduReport</h2>
@@ -134,14 +132,14 @@
             </nav>
 
             <!-- User Profile -->
-            <div class="p-4 border-t border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-semibold text-sm shadow-md">
-                        {{ strtoupper(substr($userName ?? 'A', 0, 1)) }}
+            <div class="p-4">
+                <div class="flex items-center gap-1">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/30">
+                        <img src="{{ asset('images/User2.png') }}" class="h-full w-full object-contain">
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 truncate">{{ $userName ?? 'Admin' }}</p>
-                        <p class="text-xs text-gray-400 dark:text-gray-500 truncate">Admin TU</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Admin TU</p>
                     </div>
                 </div>
             </div>
@@ -179,10 +177,11 @@
                         <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full"></span>
                     </button>
 
+
                     <!-- User Avatar -->
-                    <div class="flex items-center gap-3 pl-4 border-l border-white/20">
-                        <div class="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-white/30">
-                            {{ strtoupper(substr($userName ?? 'A', 0, 1)) }}
+                    <div class="flex items-center gap-1 pl-4 border-l border-white/20">
+                        <div class="w-14 h-14 rounded-full overflow-hidden">
+                            <img src="{{ asset('images/User2.png') }}" class="h-full w-full object-cover"> 
                         </div>
                         <div>
                             <p class="text-sm font-semibold text-white">{{ $userName ?? 'Admin' }}</p>
