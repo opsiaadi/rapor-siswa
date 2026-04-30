@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Input Nilai Siswa</title>
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-white-700">
