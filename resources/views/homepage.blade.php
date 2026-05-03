@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Lapor Siswa</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css'])
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
 <nav class="flex justify-between items-center px-8 py-4 bg-white shadow">
     <div class="flex items-center gap-2">
         <img src="{{ asset('images/open-book.png')}}" alt="logo-rapor" class="h-10 w-auto">
-        <h1 class="font-bold text-lg">EduReport</h1>
+        <h1 class="font-bold text-lg">SiRapor</h1>
     </div>
     <div class="hidden md:flex gap-6">
         <a class="text-blue-600 font-semibold border-b-2 border-blue-600">Beranda</a>
@@ -70,7 +70,7 @@
             </div>
         </div>
         <div class="flex justify-center md:justify-end">
-            <img src="{{ asset('images/homepage.png') }}" class="w-full max-w-md object-contain">
+            <img src="{{ asset('images/homepage.png') }}" class="w-full max-w-md object-contain border-green-400 rounded-xl p-1 shadow-xl">
         </div>
     </div>
 </section>

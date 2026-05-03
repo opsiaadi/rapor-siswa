@@ -1,107 +1,121 @@
 @extends('layouts.guru', [
-    'title' => 'Hasil Belajar Siswa',
-    'pageTitle' => 'Hasil Belajar Siswa',
-    'breadcrumb' => 'Rekap nilai akhir siswa',
+    'title' => 'Input Nilai Siswa',
+    'pageTitle' => 'Input Nilai Siswa',
+    'breadcrumb' => 'Input nilai harian, UTS, UAS',
     'id' => $id ?? 1,
     'namaGuru' => $namaGuru ?? 'Guru Mapel',
 ])
 
 @section('content')
-<div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl mb-6">
-            <form action="{{ route('guru.nilai', ['id' => $id ?? 1, 'namaGuru' => $namaGuru ?? 'Guru']) }}" method="GET" class="flex flex-wrap justify-center gap-4 items-end">
-                <div>
-                    <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Kelas</label>
-                    <select name="kelas" class="block w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">-- Pilih Kelas --</option>
-                        @foreach($kelasList as $kelas)
-                            <option value="{{ $kelas->id }}" {{ isset($filter['kelasId']) && $filter['kelasId'] == $kelas->id ? 'selected' : '' }}>{{ $kelas->nama_kelas }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div>
-                    <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Semester / Kategori</label>
-                    <select name="semester" class="block w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">-- Pilih Semester --</option>
-                        @foreach($semesterList as $semester)
-                            <option value="{{ $semester->id }}" {{ isset($filter['semester']) && $filter['semester'] == $semester->id ? 'selected' : '' }}>{{ $semester->nama }} - {{ $semester->kategori }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div>
-                    <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Mata Pelajaran</label>
-                    <select name="mapel" class="block w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">-- Pilih Mapel --</option>
-                        @foreach($mapelList as $mapel)
-                            <option value="{{ $mapel->id }}" {{ isset($filter['mapelId']) && $filter['mapelId'] == $mapel->id ? 'selected' : '' }}>{{ $mapel->nama_mapel }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all shadow-lg shadow-blue-500/30">
-                    Tampilkan
-                </button>
-            </form>
+<div class="bg-gray-50  p-4 rounded-xl mb-6">
+    <form action="{{ route('guru.nilai') }}" method="GET" class="flex flex-wrap justify-center gap-4 items-end">
+        <div>
+            <label class="text-xs font-semibold text-gray-500  uppercase">Mengajar</label>
+            <select name="mengajar" class="block w-full bg-white  border border-gray-200  rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">-- Pilih Mengajar --</option>
+                @foreach($guruMengajar as $mengajar)
+                <option value="{{ $mengajar->id }}" {{ isset($filter['mengajarId']) && $filter['mengajarId'] == $mengajar->id ? 'selected' : '' }}>
+                    {{ $mengajar->mapel_nama }} - Kelas {{ $mengajar->kelas_nama }} (Semester {{ $mengajar->semester }})
+                </option>
+                @endforeach
+                @if($guruMengajar->isEmpty())
+                <option value="">(Tidak ada data mengajar)</option>
+                @endif
+            </select>
         </div>
 
-        <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl overflow-hidden">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">Daftar Siswa</h3>
-
-            <form action="/dashboard_guru/guru/nilai" method="POST">
-                @csrf
-                <input type="hidden" name="guru_id" value="{{ $id ?? 'GR001' }}">
-                <input type="hidden" name="guru_nama" value="{{ $namaGuru ?? 'Guru Mapel' }}">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600">
-                                <th class="py-3 px-2 text-left w-12">No.</th>
-                                <th class="py-3 px-2 text-left">Nama Siswa</th>
-                                <th class="py-3 px-2 text-center">Harian (n%)</th>
-                                <th class="py-3 px-2 text-center">UTS (n%)</th>
-                                <th class="py-3 px-2 text-center">UAS (n%)</th>
-                                <th class="py-3 px-2 text-center">Nilai Akhir</th>
-                                <th class="py-3 px-2 text-center">Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="text-center">
-                            @forelse($siswaList ?? [] as $i => $siswa)
-                            <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                                <td class="py-3 px-2 text-left text-gray-600 dark:text-gray-400">{{ $i + 1 }}</td>
-                                <td class="py-3 px-2 text-left font-medium text-gray-800 dark:text-white">{{ $siswa->nama }}</td>
-                                <td class="py-3 px-2"><input type="number" name="nilai[harian][{{ $siswa->id }}]" value="{{ $siswa->harian ?? '' }}" min="0" max="100" class="w-16 text-center bg-blue-600 dark:bg-blue-500 text-white rounded-lg py-1.5 font-medium focus:ring-2 focus:ring-blue-400"></td>
-                                <td class="py-3 px-2"><input type="number" name="nilai[uts][{{ $siswa->id }}]" value="{{ $siswa->uts ?? '' }}" min="0" max="100" class="w-16 text-center bg-blue-600 dark:bg-blue-500 text-white rounded-lg py-1.5 font-medium focus:ring-2 focus:ring-blue-400"></td>
-                                <td class="py-3 px-2"><input type="number" name="nilai[uas][{{ $siswa->id }}]" value="{{ $siswa->uas ?? '' }}" min="0" max="100" class="w-16 text-center bg-blue-600 dark:bg-blue-500 text-white rounded-lg py-1.5 font-medium focus:ring-2 focus:ring-blue-400"></td>
-                                <td class="py-3 px-2 font-bold text-blue-600 dark:text-blue-400">-</td>
-                                <td class="py-3 px-2"><span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-semibold">Tuntas</span></td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="py-4 text-center text-gray-500 dark:text-gray-400">Pilih kelas terlebih dahulu untuk menampilkan siswa.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="flex justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
-                    <div class="flex gap-3">
-                        <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all shadow-lg shadow-blue-500/30">
-                            Edit
-                        </button>
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-all shadow-lg shadow-green-500/30">
-                            Simpan
-                        </button>
-                    </div>
-
-                    <button type="button" class="bg-violet-600 hover:bg-violet-700 text-white px-8 py-2 rounded-lg font-medium transition-all shadow-lg shadow-violet-500/30">
-                        Kirim
-                    </button>
-                </div>
-            </form>
+        <div>
+            <label class="text-xs font-semibold text-gray-500  uppercase">Kelas</label>
+            <select name="kelas" class="block w-full bg-white  border border-gray-200  rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">-- Pilih Kelas --</option>
+                @foreach($kelasList as $kelas)
+                <option value="{{ $kelas->id }}" {{ isset($filter['kelasId']) && $filter['kelasId'] == $kelas->id ? 'selected' : '' }}>{{ $kelas->nama_kelas }}</option>
+                @endforeach
+            </select>
         </div>
-    </div>
+
+        <div>
+            <label class="text-xs font-semibold text-gray-500  uppercase">Semester</label>
+            <select name="semester" class="block w-full bg-white  border border-gray-200  rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="1" {{ isset($filter['semester']) && $filter['semester'] == 1 ? 'selected' : '' }}>Semester 1</option>
+                <option value="2" {{ isset($filter['semester']) && $filter['semester'] == 2 ? 'selected' : '' }}>Semester 2</option>
+            </select>
+        </div>
+
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all shadow-lg shadow-blue-500/30">
+            Tampilkan
+        </button>
+    </form>
 </div>
+
+@if(isset($filter['mapelId']) && $filter['mapelId'])
+<div class="bg-gray-50  p-4 rounded-xl overflow-hidden">
+    <h3 class="text-sm font-semibold text-gray-700  mb-4">Daftar Siswa - {{ $guruMengajar->firstWhere('mapel_id', $filter['mapelId'])->mapel_nama ?? '' }} (Kelas {{ $kelasList->firstWhere('id', $filter['kelasId'])->nama_kelas ?? '' }})</h3>
+    <form action="{{ route('guru.nilai') }}" method="POST">
+        @csrf
+        <input type="hidden" name="mengajar" value="{{ $filter['mengajarId'] ?? '' }}">
+        <input type="hidden" name="kelas" value="{{ $filter['kelasId'] ?? '' }}">
+        <input type="hidden" name="semester" value="{{ $filter['semester'] ?? '' }}">
+        <input type="hidden" name="mapel" value="{{ $filter['mapelId'] ?? '' }}">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-gray-600  border-b border-gray-200 ">
+                        <th class="py-3 px-2 text-left w-12">No.</th>
+                        <th class="py-3 px-2 text-left">Nama Siswa</th>
+                        <th class="py-3 px-2 text-center">Harian (40%)</th>
+                        <th class="py-3 px-2 text-center">UTS (30%)</th>
+                        <th class="py-3 px-2 text-center">UAS (30%)</th>
+                        <th class="py-3 px-2 text-center">Nilai Akhir</th>
+                        <th class="py-3 px-2 text-center">Status KKM</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    @forelse($siswaList ?? [] as $i => $siswa)
+                    <tr class="border-b border-gray-100  hover:bg-gray-100  transition-colors">
+                        <td class="py-3 px-2 text-left text-gray-600 ">{{ $i + 1 }}</td>
+                        <td class="py-3 px-2 text-left font-medium text-gray-800 ">{{ $siswa->nama }}</td>
+                        <td class="py-3 px-2"><input type="number" name="nilai[harian][{{ $siswa->id }}]" value="{{ old('nilai.harian.' . $siswa->id, $siswa->harian ?? '') }}" min="0" max="100" step="0.1" class="w-20 text-center bg-white  border border-gray-200  rounded-lg py-1.5 font-medium focus:ring-2 focus:ring-blue-400"></td>
+                        <td class="py-3 px-2"><input type="number" name="nilai[uts][{{ $siswa->id }}]" value="{{ old('nilai.uts.' . $siswa->id, $siswa->uts ?? '') }}" min="0" max="100" step="0.1" class="w-20 text-center bg-white  border border-gray-200  rounded-lg py-1.5 font-medium focus:ring-2 focus:ring-blue-400"></td>
+                        <td class="py-3 px-2"><input type="number" name="nilai[uas][{{ $siswa->id }}]" value="{{ old('nilai.uas.' . $siswa->id, $siswa->uas ?? '') }}" min="0" max="100" step="0.1" class="w-20 text-center bg-white  border border-gray-200  rounded-lg py-1.5 font-medium focus:ring-2 focus:ring-blue-400"></td>
+                        <td class="py-3 px-2 font-bold text-blue-600 ">
+                            {{ $siswa->nilai_akhir ? number_format($siswa->nilai_akhir, 1) : '-' }}
+                        </td>
+                        <td class="py-3 px-2">
+                            @if($siswa->status_kkm)
+                                @php
+                                    $badgeClass = $siswa->status_kkm == 'lulus' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                                @endphp
+                                <span class="px-2 py-1 {{ $badgeClass }} rounded-full text-xs font-semibold">{{ ucfirst($siswa->status_kkm) }}</span>
+                            @else
+                                -
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="py-4 text-center text-gray-500 ">Pilih data mengajar terlebih dahulu untuk menampilkan siswa.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if(!$siswaList->isEmpty())
+        <div class="flex justify-between mt-6 pt-4 border-t border-gray-200 ">
+            <a href="{{ route('guru.nilai') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-medium transition-all   ">
+                Reset
+            </a>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-all shadow-lg shadow-green-500/30">
+                Simpan Nilai
+            </button>
+        </div>
+        @endif
+    </form>
+</div>
+@else
+<div class="bg-gray-50  p-4 rounded-xl text-center text-gray-500 ">
+    Silakan pilih data mengajar untuk mulai input nilai.
+</div>
+@endif
 @endsection

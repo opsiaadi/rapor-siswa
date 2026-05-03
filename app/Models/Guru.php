@@ -24,7 +24,7 @@ class Guru extends Model
         'password',
     ];
 
-    public function mapel(): BelongsToMany
+    public function mapels(): BelongsToMany
     {
         return $this->belongsToMany(Mapel::class, 'kelas_mapel', 'guru_id', 'mapel_id');
     }

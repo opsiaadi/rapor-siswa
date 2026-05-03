@@ -3,121 +3,191 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Helpers\FakeDataHelper;
 
 class GuruController extends Controller
 {
-    private function getBaseData()
+    private function getCurrentGuru()
     {
+        $user = session('user');
+        if (!$user || $user['role'] !== 'guru') return null;
+        
+        // Return user data directly since we don't have guru session data (no dummy)
         return [
-            'kelasList' => FakeDataHelper::getKelasOptions(),
-            'mapelList' => FakeDataHelper::getMapelOptions(),
-            'semesterList' => FakeDataHelper::getSemesterOptions(),
-            'allSiswa' => FakeDataHelper::getSiswa(),
+            'id' => $user['guru_id'] ?? 1,
+            'nama' => $user['name'],
         ];
     }
-
-    private function filterSiswa($allSiswa, $kelasId = null)
+    
+    private function getGuruMengajar($guruId)
     {
-        if ($kelasId) {
-            return array_map(fn($s) => (object)$s, 
-                array_filter($allSiswa, fn($s) => ($s['kelas_id'] ?? null) == $kelasId)
-            );
+        $mengajarData = session('mengajar', []);
+        $guruMengajar = collect($mengajarData)->where('guru_id', $guruId)->values();
+        
+        $mapelData = session('mata_pelajaran', []);
+        $kelasData = session('kelas', []);
+        
+        return $guruMengajar->map(function($m) use ($mapelData, $kelasData) {
+            $mapel = collect($mapelData)->firstWhere('id', $m['mapel_id']);
+            $kelas = collect($kelasData)->firstWhere('id', $m['kelas_id']);
+            
+            return (object) [
+                'id' => $m['id'],
+                'mapel_id' => $m['mapel_id'],
+                'mapel_nama' => $mapel['nama'] ?? '-',
+                'kelas_id' => $m['kelas_id'],
+                'kelas_nama' => $kelas['nama_kelas'] ?? '-',
+                'semester' => $m['semester'],
+            ];
+        });
+    }
+    
+    public function nama($id = null, $namaGuru = null)
+    {
+        $guru = $this->getCurrentGuru();
+        
+        if (!$guru) {
+            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
         }
-        return array_map(fn($s) => (object)$s, $allSiswa);
+        
+        $guruMengajar = $this->getGuruMengajar($guru['id']);
+        
+        return view('guru.dashboard_guru', [
+            'id' => $guru['id'],
+            'namaGuru' => $guru['nama'],
+            'guruMengajar' => $guruMengajar,
+        ]);
     }
-
-    private function buildKelasSummary($kelasList, $allSiswa)
-    {
-        return array_map(fn($kelas) => [
-            'id' => $kelas->id,
-            'nama_kelas' => $kelas->nama_kelas,
-            'siswa_count' => count(array_filter($allSiswa, fn($s) => ($s['kelas_id'] ?? null) == $kelas->id)),
-            'tingkat' => $kelas->tingkat ?? '-',
-        ], $kelasList);
-    }
-
-    private function getFilter(Request $request)
-    {
-        return [
-            'kelasId' => $request->input('kelas'),
-            'semester' => $request->input('semester'),
-            'mapelId' => $request->input('mapel'),
-        ];
-    }
-
-    private function getGuruMapel($guruId)
-    {
-        $guru = FakeDataHelper::findById(FakeDataHelper::getGuru(), $guruId);
-        if (!$guru) return [];
-
-        $mapelIds = $guru['mapel_ids'] ?? [];
-        return array_values(array_filter(FakeDataHelper::getMapel(), fn($m) => in_array($m['id'], $mapelIds)));
-    }
-
-    public function nama($id = 'GR001', $namaGuru = 'Guru Mapel')
-    {
-        $base = $this->getBaseData();
-        $guruMapel = $this->getGuruMapel($id);
-
-        return view('guru.dashboard_guru', array_merge($base, [
-            'title' => 'Dashboard Guru',
-            'pageTitle' => 'Dashboard Guru',
-            'breadcrumb' => 'Dashboard Guru',
-            'id' => $id,
-            'namaGuru' => $namaGuru,
-            'guruMapel' => $guruMapel,
-        ]));
-    }
-
-    public function hasilbelajar(Request $request, $id = 'GR001', $namaGuru = 'Guru Mapel')
-    {
-        $base = $this->getBaseData();
-        $filter = $this->getFilter($request);
-
-        $siswaList = $this->filterSiswa($base['allSiswa'], $filter['kelasId']);
-
-        return view('guru.input-nilai', array_merge($base, [
-            'title' => 'Hasil Belajar Siswa',
-            'pageTitle' => 'Hasil Belajar Siswa',
-            'breadcrumb' => 'Rekap nilai akhir siswa',
-            'id' => $id,
-            'namaGuru' => $namaGuru,
-            'siswaList' => $siswaList,
-            'jumlahSiswa' => count($siswaList),
-            'kelasSummary' => $this->buildKelasSummary($base['kelasList'], $base['allSiswa']),
-            'filter' => $filter,
-        ]));
-    }
-
+    
     public function nilai(Request $request)
     {
-        $id = $request->input('guru_id', 'GR001');
-        $namaGuru = $request->input('guru_nama', 'Guru Mapel');
-        $base = $this->getBaseData();
-        $filter = $this->getFilter($request);
-
-        $siswaList = $this->filterSiswa($base['allSiswa'], $filter['kelasId']);
-
-        return view('guru.input-nilai', array_merge($base, [
-            'title' => 'Input Nilai',
-            'pageTitle' => 'Input Nilai Siswa',
-            'breadcrumb' => 'Masukkan nilai harian, UTS, dan UAS',
-            'id' => $id,
-            'namaGuru' => $namaGuru,
+        $guru = $this->getCurrentGuru();
+        
+        if (!$guru) {
+            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
+        }
+        
+        $guruMengajar = $this->getGuruMengajar($guru['id']);
+        $kelasData = session('kelas', []);
+        $siswaData = session('siswa', []);
+        
+        $filter = [
+            'mengajarId' => $request->input('mengajar'),
+            'kelasId' => $request->input('kelas'),
+            'semester' => $request->input('semester', '1'),
+            'mapelId' => $request->input('mapel'),
+        ];
+        
+        // If mengajar selected, auto-fill mapel and kelas
+        if ($filter['mengajarId']) {
+            $selectedMengajar = $guruMengajar->firstWhere('id', $filter['mengajarId']);
+            if ($selectedMengajar) {
+                $filter['mapelId'] = $selectedMengajar->mapel_id;
+                $filter['kelasId'] = $selectedMengajar->kelas_id;
+                $filter['semester'] = $selectedMengajar->semester;
+            }
+        }
+        
+        // Filter siswa by kelas
+        $siswaList = collect($siswaData);
+        if ($filter['kelasId']) {
+            $siswaList = $siswaList->where('kelas_id', $filter['kelasId']);
+        }
+        
+        // Get existing nilai from session
+        $nilaiData = session('nilai', []);
+        
+        // Map nilai to siswa
+        $siswaList = $siswaList->map(function($s) use ($nilaiData, $filter) {
+            $nilai = collect($nilaiData)->firstWhere(function($n) use ($s, $filter) {
+                return $n['siswa_id'] == $s['id'] && 
+                $n['mapel_id'] == $filter['mapelId'] && 
+                $n['semester'] == $filter['semester'];
+            });
+            
+            return (object) [
+                'id' => $s['id'],
+                'nama' => $s['nama'],
+                'nis' => $s['nis'],
+                'harian' => $nilai['harian'] ?? null,
+                'uts' => $nilai['uts'] ?? null,
+                'uas' => $nilai['uas'] ?? null,
+                'nilai_akhir' => $nilai['nilai_akhir'] ?? null,
+                'status_kkm' => $nilai['status_kkm'] ?? null,
+            ];
+        });
+        
+        // Handle POST - save nilai
+        if ($request->isMethod('post')) {
+            $inputNilai = $request->input('nilai', []);
+            
+            foreach ($siswaList as $siswa) {
+                $sid = $siswa->id;
+                $harian = $inputNilai['harian'][$sid] ?? null;
+                $uts = $inputNilai['uts'][$sid] ?? null;
+                $uas = $inputNilai['uas'][$sid] ?? null;
+                
+                if ($harian !== null || $uts !== null || $uas !== null) {
+                    // Calculate nilai_akhir
+                    $nilai_akhir = null;
+                    if ($harian !== null && $uts !== null && $uas !== null) {
+                        $nilai_akhir = ($harian * 0.4) + ($uts * 0.3) + ($uas * 0.3);
+                    }
+                    
+                    // Check KKM
+                    $mapelData = session('mata_pelajaran', []);
+                    $mapel = collect($mapelData)->firstWhere('id', $filter['mapelId']);
+                    $kkm = $mapel['kkm'] ?? 75;
+                    $status_kkm = $nilai_akhir !== null && $nilai_akhir >= $kkm ? 'lulus' : 'remedial';
+                    
+                    // Check if nilai already exists
+                    $existingIndex = null;
+                    foreach ($nilaiData as $idx => $n) {
+                        if ($n['siswa_id'] == $sid && $n['mapel_id'] == $filter['mapelId'] && $n['semester'] == $filter['semester']) {
+                            $existingIndex = $idx;
+                            break;
+                        }
+                    }
+                    
+                    $newNilai = [
+                        'siswa_id' => $sid,
+                        'mapel_id' => $filter['mapelId'],
+                        'kelas_id' => $filter['kelasId'],
+                        'semester' => $filter['semester'],
+                        'harian' => $harian,
+                        'uts' => $uts,
+                        'uas' => $uas,
+                        'nilai_akhir' => $nilai_akhir,
+                        'kkm' => $kkm,
+                        'status_kkm' => $status_kkm,
+                    ];
+                    
+                    if ($existingIndex !== null) {
+                        $nilaiData[$existingIndex] = $newNilai;
+                    } else {
+                        $nilaiData[] = $newNilai;
+                    }
+                }
+            }
+            
+            session(['nilai' => $nilaiData]);
+            
+            return redirect()->route('guru.nilai')->with('success', 'Nilai berhasil disimpan.');
+        }
+        
+        return view('guru.input-nilai', [
+            'id' => $guru['id'],
+            'namaGuru' => $guru['nama'],
             'siswaList' => $siswaList,
+            'guruMengajar' => $guruMengajar,
+            'kelasList' => collect(array_map(fn($k) => (object) $k, $kelasData)),
             'filter' => $filter,
-        ]));
-    }
-
-    public function getGuru()
-    {
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                ['id' => 'GR001', 'nama' => 'Budi Santoso', 'mapel' => 'Matematika'],
-                ['id' => 'GR002', 'nama' => 'Ani Lestari', 'mapel' => 'Bahasa Indonesia']
-            ]
         ]);
+    }
+    
+    public function hasilbelajar($id = null, $namaGuru = null)
+    {
+        // Redirect to dashboard since hasil-belajar view not available
+        return redirect()->route('guru.dashboard', ['id' => $id, 'namaGuru' => $namaGuru])
+                        ->with('info', 'Halaman hasil belajar belum tersedia.');
     }
 }
