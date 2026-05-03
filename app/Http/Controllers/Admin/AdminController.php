@@ -14,7 +14,7 @@ class AdminController extends Controller
         $guruData = session('guru', []);
         $mapelData = session('mata_pelajaran', []);
         $kelasData = session('kelas', []);
-        
+            
         $stats = [
             'total_siswa' => count($siswaData),
             'total_guru' => count($guruData),

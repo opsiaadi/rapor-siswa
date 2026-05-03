@@ -36,18 +36,18 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 text-sm font-semibold text-white">
-                                    {{ strtoupper(substr($siswa['nama'] ?? 'S', 0, 1)) }}
+                                    {{ strtoupper(substr($siswa->nama ?? 'S', 0, 1)) }}
                                 </div>
                                 <div>
-                                    <p class="font-medium text-gray-900 ">{{ $siswa['nama'] ?? '-' }}</p>
+                                    <p class="font-medium text-gray-900 ">{{ $siswa->nama ?? '-' }}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-500 ">
-                            {{ $siswa['nis'] ?? '-' }}
+                            {{ $siswa->nis ?? '-' }}
                         </td>
                         <td class="px-6 py-4">
-                            @if(($siswa['status_rapor'] ?? '') == 'sudah')
+                            @if(($siswa->status_rapor ?? '') == 'sudah')
                             <span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 border border-green-100   ">
                                 <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -64,7 +64,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa['id']]) }}" 
+                            <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}"
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-95 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-500/30 transition-all duration-150"
                                 title="Edit Rapor Siswa">
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

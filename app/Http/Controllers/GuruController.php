@@ -9,12 +9,19 @@ class GuruController extends Controller
     private function getCurrentGuru()
     {
         $user = session('user');
-        if (!$user || $user['role'] !== 'guru') return null;
-        
-        // Return user data directly since we don't have guru session data (no dummy)
+        if (!$user || $user['role'] !== 'guru') {
+            return null;
+        }
+        $guruData = session('guru', []);
+        $guru = collect($guruData)->firstWhere('id', $user['guru_id']);
+        if ($guru) {
+            return $guru;
+        }
+        // Fallback to user session data so teacher can still log in without pre-created guru record
         return [
-            'id' => $user['guru_id'] ?? 1,
+            'id' => $user['guru_id'],
             'nama' => $user['name'],
+            'mapel_ids' => []
         ];
     }
     
@@ -22,7 +29,6 @@ class GuruController extends Controller
     {
         $mengajarData = session('mengajar', []);
         $guruMengajar = collect($mengajarData)->where('guru_id', $guruId)->values();
-        
         $mapelData = session('mata_pelajaran', []);
         $kelasData = session('kelas', []);
         
@@ -44,13 +50,10 @@ class GuruController extends Controller
     public function nama($id = null, $namaGuru = null)
     {
         $guru = $this->getCurrentGuru();
-        
         if (!$guru) {
             return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
         }
-        
         $guruMengajar = $this->getGuruMengajar($guru['id']);
-        
         return view('guru.dashboard_guru', [
             'id' => $guru['id'],
             'namaGuru' => $guru['nama'],
@@ -61,11 +64,9 @@ class GuruController extends Controller
     public function nilai(Request $request)
     {
         $guru = $this->getCurrentGuru();
-        
         if (!$guru) {
             return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
         }
-        
         $guruMengajar = $this->getGuruMengajar($guru['id']);
         $kelasData = session('kelas', []);
         $siswaData = session('siswa', []);
@@ -77,31 +78,26 @@ class GuruController extends Controller
             'mapelId' => $request->input('mapel'),
         ];
         
-        // If mengajar selected, auto-fill mapel and kelas
         if ($filter['mengajarId']) {
             $selectedMengajar = $guruMengajar->firstWhere('id', $filter['mengajarId']);
             if ($selectedMengajar) {
                 $filter['mapelId'] = $selectedMengajar->mapel_id;
                 $filter['kelasId'] = $selectedMengajar->kelas_id;
-                $filter['semester'] = $selectedMengajar->semester;
             }
         }
         
-        // Filter siswa by kelas
         $siswaList = collect($siswaData);
         if ($filter['kelasId']) {
             $siswaList = $siswaList->where('kelas_id', $filter['kelasId']);
         }
         
-        // Get existing nilai from session
         $nilaiData = session('nilai', []);
         
-        // Map nilai to siswa
         $siswaList = $siswaList->map(function($s) use ($nilaiData, $filter) {
             $nilai = collect($nilaiData)->firstWhere(function($n) use ($s, $filter) {
                 return $n['siswa_id'] == $s['id'] && 
-                $n['mapel_id'] == $filter['mapelId'] && 
-                $n['semester'] == $filter['semester'];
+                       $n['mapel_id'] == $filter['mapelId'] && 
+                       $n['semester'] == $filter['semester'];
             });
             
             return (object) [
@@ -116,7 +112,6 @@ class GuruController extends Controller
             ];
         });
         
-        // Handle POST - save nilai
         if ($request->isMethod('post')) {
             $inputNilai = $request->input('nilai', []);
             
@@ -127,19 +122,16 @@ class GuruController extends Controller
                 $uas = $inputNilai['uas'][$sid] ?? null;
                 
                 if ($harian !== null || $uts !== null || $uas !== null) {
-                    // Calculate nilai_akhir
                     $nilai_akhir = null;
                     if ($harian !== null && $uts !== null && $uas !== null) {
                         $nilai_akhir = ($harian * 0.4) + ($uts * 0.3) + ($uas * 0.3);
                     }
                     
-                    // Check KKM
-                    $mapelData = session('mata_pelajaran', []);
-                    $mapel = collect($mapelData)->firstWhere('id', $filter['mapelId']);
+                    $mapelData2 = session('mata_pelajaran', []);
+                    $mapel = collect($mapelData2)->firstWhere('id', $filter['mapelId']);
                     $kkm = $mapel['kkm'] ?? 75;
                     $status_kkm = $nilai_akhir !== null && $nilai_akhir >= $kkm ? 'lulus' : 'remedial';
                     
-                    // Check if nilai already exists
                     $existingIndex = null;
                     foreach ($nilaiData as $idx => $n) {
                         if ($n['siswa_id'] == $sid && $n['mapel_id'] == $filter['mapelId'] && $n['semester'] == $filter['semester']) {
@@ -170,7 +162,6 @@ class GuruController extends Controller
             }
             
             session(['nilai' => $nilaiData]);
-            
             return redirect()->route('guru.nilai')->with('success', 'Nilai berhasil disimpan.');
         }
         
@@ -179,14 +170,13 @@ class GuruController extends Controller
             'namaGuru' => $guru['nama'],
             'siswaList' => $siswaList,
             'guruMengajar' => $guruMengajar,
-            'kelasList' => collect(array_map(fn($k) => (object) $k, $kelasData)),
+            'kelasList' => collect($kelasData)->unique('id')->map(fn($k) => (object) $k),
             'filter' => $filter,
         ]);
     }
     
     public function hasilbelajar($id = null, $namaGuru = null)
     {
-        // Redirect to dashboard since hasil-belajar view not available
         return redirect()->route('guru.dashboard', ['id' => $id, 'namaGuru' => $namaGuru])
                         ->with('info', 'Halaman hasil belajar belum tersedia.');
     }

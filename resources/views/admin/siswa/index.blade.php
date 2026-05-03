@@ -1,8 +1,8 @@
 @extends('layouts.admin', [
-'title' => 'Data Siswa',
-'pageTitle' => 'Data Siswa',
-'breadcrumb' => 'Kelola data siswa seluruh kelas',
-'userName' => 'Admin TU'
+    'title' => 'Data Siswa',
+    'pageTitle' => 'Data Siswa',
+    'breadcrumb' => 'Kelola data siswa seluruh kelas',
+    'userName' => session('user.name', 'Admin TU')
 ])
 
 @section('content')
@@ -16,7 +16,7 @@
         </div>
         <div>
             <h3 class="text-base font-bold text-gray-900 tracking-tight">Manajemen Data Siswa</h3>
-            <p class="text-sm text-gray-500 ">Total <span class="text-blue-600 font-bold">{{ count($data ?? []) }}</span> Siswa terdaftar</p>
+            <p class="text-sm text-gray-500 ">Total <span class="text-blue-600 font-bold">{{ $data->count() }}</span> Siswa terdaftar</p>
         </div>
     </div>
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
@@ -54,45 +54,29 @@
                 </tr>
             </thead>
             <tbody>
-                @php $no = 1; @endphp
-                @forelse($data ?? [] as $siswa)
+@forelse($data as $index => $siswa)
                 <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors group">
-                    <td class="px-6 py-4 text-gray-500 font-medium">{{ str_pad($no, 2, '0', STR_PAD_LEFT) }}</td>
+                    <td class="px-6 py-4 text-gray-500 font-medium">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
                     <td class="px-6 py-4 font-mono text-gray-900 font-semibold tracking-tight">{{ $siswa->nis ?? '-' }}</td>
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full {{ $siswa->jenis_kelamin === 'L' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600' }} flex items-center justify-center text-xs font-bold shrink-0">
-                            {{ strtoupper(substr($siswa->nama ?? 'U', 0, 1)) }}
+                            <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
+                                {{ strtoupper(substr($siswa->nama ?? 'S', 0, 1)) }}
                             </div>
-                            <span class="font-semibold text-gray-900 ">{{ $siswa->nama ?? '-' }}</span>
+                            <span class="font-semibold text-gray-900">{{ $siswa->nama ?? '-' }}</span>
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        @if($siswa->jenis_kelamin === 'L')
-                        <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold uppercase tracking-tighter">Laki-Laki</span>
-                        @elseif($siswa->jenis_kelamin === 'P')
-                        <span class="px-3 py-1 bg-pink-50 text-pink-700 rounded-full text-xs font-bold uppercase tracking-tighter">Perempuan</span>
-                        @else
-                        <span class="text-gray-400">-</span>
-                        @endif
+                        <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold uppercase tracking-tighter">{{ $siswa->jenis_kelamin ?? '-' }}</span>
                     </td>
-                    <td class="px-6 py-4 text-gray-600 ">{{ $siswa->tahun_ajaran ?? '-' }}</td>
+                    <td class="px-6 py-4 text-gray-600">{{ $siswa->tahun_ajaran ?? '-' }}</td>
                     <td class="px-6 py-4">
                         <div class="flex items-center justify-center gap-1">
-                            <button type="button"
-                             onclick="openDetailModal(this)" 
-                             data-id="{{ $siswa->id ?? '' }}"
-                             data-nama="{{ $siswa->nama ?? '-' }}"
-                             data-nis="{{ $siswa->nis ?? '-' }}"
-                             data-gender="{{ $siswa->jenis_kelamin ?? '-' }}"
-                             data-tahun="{{ $siswa->tahun_ajaran ?? '-' }}"
-                             data-kelas="{{ $siswa->kelas_nama ?? '-' }}"
-                             data-wali="{{ $siswa->wali_nama ?? '-' }}"
-                             class="text-gray-500 hover:text-blue-600 p-1.5 rounded-lg hover:bg-blue-50 transition-colors" title="Detail Siswa">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
+                            <button onclick="openDetailModal('{{ strtoupper(substr($siswa->nama ?? 'S', 0, 1)) }}', '{{ $siswa->nama ?? '-' }}', '{{ $siswa->nis ?? '-' }}', '{{ $siswa->jenis_kelamin ?? '-' }}', '{{ $siswa->tahun_ajaran ?? '-' }}', '{{ $siswa->kelas->nama_kelas ?? '-' }}', '{{ $siswa->wali_nama ?? '-' }}')" class="text-gray-500 hover:text-blue-600 p-1.5 rounded-lg hover:bg-blue-50 transition-colors" title="Detail Siswa">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
                             </button>
                             <a href="{{ route('admin.siswa.edit', $siswa->id) }}" class="text-gray-500 hover:text-amber-600 p-1.5 rounded-lg hover:bg-amber-50 transition-colors" title="Edit">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,37 +95,25 @@
                         </div>
                     </td>
                 </tr>
-                @php $no++; @endphp
                 @empty
-                <tr class="bg-white ">
-                    <td colspan="6" class="px-6 py-16 text-center">
-                        <div class="flex flex-col items-center gap-3">
-                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 ">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 00-3 3 3 3 0 003 3zm6 3a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </div>
-                        <div>
-                            <p class="text-sm font-semibold text-gray-600 ">Belum ada data siswa</p>
-                            <p class="text-xs text-gray-400 mt-1">Klik "Tambah Siswa" untuk menambahkan</p>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        Tidak ada data siswa tersedia
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+     </table>
 </div>
 
     <!-- Pagination -->
-    @if(count($data ?? []) > 0)
     <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
         <p class="text-xs text-gray-500 font-medium">
-            Showing <span class="font-bold text-gray-900">1-{{ count($data ?? []) }}</span> of 
-            <span class="font-bold text-gray-900">{{ count($data ?? []) }}</span> students
+            Showing <span class="font-bold text-gray-900">1-{{ $data->count() }}</span> of 
+            <span class="font-bold text-gray-900">{{ $data->count() }}</span> students
         </p>
         <div class="flex gap-2">
-            <button class="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-400 font-bold text-xs cursor-not-allowed" disabled>
+            <button class="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-400 font-bold text-xs cursor-not-allowed">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -152,13 +124,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
             </button>
-            </div>
         </div>
-        @endif
     </div>
-</div>
-
-<!-- Detail Modal -->
+    </div>
+    
+    <!-- Detail Modal -->
 <div id="detailModal" tabindex="-1" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
     <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 border border-gray-200">
     <!-- Modal Header -->
@@ -236,9 +206,9 @@
     </div>
 </div>
 </div>
-
 @endsection
 
 @push('scripts')
-
+<script src="{{ asset('js/detail-modal.js') }}"></script>
 @endpush
+

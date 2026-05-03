@@ -10,18 +10,19 @@ class WalikelasController extends Controller
     {
         $user = session('user');
         if (!$user || !isset($user['guru_id'])) return null;
-        
         $guruData = session('guru', []);
-        return collect($guruData)->firstWhere('id', $user['guru_id']);
+        $guru = collect($guruData)->firstWhere('id', $user['guru_id']);
+        return $guru ?: [
+            'id' => $user['guru_id'],
+            'nama' => $user['name'] ?? 'Wali Kelas',
+            'mapel_ids' => []
+        ];
     }
     
     private function guru(): array
     {
         $guru = $this->getCurrentGuru();
-        return [
-            'id' => $guru['id'] ?? 1,
-            'nama' => $guru['nama'] ?? 'Wali Kelas',
-        ];
+        return $guru ?: [];
     }
     
     private function kelas(): array
@@ -29,20 +30,25 @@ class WalikelasController extends Controller
         $g = $this->guru();
         $allKelas = session('kelas', []);
         
-        $filtered = array_filter($allKelas, fn($k) => 
-            ($k['wali_kelas_id'] ?? null) == $g['id']
-        );
+        $filtered = array_filter($allKelas, function($k) use ($g) {
+            return ($k['wali_kelas_id'] ?? null) == ($g['id'] ?? null);
+        });
         
-        $filtered = array_values($filtered);
-        if (!empty($filtered)) return $filtered;
+        // Ensure unique by class ID to prevent duplicates
+        $filtered = collect($filtered)->unique('id')->values()->all();
         
-        return array_slice($allKelas, 0, 1);
+        return $filtered;
     }
     
     private function siswaData(array $kelas): array
     {
         $ids = array_column($kelas, 'id');
         $allSiswa = session('siswa', []);
+        
+        // Filter siswa yang memiliki kelas_id dalam daftar $ids
+        $filtered = array_filter($allSiswa, function($s) use ($ids) {
+            return in_array($s['kelas_id'] ?? null, $ids);
+        });
         
         return array_map(function($s) {
             return (object) [
@@ -61,7 +67,7 @@ class WalikelasController extends Controller
                 'alpha' => $s['alpha'] ?? 0,
                 'status_rapor' => $s['status_rapor'] ?? 'belum',
             ];
-        }, array_filter($allSiswa, fn($s) => in_array($s['kelas_id'] ?? null, $ids)));
+        }, $filtered);
     }
     
     private function getSiswa($id): ?object
@@ -114,23 +120,26 @@ class WalikelasController extends Controller
     
     public function dashboard()
     {
-        $g = $this->guru(); 
-        $k = $this->kelas(); 
-        $s = $this->siswaData($k); 
+        $g = $this->guru();
+        $k = $this->kelas();
+        $s = $this->siswaData($k);
         $e = $k[0] ?? null;
-        
+
         $guru = $this->getCurrentGuru();
-        $mapel_ids = $guru['mapel_ids'] ?? [];
-        
+        $mapel_ids = $guru ? ($guru['mapel_ids'] ?? []) : [];
+
         return view('walikelas.dashboard', [
-            'id' => $g['id'], 'namaGuru' => $g['nama'],
-            'kelasList' => collect(array_map(fn($k) => (object) $k, session('kelas', []))),
-            'assignedClasses' => collect($k), 'selectedClass' => (object) ($e ?? []), 'siswaList' => collect($s),
+            'id' => $g['id'] ?? null,
+            'namaGuru' => $g['nama'] ?? null,
+            'kelasList' => collect(session('kelas', []))->unique('id')->map(fn($k) => (object) $k),
+            'assignedClasses' => collect($k),
+            'selectedClass' => (object) ($e ?? []),
+            'siswaList' => collect($s),
             'stats' => [
-                'kelas_perwalian' => count($k), 
+                'kelas_perwalian' => count($k),
                 'total_siswa' => count($s),
                 'mapel_diampu' => count($mapel_ids),
-                'kelas_utama' => $e['nama_kelas'] ?? '-'
+                'kelas_utama' => ($e ? ($e['nama_kelas'] ?? '-') : '-')
             ]
         ]);
     }
@@ -142,8 +151,10 @@ class WalikelasController extends Controller
         $siswaList = $this->siswaData($k);
         
         return view('walikelas.form_finalisasi', [
-            'id' => $g['id'], 'namaGuru' => $g['nama'],
-            'assignedClasses' => collect($k), 'kelasUtama' => (object) ($k[0] ?? []),
+            'id' => $g['id'] ?? null,
+            'namaGuru' => $g['nama'] ?? null,
+            'assignedClasses' => collect($k),
+            'kelasUtama' => (object) ($k[0] ?? []),
             'siswaList' => $siswaList
         ]);
     }
@@ -154,8 +165,10 @@ class WalikelasController extends Controller
         $k = $this->kelas(); 
         
         return view('walikelas.data_siswa', [
-            'id' => $g['id'], 'namaGuru' => $g['nama'],
-            'siswaList' => collect($this->siswaData($k)), 'assignedClasses' => collect($k),
+            'id' => $g['id'] ?? null,
+            'namaGuru' => $g['nama'] ?? null,
+            'siswaList' => collect($this->siswaData($k)),
+            'assignedClasses' => collect($k),
             'kelasUtama' => (object) ($k[0] ?? [])
         ]);
     }
@@ -187,8 +200,11 @@ class WalikelasController extends Controller
         });
         
         return view('walikelas.rapor_siswa', [
-            'id' => $g['id'], 'namaGuru' => $g['nama'],
-            'siswa' => $sw, 'kelasUtama' => (object) ($k[0] ?? []), 'assignedClasses' => collect($k),
+            'id' => $g['id'] ?? null,
+            'namaGuru' => $g['nama'] ?? null,
+            'siswa' => $sw,
+            'kelasUtama' => (object) ($k[0] ?? []),
+            'assignedClasses' => collect($k),
             'nilaiList' => $nilaiPerMapel,
         ]);
     }

@@ -17,11 +17,14 @@ class GuruDataController extends Controller
             return (object) [
                 'id' => $g['id'],
                 'nama' => $g['nama'] ?? '-',
+                'nik' => $g['nik'] ?? '-',
                 'email' => $g['email'] ?? '-',
                 'mapel_ids' => $g['mapel_ids'] ?? [],
                 'mapels' => collect(array_map(fn($m) => (object) $m, $mapels)),
             ];
         }, $guruData);
+        
+        $data = collect($data); // Convert to collection for easier handling in view
         
         return view('admin.guru.index', compact('data'));
     }
@@ -39,8 +42,10 @@ class GuruDataController extends Controller
         
         $newGuru = [
             'id' => $newId,
+            'nik' => $request->nik ?? '',
             'nama' => $request->nama ?? 'Guru',
             'email' => $request->email ?? '',
+            'password' => $request->password ?? '',
             'mapel_ids' => $request->mapel_ids ?? [],
         ];
         

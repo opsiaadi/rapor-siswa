@@ -28,6 +28,8 @@ class SiswaController extends Controller
             ];
         }, $siswaData);
         
+        $data = collect($data); // Convert to collection for easier handling in view
+        
         return view('admin.siswa.index', compact('data'));
     }
 

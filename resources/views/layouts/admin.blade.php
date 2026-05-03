@@ -42,16 +42,17 @@
 
             <!-- Logo -->
             <div class="p-5 border-b border-emerald-800">
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-white/10">
-                        <img src="{{asset ('images/open-book.png')}}" class="w-6 h-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-800/50">
+                        <img src="{{ asset('images/open-book.png')}}" >
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-white">EduReport</h2>
-                        <p class="text-xs text-emerald-300/60">Sistem Rapor Digital</p>
+                        <p class="text-xs text-blue-200/70">Sistem Rapor Digital</p>
                     </div>
                 </div>
             </div>
+
 
             <!-- Navigation -->
             <nav class="flex-1 p-4 space-y-1 overflow-y-auto">

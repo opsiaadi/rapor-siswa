@@ -20,6 +20,9 @@ class LoginController extends Controller
                 'admin_id' => $role === 'admin' ? 1 : null,
             ]]);
             
+            // Debug: pastikan session tersimpan
+            logger('Login success', ['role' => $role, 'session_user' => session('user')]);
+            
             if ($role === 'admin') {
                 return redirect()->route('admin.dashboard', ['id' => 1, 'nama' => $nik]);
             }

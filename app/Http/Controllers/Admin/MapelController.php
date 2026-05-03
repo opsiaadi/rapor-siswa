@@ -9,7 +9,9 @@ class MapelController extends Controller
 {
     public function index()
     {
-        $data = collect(session('mata_pelajaran', []))->map(fn($m) => (object) $m);
+        $mapelData = session('mata_pelajaran', []);
+        
+        $data = collect($mapelData)->map(fn($m) => (object) $m);
         return view('admin.mapel.index', compact('data'));
     }
 
@@ -34,7 +36,7 @@ class MapelController extends Controller
         $mapelData[] = $newMapel;
         session(['mata_pelajaran' => $mapelData]);
         
-        return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil ditambahkan.');
+        return redirect()->route('admin.mapel.index')->with('success');
     }
 
     public function edit($id)

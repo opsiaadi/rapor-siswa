@@ -96,11 +96,11 @@
                         @endphp
                         <div class="flex items-start gap-2 p-2 rounded-lg border border-gray-200  bg-white ">
                             <input type="checkbox" name="mapel_ids[]" value="{{ $mapel->id }}" id="mapel_{{ $mapel->id }}"
-                                {{ in_array($mapel->id, old('mapel_ids', $kelas->mapel->pluck('id')->toArray())) ? 'checked' : '' }}
+                                 {{ in_array($mapel->id, old('mapel_ids', $kelas->mapel_ids ?? [])) ? 'checked' : '' }}
                                 class="mt-0.5 w-4 h-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500">
                             <div class="flex-1">
                                 <label for="mapel_{{ $mapel->id }}" class="text-xs font-medium text-gray-900  cursor-pointer">
-                                    {{ $mapel->nama_mapel }} ({{ $mapel->kode_mapel }})
+                                    {{ $mapel->nama }} ({{ $mapel->kode_mapel }})
                                 </label>
                                 <div class="mt-1">
                                     <select name="mapel_guru[{{ $mapel->id }}]" class="w-full px-2 py-1 text-xs border border-gray-300  rounded-lg bg-white  text-gray-900  focus:ring-1 focus:ring-teal-500">
@@ -160,11 +160,11 @@
                             @foreach($siswaList as $siswa)
                             <tr class="border-t ">
                                 <td class="px-2 py-2">{{ $loop->iteration }}</td>
-                                <td class="px-2 py-2 font-mono text-xs">{{ $siswa['nis'] }}</td>
-                                <td class="px-2 py-2">{{ $siswa['nama'] }}</td>
+                                <td class="px-2 py-2 font-mono text-xs">{{ $siswa->nis }}</td>
+                                <td class="px-2 py-2">{{ $siswa->nama }}</td>
                                 <td class="px-2 py-2 text-center">
-                                    <span class="px-2 py-0.5 rounded text-xs {{ $siswa['jenis_kelamin'] === 'L' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
-                                        {{ $siswa['jenis_kelamin'] }}
+                                    <span class="px-2 py-0.5 rounded text-xs {{ $siswa->jenis_kelamin === 'L' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
+                                        {{ $siswa->jenis_kelamin }}
                                     </span>
                                 </td>
                             </tr>
