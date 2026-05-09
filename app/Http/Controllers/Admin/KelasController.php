@@ -3,118 +3,141 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\Mapel;
+use App\Models\KelasMapel;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
     public function index()
     {
-        $kelasData = session('kelas', []);
-        $guruData = session('guru', []);
-        $siswaData = session('siswa', []);
-        $mapelData = session('mata_pelajaran', []);
-        
-        $data = collect($kelasData)->map(function($k) use ($guruData, $siswaData, $mapelData) {
-            $waliKelas = collect($guruData)->firstWhere('id', $k['wali_kelas_id'] ?? null);
-            $siswaInKelas = array_filter($siswaData, fn($s) => ($s['kelas_id'] ?? null) == $k['id']);
-            $mapels = array_filter($mapelData, fn($m) => in_array($m['id'] ?? null, $k['mapel_ids'] ?? []));
-            
-            return (object) [
-                'id' => $k['id'],
-                'nama_kelas' => $k['nama_kelas'] ?? '-',
-                'tingkat' => $k['tingkat'] ?? '-',
-                'wali_kelas' => $waliKelas ? (object) $waliKelas : null,
-                'siswa' => collect(array_map(fn($s) => (object) $s, $siswaInKelas)),
-                'siswa_count' => count($siswaInKelas),
-                'mapel' => collect(array_map(fn($m) => (object) $m, $mapels)),
-            ];
-        });
-        
+        $data = Kelas::all();
         return view('admin.kelas.index', compact('data'));
     }
 
     public function create()
     {
-        $guruList = collect(session('guru', []))->map(fn($g) => (object) $g);
-        $mapelList = collect(session('mata_pelajaran', []))->map(fn($m) => (object) $m);
+        $guruList = Guru::with('mapels')->get();
+        $mapelList = Mapel::all();
+        
+        // Build mapel_id => [guru_id, ...] mapping from guru_mapel table
+        $mapelGuruMap = [];
+        foreach ($guruList as $guru) {
+            foreach ($guru->mapels as $mapel) {
+                if (!isset($mapelGuruMap[$mapel->id])) {
+                    $mapelGuruMap[$mapel->id] = [];
+                }
+                $mapelGuruMap[$mapel->id][] = $guru->id;
+            }
+        }
+        
         $currentMapelGuru = [];
-        return view('admin.kelas.create', compact('guruList', 'mapelList', 'currentMapelGuru'));
-    }
-
-    public function store(Request $request)
-    {
-        $kelasData = session('kelas', []);
-        $newId = collect($kelasData)->max('id') + 1 ?? 1;
-        
-        $newKelas = [
-            'id' => $newId,
-            'nama_kelas' => $request->nama_kelas ?? 'Kelas',
-            'wali_kelas_id' => $request->wali_kelas_id ?: null,
-            'mapel_ids' => $request->mapel_ids ?? [],
-            'tingkat' => $request->tingkat ?? null,
-        ];
-        
-        $kelasData[] = $newKelas;
-        session(['kelas' => $kelasData]);
-        
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
+        return view('admin.kelas.create', compact('guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap'));
     }
 
     public function edit($id)
     {
-        $kelasData = session('kelas', []);
-        $kelas = collect($kelasData)->firstWhere('id', (int) $id);
+        $kelas = Kelas::with(['kelasMapels.guru', 'kelasMapels.mapel'])->findOrFail($id);
+        $guruList = Guru::with('mapels')->get();
+        $mapelList = Mapel::all();
         
-        if (!$kelas) return redirect()->route('admin.kelas.index')->with('error', 'Data tidak ditemukan.');
-        
-        $kelas = (object) $kelas;
-        $guruList = collect(session('guru', []))->map(fn($g) => (object) $g);
-        $mapelList = collect(session('mata_pelajaran', []))->map(fn($m) => (object) $m);
-        
-        // Get current mapel_guru mapping
+        // Build current mapel_guru mapping
         $currentMapelGuru = [];
-        foreach ($kelas->mapel_ids ?? [] as $mapelId) {
-            // Find guru who teaches this mapel in this class
-            $guruData = session('guru', []);
-            foreach ($guruData as $g) {
-                if (in_array($mapelId, $g['mapel_ids'] ?? [])) {
-                    $currentMapelGuru[$mapelId] = $g['id'];
-                    break;
+        foreach ($kelas->kelasMapels as $km) {
+            $currentMapelGuru[$km->mapel_id] = $km->guru_id;
+        }
+        
+        // Build mapel_guru map for JS
+        $mapelGuruMap = [];
+        foreach ($guruList as $guru) {
+            foreach ($guru->mapels as $mapel) {
+                if (!isset($mapelGuruMap[$mapel->id])) {
+                    $mapelGuruMap[$mapel->id] = [];
                 }
+                $mapelGuruMap[$mapel->id][] = $guru->id;
             }
         }
         
-        $siswaList = collect(session('siswa', []))
-            ->filter(fn($s) => ($s['kelas_id'] ?? null) == $id)
-            ->map(fn($s) => (object) $s);
-        
-        return view('admin.kelas.edit', compact('kelas', 'guruList', 'mapelList', 'currentMapelGuru', 'siswaList'));
+        return view('admin.kelas.edit', compact('kelas', 'guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama_kelas' => 'required',
+            'tingkat' => 'required',
+        ]);
+
+        $kelas = Kelas::create([
+            'nama_kelas' => $request->nama_kelas,
+            'tingkat' => $request->tingkat,
+            'wali_kelas_id' => $request->wali_kelas_id ?: null,
+        ]);
+
+        // Save mapel and guru pengampu to kelas_mapel
+        if ($request->mapel_ids) {
+            foreach ($request->mapel_ids as $mapelId) {
+                $guruId = $request->mapel_guru[$mapelId] ?? null;
+                if ($guruId) {
+                    KelasMapel::create([
+                        'kelas_id' => $kelas->id,
+                        'mapel_id' => $mapelId,
+                        'guru_id' => $guruId,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
     {
-        $kelasData = session('kelas', []);
-        
-        foreach ($kelasData as &$k) {
-            if ($k['id'] == $id) {
-                $k['nama_kelas'] = $request->nama_kelas ?? $k['nama_kelas'];
-                $k['wali_kelas_id'] = $request->wali_kelas_id ?: $k['wali_kelas_id'];
-                $k['mapel_ids'] = $request->mapel_ids ?? $k['mapel_ids'];
-                $k['tingkat'] = $request->tingkat ?? $k['tingkat'];
-                break;
+        $kelas = Kelas::findOrFail($id);
+
+        $request->validate([
+            'nama_kelas' => 'required',
+            'tingkat' => 'required',
+        ]);
+
+        $kelas->update([
+            'nama_kelas' => $request->nama_kelas,
+            'tingkat' => $request->tingkat,
+            'wali_kelas_id' => $request->wali_kelas_id ?: null,
+        ]);
+
+        // Update kelas_mapel entries
+        // First delete existing
+        KelasMapel::where('kelas_id', $id)->delete();
+
+        // Then create new entries
+        if ($request->mapel_ids) {
+            foreach ($request->mapel_ids as $mapelId) {
+                $guruId = $request->mapel_guru[$mapelId] ?? null;
+                if ($guruId) {
+                    KelasMapel::create([
+                        'kelas_id' => $kelas->id,
+                        'mapel_id' => $mapelId,
+                        'guru_id' => $guruId,
+                    ]);
+                }
             }
         }
-        
-        session(['kelas' => $kelasData]);
+
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $kelasData = session('kelas', []);
-        $kelasData = array_filter($kelasData, fn($k) => $k['id'] != $id);
-        session(['kelas' => array_values($kelasData)]);
+        $kelas = Kelas::findOrFail($id);
         
+        // Delete related kelas_mapel first
+        KelasMapel::where('kelas_id', $id)->delete();
+        
+        $kelas->delete();
+
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }
 }

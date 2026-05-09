@@ -3,93 +3,85 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Guru;
+use App\Models\Mapel;
 use Illuminate\Http\Request;
 
 class GuruDataController extends Controller
 {
     public function index()
     {
-        $guruData = session('guru', []);
-        $mapelData = session('mata_pelajaran', []);
-        
-        $data = array_map(function($g) use ($mapelData) {
-            $mapels = array_filter($mapelData, fn($m) => in_array($m['id'], $g['mapel_ids'] ?? []));
-            return (object) [
-                'id' => $g['id'],
-                'nama' => $g['nama'] ?? '-',
-                'nik' => $g['nik'] ?? '-',
-                'email' => $g['email'] ?? '-',
-                'mapel_ids' => $g['mapel_ids'] ?? [],
-                'mapels' => collect(array_map(fn($m) => (object) $m, $mapels)),
-            ];
-        }, $guruData);
-        
-        $data = collect($data); // Convert to collection for easier handling in view
-        
+        $data = Guru::with('mapels')->get();
         return view('admin.guru.index', compact('data'));
     }
 
     public function create()
     {
-        $mapelList = collect(session('mata_pelajaran', []))->map(fn($m) => (object) $m);
+        $mapelList = Mapel::all();
         return view('admin.guru.create', compact('mapelList'));
     }
 
     public function store(Request $request)
     {
-        $guruData = session('guru', []);
-        $newId = collect($guruData)->max('id') + 1 ?? 1;
-        
-        $newGuru = [
-            'id' => $newId,
-            'nik' => $request->nik ?? '',
-            'nama' => $request->nama ?? 'Guru',
-            'email' => $request->email ?? '',
-            'password' => $request->password ?? '',
-            'mapel_ids' => $request->mapel_ids ?? [],
-        ];
-        
-        $guruData[] = $newGuru;
-        session(['guru' => $guruData]);
-        
+        $request->validate([
+            'nik' => 'required|unique:guru,nik',
+            'nama' => 'required',
+            'email' => 'required|email|unique:guru,email',
+            'password' => 'required',
+        ]);
+
+        $guru = Guru::create([
+            'nik' => $request->nik,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
+
+        if ($request->has('mapel_ids')) {
+            $guru->mapels()->sync($request->mapel_ids);
+        }
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $guruData = session('guru', []);
-        $guru = collect($guruData)->firstWhere('id', (int) $id);
-        
-        if (!$guru) return redirect()->route('admin.guru.index')->with('error', 'Data tidak ditemukan.');
-        
-        $guru = (object) $guru;
-        $mapelList = collect(session('mata_pelajaran', []))->map(fn($m) => (object) $m);
+        $guru = Guru::with('mapels')->findOrFail($id);
+        $mapelList = Mapel::all();
         return view('admin.guru.edit', compact('guru', 'mapelList'));
     }
 
     public function update(Request $request, $id)
     {
-        $guruData = session('guru', []);
-        
-        foreach ($guruData as &$g) {
-            if ($g['id'] == $id) {
-                $g['nama'] = $request->nama ?? $g['nama'];
-                $g['email'] = $request->email ?? $g['email'];
-                $g['mapel_ids'] = $request->mapel_ids ?? $g['mapel_ids'];
-                break;
-            }
+        $guru = Guru::findOrFail($id);
+
+        $request->validate([
+            'nik' => 'required|unique:guru,nik,' . $id,
+            'nama' => 'required',
+            'email' => 'required|email|unique:guru,email,' . $id,
+        ]);
+
+        $guru->update([
+            'nik' => $request->nik,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'password' => $request->password ?: $guru->password,
+        ]);
+
+        if ($request->has('mapel_ids')) {
+            $guru->mapels()->sync($request->mapel_ids);
+        } else {
+            $guru->mapels()->sync([]);
         }
-        
-        session(['guru' => $guruData]);
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $guruData = session('guru', []);
-        $guruData = array_filter($guruData, fn($g) => $g['id'] != $id);
-        session(['guru' => array_values($guruData)]);
-        
+        $guru = Guru::findOrFail($id);
+        $guru->delete();
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus.');
     }
 }

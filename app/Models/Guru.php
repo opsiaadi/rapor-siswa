@@ -26,7 +26,12 @@ class Guru extends Model
 
     public function mapels(): BelongsToMany
     {
-        return $this->belongsToMany(Mapel::class, 'kelas_mapel', 'guru_id', 'mapel_id');
+        return $this->belongsToMany(Mapel::class, 'guru_mapel', 'guru_id', 'mapel_id');
+    }
+
+    public function mapelsDirect(): BelongsToMany
+    {
+        return $this->belongsToMany(Mapel::class, 'guru_mapel', 'guru_id', 'mapel_id');
     }
 
     public function kelasDiampu(): HasMany

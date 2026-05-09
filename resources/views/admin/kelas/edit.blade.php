@@ -96,17 +96,23 @@
                         @endphp
                         <div class="flex items-start gap-2 p-2 rounded-lg border border-gray-200  bg-white ">
                             <input type="checkbox" name="mapel_ids[]" value="{{ $mapel->id }}" id="mapel_{{ $mapel->id }}"
-                                 {{ in_array($mapel->id, old('mapel_ids', $kelas->mapel_ids ?? [])) ? 'checked' : '' }}
+                                 {{ $kelas->kelasMapels->contains('mapel_id', $mapel->id) ? 'checked' : '' }}
                                 class="mt-0.5 w-4 h-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500">
                             <div class="flex-1">
                                 <label for="mapel_{{ $mapel->id }}" class="text-xs font-medium text-gray-900  cursor-pointer">
-                                    {{ $mapel->nama }} ({{ $mapel->kode_mapel }})
+                                    {{ $mapel->nama_mapel }} ({{ $mapel->kode_mapel }})
                                 </label>
                                 <div class="mt-1">
-                                    <select name="mapel_guru[{{ $mapel->id }}]" class="w-full px-2 py-1 text-xs border border-gray-300  rounded-lg bg-white  text-gray-900  focus:ring-1 focus:ring-teal-500">
+                                    @php
+                                        $guruMapel = $guruList->filter(function($g) use ($mapel) {
+                                            return $g->mapels->contains('id', $mapel->id);
+                                        });
+                                        $selectedGuru = old('mapel_guru.'.$mapel->id, $guruId);
+                                    @endphp
+                                    <select name="mapel_guru[{{ $mapel->id }}]" id="guru_mapel_{{ $mapel->id }}" class="w-full px-2 py-1 text-xs border border-gray-300  rounded-lg bg-white  text-gray-900  focus:ring-1 focus:ring-teal-500">
                                         <option value="">-- Pilih Guru --</option>
-                                        @foreach ($guruList as $guru)
-                                        <option value="{{ $guru->id }}" {{ (old('mapel_guru.'.$mapel->id, $guruId) == $guru->id) ? 'selected' : '' }}>
+                                        @foreach ($guruMapel as $guru)
+                                        <option value="{{ $guru->id }}" {{ $selectedGuru == $guru->id ? 'selected' : '' }}>
                                             {{ $guru->nama }}
                                         </option>
                                         @endforeach
@@ -180,4 +186,32 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mapelGuruMap = @json($mapelGuruMap ?? []);
+    
+    function autoSelectGuru(checkbox) {
+        const mapelId = checkbox.value;
+        const guruSelect = document.getElementById('guru_mapel_' + mapelId);
+        
+        if (checkbox.checked) {
+            if (mapelGuruMap[mapelId] && mapelGuruMap[mapelId].length > 0) {
+                guruSelect.value = mapelGuruMap[mapelId][0];
+            }
+        } else {
+            guruSelect.value = '';
+        }
+    }
+    
+    document.querySelectorAll('input[name="mapel_ids[]"]').forEach(function(checkbox) {
+        autoSelectGuru(checkbox);
+        checkbox.addEventListener('change', function() {
+            autoSelectGuru(this);
+        });
+    });
+});
+</script>
+@endpush
 

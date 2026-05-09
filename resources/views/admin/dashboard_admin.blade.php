@@ -77,131 +77,10 @@
         </div>
     </div>
 
-    <!-- Charts & Quick Stats -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <!-- Bar Chart -->
-        <div class="lg:col-span-2 p-5 bg-white rounded-lg border border-gray-200 shadow-sm  ">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h3 class="text-base font-semibold text-gray-900 ">Jumlah Siswa Per Kelas</h3>
-                    <p class="text-xs text-gray-500  mt-0.5">Distribusi siswa tahun ajaran aktif</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <label for="tahun_ajaran" class="text-xs font-medium text-gray-500 ">Tahun Ajaran:</label>
-                    <select id="tahun_ajaran" onchange="changeTahunAjaran(this.value)"
-                        class="text-xs font-medium text-emerald-700  bg-emerald-50  border border-emerald-200  rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer">
-                        @foreach($tahunAjaranList as $ta)
-                        <option value="{{ $ta }}" {{ $selectedTA == $ta ? 'selected' : '' }}>{{ $ta }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            @php
-                $gradientColors = [
-                    'from-blue-500 to-blue-600',
-                    'from-purple-500 to-purple-600',
-                    'from-pink-500 to-pink-600',
-                    'from-amber-500 to-amber-600',
-                    'from-emerald-500 to-emerald-600',
-                    'from-cyan-500 to-cyan-600',
-                    'from-indigo-500 to-indigo-600',
-                    'from-rose-500 to-rose-600',
-                ];
-                $maxSiswa = max(array_column($kelasPerKelas, 'siswa_count') ?: [1]);
-            @endphp
-            @if($totalSiswa > 0)
-            <!-- Chart Container with Grid Lines -->
-            <div class="relative">
-                <!-- Horizontal Grid Lines -->
-                <div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8">
-                    <div class="border-b border-dashed border-gray-100  w-full"></div>
-                    <div class="border-b border-dashed border-gray-100  w-full"></div>
-                    <div class="border-b border-dashed border-gray-100  w-full"></div>
-                    <div class="border-b border-dashed border-gray-100  w-full"></div>
-                </div>
-
-                <!-- Bars -->
-                <div class="flex items-end gap-4 h-52 px-2 relative z-10">
-                    @foreach($kelasPerKelas as $idx => $k)
-                    @php
-                        $barHeight = max(8, (($k->siswa_count ?? 0) / max($maxSiswa, 1)) * 100);
-                        $percentage = $totalSiswa > 0 ? round((($k->siswa_count ?? 0) / $totalSiswa) * 100) : 0;
-                    @endphp
-                    <div class="flex-1 flex flex-col items-center gap-2 group">
-                        <!-- Tooltip on Hover -->
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-12 bg-gray-900  text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
-                            {{ $k->siswa_count ?? 0 }} siswa ({{ $percentage }}%)
-                            <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-px">
-                                <div class="border-4 border-transparent border-t-gray-900 "></div>
-                            </div>
-                        </div>
-
-                        <!-- Count Label -->
-                        <span class="text-sm font-bold text-gray-800  group-hover:text-emerald-600  transition-colors">{{ $k->siswa_count ?? 0 }}</span>
-
-                        <!-- Bar -->
-                        <div class="w-full relative rounded-t-lg overflow-hidden shadow-sm bg-gradient-to-t {{ $gradientColors[$idx % count($gradientColors)] }}" style="height: {{ $barHeight }}%">
-                            <!-- Shine Effect -->
-                            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"></div>
-                        </div>
-
-                        <!-- Class Name -->
-                        <span class="text-xs font-medium text-gray-600  text-center truncate w-full group-hover:text-gray-900  transition-colors">{{ $k->nama_kelas }}</span>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Summary -->
-            <div class="mt-4 pt-4 border-t border-gray-100  flex items-center justify-between text-xs">
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-1.5">
-                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-                        <span class="text-gray-500 ">Total: <strong class="text-gray-900 ">{{ $totalSiswa }} siswa</strong> ({{ $selectedTA ?? '2024/2025' }})</span>
-                    </div>
-                </div>
-                <span class="text-gray-400 ">{{ count($kelasPerKelas) }} kelas aktif</span>
-            </div>
-            @else
-            <div class="text-center py-12">
-                <div class="w-16 h-16 mx-auto mb-4 bg-gray-100  rounded-full flex items-center justify-center">
-                    <svg class="w-8 h-8 text-gray-400 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                </div>
-                <p class="text-gray-400  font-medium">Tidak ada data siswa untuk tahun ajaran {{ $selectedTA ?? '2024/2025' }}</p>
-                <p class="text-xs text-gray-400  mt-1">Tambahkan kelas terlebih dahulu</p>
-            </div>
-            @endif
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="p-4 bg-white rounded-lg border border-gray-200 shadow-sm  ">
-            <h3 class="text-base font-semibold text-gray-900  mb-4">Statistik Cepat</h3>
-            <div class="space-y-3">
-                @php
-                    $totalSiswa = $stats['total_siswa'] ?? 0;
-                    $totalGuru = $stats['total_guru'] ?? 0;
-                    $avgPerKelas = ($stats['total_kelas'] ?? 0) > 0 ? round($totalSiswa / ($stats['total_kelas'] ?? 1)) : 0;
-                @endphp
-                <div class="flex items-center justify-between p-3 bg-blue-50  rounded-lg">
-                    <span class="text-sm text-gray-600 ">Rata-rata Siswa/Kelas</span>
-                    <span class="text-lg font-bold text-gray-900 ">{{ $avgPerKelas }}</span>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-purple-50  rounded-lg">
-                    <span class="text-sm text-gray-600 ">Total Guru</span>
-                    <span class="text-lg font-bold text-gray-900 ">{{ $totalGuru }}</span>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-amber-50  rounded-lg">
-                    <span class="text-sm text-gray-600 ">Total Mapel</span>
-                    <span class="text-lg font-bold text-gray-900 ">{{ $stats['total_mapel'] ?? 0 }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Students Table - Flowbite Table Style -->
-    <div class="p-4 bg-white rounded-lg border border-gray-200 shadow-sm  ">
+    <!-- Siswa Terbaru & Statistik Cepat -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Siswa Terbaru (Kiri - 2 kolom) -->
+        <div class="lg:col-span-2 p-4 bg-white rounded-lg border border-gray-200 shadow-sm  ">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-semibold text-gray-900 ">Siswa Terbaru</h3>
             <a href="/admin/siswa" class="text-sm text-blue-600  hover:underline font-medium flex items-center gap-1">
@@ -242,15 +121,7 @@
                         </td>
                         <td class="px-5 py-3 text-center">
                             <button type="button"
-                                    onclick="openDetailModal({{ json_encode([
-                                        'id' => $s->id ?? '',
-                                        'nama' => $s->nama ?? '-',
-                                        'nis' => $s->nis ?? '-',
-                                        'jenis_kelamin' => $s->jenis_kelamin ?? '-',
-                                        'tahun_ajaran' => $s->tahun_ajaran ?? '-',
-                                        'kelas_nama' => $s->kelas_nama ?? '-',
-                                        'wali_nama' => $s->wali_nama ?? '-',
-                                    ]) }})"
+                                    onclick="openDetailModal('{{ strtoupper(substr($s->nama ?? 'S', 0, 1)) }}', '{{ $s->nama ?? '-' }}', '{{ $s->nis ?? '-' }}', '{{ $s->jenis_kelamin ?? '-' }}', '{{ $s->tahun_ajaran ?? '-' }}', '{{ $s->kelas_nama ?? '-' }}', '{{ $s->wali_nama ?? '-' }}')"
                                     class="inline-flex items-center justify-center p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50    rounded-lg transition-colors"
                                     title="Detail Siswa">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,6 +138,35 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        </div>
+
+        <!-- Statistik Cepat (Kanan - 1 kolom) -->
+        <div class="p-4 bg-white rounded-lg border border-gray-200 shadow-sm  ">
+            <h3 class="text-base font-semibold text-gray-900  mb-4">Statistik Cepat</h3>
+            <div class="space-y-3">
+                @php
+                    $totalSiswa = $stats['total_siswa'] ?? 0;
+                    $totalGuru = $stats['total_guru'] ?? 0;
+                    $avgPerKelas = ($stats['total_kelas'] ?? 0) > 0 ? round($totalSiswa / ($stats['total_kelas'] ?? 1)) : 0;
+                @endphp
+                <div class="flex items-center justify-between p-3 bg-blue-50  rounded-lg">
+                    <span class="text-sm text-gray-600 ">Rata-rata Siswa/Kelas</span>
+                    <span class="text-lg font-bold text-gray-900 ">{{ $avgPerKelas }}</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-purple-50  rounded-lg">
+                    <span class="text-sm text-gray-600 ">Total Guru</span>
+                    <span class="text-lg font-bold text-gray-900 ">{{ $totalGuru }}</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-amber-50  rounded-lg">
+                    <span class="text-sm text-gray-600 ">Total Mapel</span>
+                    <span class="text-lg font-bold text-gray-900 ">{{ $stats['total_mapel'] ?? 0 }}</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-emerald-50  rounded-lg">
+                    <span class="text-sm text-gray-600 ">Total Kelas</span>
+                    <span class="text-lg font-bold text-gray-900 ">{{ $stats['total_kelas'] ?? 0 }}</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -351,48 +251,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal JavaScript -->
-    <script>
-        function changeTahunAjaran(ta) {
-            const url = new URL(window.location.href);
-            url.searchParams.set('tahun_ajaran', ta);
-            window.location.href = url.toString();
-        }
-
-        function openDetailModal(siswa) {
-            const modal = document.getElementById('detailModal');
-            const initial = (siswa.nama || 'U').charAt(0).toUpperCase();
-
-            document.getElementById('modalAvatar').textContent = initial;
-            document.getElementById('modalName').textContent = siswa.nama || '-';
-            document.getElementById('modalName2').textContent = siswa.nama || '-';
-            document.getElementById('modalClass').textContent = 'Kelas ' + (siswa.kelas_nama || '-');
-            document.getElementById('modalNIS').textContent = siswa.nis || '-';
-            document.getElementById('modalGender').textContent = siswa.jenis_kelamin === 'L' ? 'Laki-laki' : (siswa.jenis_kelamin === 'P' ? 'Perempuan' : '-');
-            document.getElementById('modalTahunAjaran').textContent = siswa.tahun_ajaran || '-';
-            document.getElementById('modalKelas').textContent = siswa.kelas_nama || '-';
-            document.getElementById('modalWaliKelas').textContent = siswa.wali_nama || '-';
-
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeDetailModal() {
-            const modal = document.getElementById('detailModal');
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-
-        // Close on backdrop click
-        document.getElementById('detailModal').addEventListener('click', function(e) {
-            if (e.target === this) closeDetailModal();
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeDetailModal();
-        });
-    </script>
-</div>
 @endsection

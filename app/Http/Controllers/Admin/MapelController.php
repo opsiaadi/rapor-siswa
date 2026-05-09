@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Mapel;
 use Illuminate\Http\Request;
 
 class MapelController extends Controller
 {
     public function index()
     {
-        $mapelData = session('mata_pelajaran', []);
-        
-        $data = collect($mapelData)->map(fn($m) => (object) $m);
+        $data = Mapel::all();
         return view('admin.mapel.index', compact('data'));
     }
 
@@ -22,58 +21,51 @@ class MapelController extends Controller
 
     public function store(Request $request)
     {
-        $mapelData = session('mata_pelajaran', []);
-        $newId = collect($mapelData)->max('id') + 1 ?? 1;
-        
-        $newMapel = [
-            'id' => $newId,
-            'nama' => $request->nama ?? 'Mata Pelajaran',
-            'kode_mapel' => $request->kode_mapel ?? '',
-            'kkm' => $request->kkm ?? 75,
-            'kategori' => $request->kategori ?? 'wajib',
-        ];
-        
-        $mapelData[] = $newMapel;
-        session(['mata_pelajaran' => $mapelData]);
-        
-        return redirect()->route('admin.mapel.index')->with('success');
+        $request->validate([
+            'kode_mapel' => 'required|unique:mapel,kode_mapel',
+            'nama_mapel' => 'required',
+            'kkm' => 'required|integer|min:0|max:100',
+        ]);
+
+        Mapel::create([
+            'kode_mapel' => $request->kode_mapel,
+            'nama_mapel' => $request->nama_mapel,
+            'kkm' => $request->kkm,
+        ]);
+
+        return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $mapelData = session('mata_pelajaran', []);
-        $mapel = collect($mapelData)->firstWhere('id', (int) $id);
-        
-        if (!$mapel) return redirect()->route('admin.mapel.index')->with('error', 'Data tidak ditemukan.');
-        
-        $mapel = (object) $mapel;
+        $mapel = Mapel::findOrFail($id);
         return view('admin.mapel.edit', compact('mapel'));
     }
 
     public function update(Request $request, $id)
     {
-        $mapelData = session('mata_pelajaran', []);
-        
-        foreach ($mapelData as &$m) {
-            if ($m['id'] == $id) {
-                $m['nama'] = $request->nama ?? $m['nama'];
-                $m['kode_mapel'] = $request->kode_mapel ?? $m['kode_mapel'];
-                $m['kkm'] = $request->kkm ?? $m['kkm'];
-                $m['kategori'] = $request->kategori ?? $m['kategori'];
-                break;
-            }
-        }
-        
-        session(['mata_pelajaran' => $mapelData]);
+        $mapel = Mapel::findOrFail($id);
+
+        $request->validate([
+            'kode_mapel' => 'required|unique:mapel,kode_mapel,' . $id,
+            'nama_mapel' => 'required',
+            'kkm' => 'required|integer|min:0|max:100',
+        ]);
+
+        $mapel->update([
+            'kode_mapel' => $request->kode_mapel,
+            'nama_mapel' => $request->nama_mapel,
+            'kkm' => $request->kkm,
+        ]);
+
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $mapelData = session('mata_pelajaran', []);
-        $mapelData = array_filter($mapelData, fn($m) => $m['id'] != $id);
-        session(['mata_pelajaran' => array_values($mapelData)]);
-        
+        $mapel = Mapel::findOrFail($id);
+        $mapel->delete();
+
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil dihapus.');
     }
 }

@@ -118,6 +118,4 @@
     </form>
 </div>
 
-<script src="{{ asset('js/detail-modal.js') }}"></script>
-
 @endsection

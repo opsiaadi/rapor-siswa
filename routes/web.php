@@ -64,7 +64,7 @@ Route::prefix('admin')->group(function (){
 // Guru 
 Route::prefix('guru')->group(function () {
     Route::get('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai');
-    Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('guru.dashboard');
+    Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama')->name('guru.dashboard');
     Route::post('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
