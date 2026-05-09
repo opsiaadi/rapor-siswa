@@ -10,14 +10,14 @@
     <!-- Header -->
     <div class="p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
         <div class="flex items-center gap-4">
-            <a href="{{ route('admin.kelas.index') }}" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <a href="{{ route('admin.kelas.index') }}" class="text-gray-400 hover:text-gray-600 ">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
             </a>
             <div>
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Edit Kelas</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Ubah data kelas dan pengaturan mapel</p>
+                <h2 class="text-lg font-semibold text-gray-900 ">Edit Kelas</h2>
+                <p class="text-sm text-gray-500  mt-1">Ubah data kelas dan pengaturan mapel</p>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
                 @method('PUT')
 
                 <!-- Identitas Kelas (samain bg kayak mapel) -->
-                <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/10 dark:to-cyan-900/10">
+                <div class="p-4 border-b border-gray-100  bg-gradient-to-r from-teal-50 to-cyan-50  ">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-teal-500 flex items-center justify-center text-white">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,22 +39,22 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Identitas Kelas</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Field <span class="text-red-500">*</span> wajib</p>
+                            <h3 class="text-sm font-semibold text-gray-900 ">Identitas Kelas</h3>
+                            <p class="text-xs text-gray-500 ">Field <span class="text-red-500">*</span> wajib</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="p-4 space-y-4">
                     <div>
-                        <label for="nama_kelas" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kelas <span class="text-red-500">*</span></label>
+                        <label for="nama_kelas" class="block text-xs font-medium text-gray-700  mb-1">Nama Kelas <span class="text-red-500">*</span></label>
                         <input type="text" name="nama_kelas" id="nama_kelas" value="{{ old('nama_kelas', $kelas->nama_kelas) }}"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 focus:ring-emerald-500 focus:border-emerald-500" required>
+                            class="w-full px-3 py-2 border border-gray-300  rounded-lg text-sm bg-white  focus:ring-emerald-500 focus:border-emerald-500" required>
                     </div>
 
                     <div>
-                        <label for="tingkat" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tingkat <span class="text-red-500">*</span></label>
-                        <select name="tingkat" id="tingkat" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700" required>
+                        <label for="tingkat" class="block text-xs font-medium text-gray-700  mb-1">Tingkat <span class="text-red-500">*</span></label>
+                        <select name="tingkat" id="tingkat" class="w-full px-3 py-2 border border-gray-300  rounded-lg text-sm bg-white " required>
                             @foreach (['VII', 'VIII', 'IX', 'X', 'XI', 'XII'] as $tingkat)
                             <option value="{{ $tingkat }}" {{ old('tingkat', $kelas->tingkat) == $tingkat ? 'selected' : '' }}>{{ $tingkat }}</option>
                             @endforeach
@@ -62,8 +62,8 @@
                     </div>
 
                     <div>
-                        <label for="wali_kelas_id" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Wali Kelas</label>
-                        <select name="wali_kelas_id" id="wali_kelas_id" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700">
+                        <label for="wali_kelas_id" class="block text-xs font-medium text-gray-700  mb-1">Wali Kelas</label>
+                        <select name="wali_kelas_id" id="wali_kelas_id" class="w-full px-3 py-2 border border-gray-300  rounded-lg text-sm bg-white ">
                             <option value="">-- Pilih --</option>
                             @forelse ($guruList as $guru)
                             <option value="{{ $guru->id }}" {{ old('wali_kelas_id', $kelas->wali_kelas_id) == $guru->id ? 'selected' : '' }}>{{ $guru->nama }}</option>
@@ -75,7 +75,7 @@
                 </div>
 
                 <!-- Mapel (didalam form) -->
-                <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/10 dark:to-cyan-900/10">
+                <div class="p-4 border-t border-gray-100  bg-gradient-to-r from-teal-50 to-cyan-50  ">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-9 h-9 rounded-lg bg-teal-500 flex items-center justify-center text-white">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,8 +83,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Mata Pelajaran</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Centang mapel, guru auto</p>
+                            <h3 class="text-sm font-semibold text-gray-900 ">Mata Pelajaran</h3>
+                            <p class="text-xs text-gray-500 ">Centang mapel, guru auto</p>
                         </div>
                     </div>
 
@@ -92,20 +92,26 @@
                         @forelse ($mapelList as $mapel)
                         @php
                             $guruId = $currentMapelGuru[$mapel->id] ?? null;
-                            $guruPengampu = $guruId
-                                ? $guruList->firstWhere('id', $guruId)
-                                : \App\Helpers\FakeDataHelper::findGuruByMapel($mapel->id);
+                            $guruPengampu = $guruId ? $guruList->firstWhere('id', $guruId) : null;
                         @endphp
-                        <div class="flex items-start gap-2 p-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700/50">
+                        <div class="flex items-start gap-2 p-2 rounded-lg border border-gray-200  bg-white ">
                             <input type="checkbox" name="mapel_ids[]" value="{{ $mapel->id }}" id="mapel_{{ $mapel->id }}"
-                                {{ in_array($mapel->id, old('mapel_ids', $kelas->mapel->pluck('id')->toArray())) ? 'checked' : '' }}
+                                 {{ in_array($mapel->id, old('mapel_ids', $kelas->mapel_ids ?? [])) ? 'checked' : '' }}
                                 class="mt-0.5 w-4 h-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500">
                             <div class="flex-1">
-                                <label for="mapel_{{ $mapel->id }}" class="text-xs font-medium text-gray-900 dark:text-gray-100 cursor-pointer">
-                                    {{ $mapel->nama_mapel }} ({{ $mapel->kode_mapel }})
+                                <label for="mapel_{{ $mapel->id }}" class="text-xs font-medium text-gray-900  cursor-pointer">
+                                    {{ $mapel->nama }} ({{ $mapel->kode_mapel }})
                                 </label>
-                                <input type="hidden" name="mapel_guru[{{ $mapel->id }}]" value="{{ $guruPengampu?->id ?? '' }}">
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Guru: {{ $guruPengampu?->nama ?? '-' }}</p>
+                                <div class="mt-1">
+                                    <select name="mapel_guru[{{ $mapel->id }}]" class="w-full px-2 py-1 text-xs border border-gray-300  rounded-lg bg-white  text-gray-900  focus:ring-1 focus:ring-teal-500">
+                                        <option value="">-- Pilih Guru --</option>
+                                        @foreach ($guruList as $guru)
+                                        <option value="{{ $guru->id }}" {{ (old('mapel_guru.'.$mapel->id, $guruId) == $guru->id) ? 'selected' : '' }}>
+                                            {{ $guru->nama }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         @empty
@@ -115,9 +121,9 @@
                 </div>
 
                 <!-- Tombol Simpan -->
-                <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <div class="p-4 border-t border-gray-100  bg-gray-50 ">
                     <div class="flex gap-2">
-                        <a href="{{ route('admin.kelas.index') }}" class="flex-1 px-3 py-2 text-center text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">Batal</a>
+                        <a href="{{ route('admin.kelas.index') }}" class="flex-1 px-3 py-2 text-center text-xs font-medium text-gray-700  bg-white  border border-gray-300  rounded-lg hover:bg-gray-100 ">Batal</a>
                         <button type="submit" class="flex-1 px-3 py-2 text-center text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg">Simpan</button>
                     </div>
                 </div>
@@ -127,14 +133,14 @@
         <!-- Kolom Kanan: Daftar Siswa (luar form, warna mengikuti mapel: teal) -->
         <div class="lg:col-span-2">
             <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/10 dark:to-cyan-900/10">
+                <div class="p-4 border-b border-gray-100  bg-gradient-to-r from-teal-50 to-cyan-50  ">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-teal-500 flex items-center justify-center text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-5 h-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Daftar Siswa</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Kelas {{ $kelas->nama_kelas }}</p>
+                            <h3 class="text-sm font-semibold text-gray-900 ">Daftar Siswa</h3>
+                            <p class="text-xs text-gray-500 ">Kelas {{ $kelas->nama_kelas }}</p>
                         </div>
                     </div>
                 </div>
@@ -142,7 +148,7 @@
                 <div class="p-4">
                     @if(count($siswaList ?? []) > 0)
                     <table class="w-full text-sm">
-                        <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50 ">
                             <tr>
                                 <th class="px-2 py-2 text-left">No</th>
                                 <th class="px-2 py-2 text-left">NIS</th>
@@ -152,13 +158,13 @@
                         </thead>
                         <tbody>
                             @foreach($siswaList as $siswa)
-                            <tr class="border-t dark:border-gray-700">
+                            <tr class="border-t ">
                                 <td class="px-2 py-2">{{ $loop->iteration }}</td>
-                                <td class="px-2 py-2 font-mono text-xs">{{ $siswa['nis'] }}</td>
-                                <td class="px-2 py-2">{{ $siswa['nama'] }}</td>
+                                <td class="px-2 py-2 font-mono text-xs">{{ $siswa->nis }}</td>
+                                <td class="px-2 py-2">{{ $siswa->nama }}</td>
                                 <td class="px-2 py-2 text-center">
-                                    <span class="px-2 py-0.5 rounded text-xs {{ $siswa['jenis_kelamin'] === 'L' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
-                                        {{ $siswa['jenis_kelamin'] }}
+                                    <span class="px-2 py-0.5 rounded text-xs {{ $siswa->jenis_kelamin === 'L' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
+                                        {{ $siswa->jenis_kelamin }}
                                     </span>
                                 </td>
                             </tr>
@@ -166,7 +172,7 @@
                         </tbody>
                     </table>
                     @else
-                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-8">Belum ada siswa di kelas ini.</p>
+                    <p class="text-sm text-gray-500  text-center py-8">Belum ada siswa di kelas ini.</p>
                     @endif
                 </div>
             </div>
@@ -174,3 +180,4 @@
     </div>
 </div>
 @endsection
+

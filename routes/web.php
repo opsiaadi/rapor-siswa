@@ -11,6 +11,7 @@ use App\Http\Controllers\RaporController;
 use App\Http\Controllers\WalikelasController;
 use Illuminate\Support\Facades\Route;
 
+// Welcome & Homepage
 Route::get('/', function () {
     return view('welcome');
 });
@@ -21,13 +22,13 @@ Route::get('/homepage', function () {
 
 // Login
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-Route::post('/login', [LoginController::class, 'authenticate'])->name('login.post');
+Route::post('/login', [LoginController::class, 'index']);
 
-// Admin - Dashboard
+// Admin - Dashboard & Management
 Route::prefix('admin')->group(function (){
     Route::get('/dashboard/{id?}/{nama?}', [AdminController::class, 'tampilkan'])->name('admin.dashboard');
 
-    // CRUD Mapel
+    // Mapel
     Route::get('/mapel', [MapelController::class, 'index'])->name('admin.mapel.index');
     Route::get('/mapel/create', [MapelController::class, 'create'])->name('admin.mapel.create');
     Route::post('/mapel', [MapelController::class, 'store'])->name('admin.mapel.store');
@@ -35,7 +36,7 @@ Route::prefix('admin')->group(function (){
     Route::put('/mapel/{id}', [MapelController::class, 'update'])->name('admin.mapel.update');
     Route::delete('/mapel/{id}', [MapelController::class, 'destroy'])->name('admin.mapel.destroy');
 
-    // CRUD Guru
+    // Guru
     Route::get('/guru', [GuruDataController::class, 'index'])->name('admin.guru.index');
     Route::get('/guru/create', [GuruDataController::class, 'create'])->name('admin.guru.create');
     Route::post('/guru', [GuruDataController::class, 'store'])->name('admin.guru.store');
@@ -43,7 +44,7 @@ Route::prefix('admin')->group(function (){
     Route::put('/guru/{id}', [GuruDataController::class, 'update'])->name('admin.guru.update');
     Route::delete('/guru/{id}', [GuruDataController::class, 'destroy'])->name('admin.guru.destroy');
 
-    // CRUD Kelas
+    // Kelas
     Route::get('/kelas', [KelasController::class, 'index'])->name('admin.kelas.index');
     Route::get('/kelas/create', [KelasController::class, 'create'])->name('admin.kelas.create');
     Route::post('/kelas', [KelasController::class, 'store'])->name('admin.kelas.store');
@@ -51,7 +52,7 @@ Route::prefix('admin')->group(function (){
     Route::put('/kelas/{id}', [KelasController::class, 'update'])->name('admin.kelas.update');
     Route::delete('/kelas/{id}', [KelasController::class, 'destroy'])->name('admin.kelas.destroy');
 
-    // CRUD Siswa
+    // Siswa 
     Route::get('/siswa', [SiswaController::class, 'index'])->name('admin.siswa.index');
     Route::get('/siswa/create', [SiswaController::class, 'create'])->name('admin.siswa.create');
     Route::post('/siswa', [SiswaController::class, 'store'])->name('admin.siswa.store');
@@ -60,18 +61,15 @@ Route::prefix('admin')->group(function (){
     Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('admin.siswa.destroy');
 });
 
-
 // Guru 
 Route::prefix('guru')->group(function () {
-    Route::get('/beranda', [GuruController::class, 'nilai'])->name('guru.beranda');
     Route::get('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai');
     Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('guru.dashboard');
-    Route::get('/hasilbelajar/{id?}/{namaGuru?}', [GuruController::class, 'hasilbelajar'])->name('guru.hasilbelajar');
     Route::post('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-// walikelas
+// Walikelas
 Route::prefix('walikelas')->group(function () {
     Route::get('/dashboard', [WalikelasController::class, 'dashboard'])->name('walikelas.dashboard');
     Route::get('/finalisasi', [WalikelasController::class, 'finalisasi'])->name('walikelas.finalisasi');
@@ -79,13 +77,3 @@ Route::prefix('walikelas')->group(function () {
     Route::get('/rapor/{siswaId}', [WalikelasController::class, 'rapor'])->name('walikelas.rapor');
     Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanKeterangan'])->name('walikelas.rapor.simpan');
 });
-
-Route::get('/input_nilai', function () {
-    $kelasList = \App\Helpers\FakeDataHelper::getKelasOptions();
-    $mapelList = \App\Helpers\FakeDataHelper::getMapelOptions();
-    $semesterList = \App\Helpers\FakeDataHelper::getSemesterOptions();
-    $siswaList = \App\Helpers\FakeDataHelper::getSiswa();
-    return view('input_nilai', compact('kelasList', 'mapelList', 'semesterList', 'siswaList'));
-});
-
-Route::post('/rapor/simpan', [RaporController::class, 'simpan'])->name('rapor.simpan');
