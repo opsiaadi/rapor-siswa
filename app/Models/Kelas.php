@@ -41,4 +41,9 @@ class Kelas extends Model
     {
         return $this->hasMany(KelasMapel::class);
     }
+
+    public function kelasMapels(): HasMany
+    {
+        return $this->hasMany(KelasMapel::class);
+    }
 }

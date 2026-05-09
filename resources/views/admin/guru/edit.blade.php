@@ -97,7 +97,7 @@
                     </label>
                     <input type="password" name="password" id="password"
                         class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                        placeholder="Minimal 8 karakter" required>
+                        placeholder="Minimal 8 karakter">
                     <p class="mt-1.5 text-xs text-gray-500">Kosongkan jika tidak ingin mengubah</p>
                 </div>
             </div>
@@ -119,11 +119,14 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     @forelse ($mapelList as $mapel)
                     <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                        @php
+                            $selectedMapels = old('mapel_ids', $guru->mapels->pluck('id')->toArray());
+                        @endphp
                         <input type="checkbox" name="mapel_ids[]" value="{{ $mapel->id }}" 
-                        {{ in_array($mapel->id, old('mapel_ids', $guru->mapel_ids ?? [])) ? 'checked' : '' }}
+                        {{ in_array($mapel->id, $selectedMapels) ? 'checked' : '' }}
                         class="w-4 h-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500">
                         <div>
-                            <span class="text-sm font-medium text-gray-900">{{ $mapel->nama ?? '-' }}</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $mapel->nama_mapel ?? '-' }}</span>
                             <span class="text-xs text-gray-500 block">{{ $mapel->kode_mapel ?? '-' }}</span>
                         </div>
                     </label>
@@ -138,7 +141,7 @@
 
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
                 <a href="{{ route('admin.guru.index') }}" class="px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Batal</a>
-                <button type="submit" class="text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg focus:ring-4 focus:ring-indigo-300 transition-colors flex items-center gap-2">
+                <button type="submit" class="px-4 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg focus:ring-4 focus:ring-purple-300 transition-colors flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>

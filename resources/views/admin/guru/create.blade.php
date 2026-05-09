@@ -121,7 +121,7 @@
                         {{ in_array($mapel->id, old('mapel_ids', [])) ? 'checked' : '' }}
                         class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft text-brand">
                         <div>
-                            <span class="text-sm font-medium text-gray-900 ">{{ $mapel->nama }}</span>
+                            <span class="text-sm font-medium text-gray-900 ">{{ $mapel->nama_mapel }}</span>
                             <span class="text-xs text-gray-500  block">{{ $mapel->kode_mapel }}</span>
                         </div>
                     </label>
@@ -138,7 +138,7 @@
                 <a href="{{ route('admin.guru.index') }}" class="px-4 py-2.5 text-sm font-medium text-gray-700  bg-white  border border-gray-300  rounded-lg hover:bg-gray-50  transition-colors">
                     Batal
                 </a>
-                <button type="submit" class="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none flex items-center gap-2">
+                <button type="submit" class="px-4 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg focus:ring-4 focus:ring-purple-300 transition-colors flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>

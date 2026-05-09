@@ -105,16 +105,4 @@
         Bagikan
         </button>
     </div>
-
-    {{-- Search filter --}}
-    <script>
-        document.getElementById('searchSiswa').addEventListener('input', function () {
-            const keyword = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const nama = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() ?? '';
-                row.style.display = nama.includes(keyword) ? '' : 'none';
-            });
-        });
-    </script>
 @endsection
