@@ -26,8 +26,8 @@ class WalikelasController extends Controller
     
     private function siswaData($kelas)
     {
-        $kelasIds = $kelas->pluck('id')->toArray();
-        if (empty($kelasIds)) return collect();
+        $kelasIds = $kelas->pluck('id');
+        if ($kelasIds->isEmpty()) return collect();
         
         return Siswa::whereIn('kelas_id', $kelasIds)->get()->map(function($s) {
             return (object) [
@@ -59,6 +59,7 @@ class WalikelasController extends Controller
         $kelas = $this->kelas();
         $siswa = $this->siswaData($kelas);
         $kelasUtama = $kelas->first();
+        $totalSiswa = $siswa->count();
         
         return view('walikelas.dashboard', [
             'id' => $guru?->id,
@@ -67,6 +68,7 @@ class WalikelasController extends Controller
             'assignedClasses' => $kelas,
             'selectedClass' => $kelasUtama ? (object) ['nama_kelas' => $kelasUtama->nama_kelas] : (object) ['nama_kelas' => '-'],
             'siswaList' => $siswa,
+            'totalSiswa' => $totalSiswa,
             'stats' => [
                 'kelas_perwalian' => $kelas->count(),
                 'total_siswa' => $siswa->count(),
@@ -81,13 +83,15 @@ class WalikelasController extends Controller
         $guru = $this->getCurrentGuru();
         $kelas = $this->kelas();
         $siswaList = $this->siswaData($kelas);
-        
+        $totalSiswa = $siswaList->count();
+
         return view('walikelas.form_finalisasi', [
             'id' => $guru?->id,
             'namaGuru' => $guru?->nama,
             'assignedClasses' => $kelas,
             'kelasUtama' => $kelas->first() ? (object) ['nama_kelas' => $kelas->first()->nama_kelas] : (object) [],
-            'siswaList' => $siswaList
+            'siswaList' => $siswaList,
+            'totalSiswa' => $totalSiswa
         ]);
     }
     
@@ -95,11 +99,12 @@ class WalikelasController extends Controller
     {
         $guru = $this->getCurrentGuru();
         $kelas = $this->kelas();
-        
+
         return view('walikelas.data_siswa', [
             'id' => $guru?->id,
             'namaGuru' => $guru?->nama,
             'siswaList' => $this->siswaData($kelas),
+            'totalSiswa' => $this->siswaData($kelas)->count(),
             'assignedClasses' => $kelas,
             'kelasUtama' => $kelas->first() ? (object) ['nama_kelas' => $kelas->first()->nama_kelas] : (object) []
         ]);

@@ -8,8 +8,9 @@
 
 @section('content')
 <div class="space-y-6">
-    {{-- Tabel Daftar Siswa untuk Finalisasi --}}
-    <div class="rounded-3xl border border-gray-200 bg-white shadow-sm   overflow-hidden">
+        {{-- Tabel Daftar Siswa untuk Finalisasi --}}
+        <p class="text-sm text-gray-600 mb-2">Jumlah Siswa: {{ $totalSiswa ?? 0 }}</p>
+        <div class="rounded-3xl border border-gray-200 bg-white shadow-sm   overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-200  bg-gray-50  px-6 py-4">
             <h3 class="text-base font-semibold text-gray-900 ">
                 Daftar Siswa - Finalisasi Rapor
@@ -65,10 +66,10 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                             <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}"
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-95 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-500/30 transition-all duration-150"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-cyan-800 hover:bg-blue-700 active:scale-95 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-blue-500/30 transition-all duration-150"
                                 title="Edit Rapor Siswa">
-                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.072a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                <svg class="w-6 h-6 text-slate-950 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M14 4.182A4.136 4.136 0 0 1 16.9 3c1.087 0 2.13.425 2.899 1.182A4.01 4.01 0 0 1 21 7.037c0 1.068-.43 2.092-1.194 2.849L18.5 11.214l-5.8-5.71 1.287-1.31.012-.012Zm-2.717 2.763L6.186 12.13l2.175 2.141 5.063-5.218-2.141-2.108Zm-6.25 6.886-1.98 5.849a.992.992 0 0 0 .245 1.026 1.03 1.03 0 0 0 1.043.242L10.282 19l-5.25-5.168Zm6.954 4.01 5.096-5.186-2.218-2.183-5.063 5.218 2.185 2.15Z" clip-rule="evenodd"/>
                                 </svg>
                                 Edit
                             </a>

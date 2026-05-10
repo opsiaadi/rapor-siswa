@@ -49,7 +49,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 ">Total Siswa</p>
-                    <p class="mt-2 text-3xl font-bold text-gray-900 ">{{ $stats['total_siswa'] ?? 0 }}</p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900 ">{{ $totalSiswa ?? 0 }}</p>
                 </div>
                 <div class="rounded-2xl bg-emerald-100 p-3 text-emerald-700  ">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
