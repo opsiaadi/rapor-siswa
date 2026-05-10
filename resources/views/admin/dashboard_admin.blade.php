@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <!-- Stats Cards - Flowbite Card Style -->
+    <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Total Siswa -->
         <div class="w-full p-4 bg-white rounded-lg border border-gray-200 shadow-sm   hover:shadow-md transition-shadow">
