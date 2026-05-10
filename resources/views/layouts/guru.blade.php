@@ -89,7 +89,7 @@
             <div class="p-4">
                 <div class="flex items-center gap-1">
                     <div class="w-16 h-16 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/30">
-                        <img src="{{ asset('images/User2.png') }}" class="h-full w-full object-contain">
+                        <img src="{{ asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-contain">
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 truncate">{{ $namaGuru ?? 'Guru Mapel' }}</p>
@@ -115,7 +115,7 @@
 
                     <div class="flex items-center gap-1 pl-4 border-l border-white/20">
                         <div class="w-14 h-14 rounded-full overflow-hidden">
-                            <img src="{{ asset('images/User2.png') }}" class="h-full w-full object-cover"> 
+                            <img src="{{ asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover"> 
                         </div>
                         <div>
                             <p class="text-sm font-semibold text-white">{{ $namaGuru ?? 'Guru Mapel' }}</p>

@@ -16,7 +16,7 @@ class WalikelasController extends Controller
         return Guru::find($user['guru_id']);
     }
     
-    private function kelas(): \Illuminate\Database\Eloquent\Collection
+    private function kelas()
     {
         $guru = $this->getCurrentGuru();
         if (!$guru) return collect();

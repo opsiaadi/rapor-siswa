@@ -138,7 +138,6 @@
                 <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg ring-2 ring-white/30" id="modalAvatar">A</div>
                 <div>
                     <h3 class="text-lg font-bold text-white" id="modalName">Nama Siswa</h3>
-                    <p class="text-xs text-blue-100/80" id="modalClass">Kelas -</p>
                 </div>
             </div>
             <button onclick="closeDetailModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">
