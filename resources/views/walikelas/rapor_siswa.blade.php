@@ -90,10 +90,10 @@
 
             <div class="flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('walikelas.finalisasi') }}" class="inline-flex items-center justify-center rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50">
+                    <a href="{{ route('walikelas.finalisasi') }}" class="inline-flex items-center justify-center rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-600 transition-all duration-200 hover:bg-gray-50 hover:scale-105 active:scale-95">
                         Batal
                     </a>
-                    <button type="submit" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:opacity-95">
+                    <button type="submit" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition-all duration-200 hover:scale-105 active:scale-95">
                         Simpan
                     </button>
                 </div>

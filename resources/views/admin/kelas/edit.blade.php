@@ -130,8 +130,8 @@
                 <!-- Tombol Simpan -->
                 <div class="p-4 border-t border-gray-100  bg-gray-50 ">
                     <div class="flex gap-2">
-                        <a href="{{ route('admin.kelas.index') }}" class="flex-1 px-3 py-2 text-center text-xs font-medium text-gray-700  bg-white  border border-gray-300  rounded-lg hover:bg-gray-100 ">Batal</a>
-                        <button type="submit" class="flex-1 px-3 py-2 text-center text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg">Simpan</button>
+                        <a href="{{ route('admin.kelas.index') }}" class="flex-1 px-3 py-2 text-center text-xs font-medium text-gray-700  bg-white  border border-gray-300  rounded-lg hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95">Batal</a>
+                        <button type="submit" class="flex-1 px-3 py-2 text-center text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95">Simpan</button>
                     </div>
                 </div>
             </form>

@@ -28,13 +28,13 @@
     <div class="flex-1 hidden md:flex md:w-auto justify-center" id="navbar-default">
       <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
         <li>
-          <a href="#" class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white" aria-current="page">Beranda</a>
+          <a href="#" class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white relative after:absolute after:bottom-0 after:left-3 after:w-0 after:h-0.5 after:bg-blue-700 after:transition-all after:duration-300 md:after:w-0 hover:after:w-8" aria-current="page">Beranda</a>
         </li>
         <li>
-          <a href="#fitur" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Fitur</a>
+          <a href="#fitur" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent transition-all duration-300 hover:scale-105 relative">Fitur</a>
         </li>
         <li>
-          <a href="#tentang" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Tentang</a>
+          <a href="#tentang" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent transition-all duration-300 hover:scale-105 relative">Tentang</a>
         </li>
       </ul>
     </div>
@@ -42,10 +42,10 @@
     <!-- Buttons - Right -->
     <div class="hidden md:flex gap-3">
       <form action="{{ route('login') }}" method="GET">
-        <button class="text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Masuk</button>
+        <button class="text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">Masuk</button>
       </form>
       <form action="#">
-        <button class="text-sm font-medium text-white bg-blue-600 rounded-lg px-4 py-2 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">Daftar</button>
+        <button class="text-sm font-medium text-white bg-blue-600 rounded-lg px-4 py-2 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">Daftar</button>
       </form>
     </div>
 
@@ -69,7 +69,7 @@
         Sistem manajemen rapor sekolah dari input nilai sampai cetak rapor dalam satu platform.
       </p>
       <div class="mt-6 flex gap-4">
-        <a href="{{ route('login') }}" class="inline-block bg-white text-indigo-700 font-bold px-6 py-3 rounded-lg hover:bg-gray-100 transition">
+        <a href="{{ route('login') }}" class="inline-block bg-white text-indigo-700 font-bold px-6 py-3 rounded-lg hover:bg-gray-100 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
           Mulai
         </a>
       </div>
@@ -89,17 +89,17 @@
 <section id="fitur" class="py-16 px-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 text-white" style="background-size:cover;">
   <h2 class="text-3xl font-bold text-center mb-12 text-white">Fitur Utama</h2>
   <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition">
+    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
       <svg class="w-8 h-8 text-indigo-600 mb-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
       <h3 class="font-bold mb-2 text-gray-800">Manajemen Data Siswa</h3>
       <p class="text-gray-700">Kelola data siswa dengan mudah.</p>
     </div>
-    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition">
+    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
       <svg class="w-8 h-8 text-green-600 mb-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
       <h3 class="font-bold mb-2 text-gray-800">Input Nilai</h3>
       <p class="text-gray-700">Input nilai dengan cepat dan mudah.</p>
     </div>
-    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition">
+    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
       <svg class="w-8 h-8 text-orange-600 mb-3" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 0h14V7H7v2zm0 4h14v-2H7v2zm0 4h14v-2H7v2z"/></svg>
       <h3 class="font-bold mb-2 text-gray-800">Rekap Nilai Otomatis</h3>
       <p class="text-gray-700">Perhitungan Nilai Otomatis dan Akurat.</p>
@@ -114,7 +114,7 @@
     <p class="text-center text-white mb-12 max-w-2xl mx-auto">Platform manajemen rapor sekolah digital yang dirancang untuk mempermudah proses pengelolaan nilai dan laporan akademik.</p>
 
     <div class="grid md:grid-cols-2 gap-10">
-      <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-lg transition">
+      <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
         <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
           <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
@@ -122,7 +122,7 @@
         <p class="text-gray-700 text-sm leading-relaxed">Menjadi solusi terdepan dalam digitalisasi sistem penilaian dan pelaporan akademik di lingkungan pendidikan Indonesia, sehingga proses evaluasi menjadi lebih transparan, efisien, dan mudah diakses.</p>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-lg transition">
+      <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
           <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         </div>
@@ -134,17 +134,17 @@
     <div class="mt-12 bg-white rounded-2xl shadow-md p-8">
       <h3 class="font-bold text-xl mb-4 text-center text-gray-800">Kenapa SiRapor?</h3>
       <div class="grid md:grid-cols-3 gap-6 text-center">
-        <div>
+        <div class="p-4 rounded-xl hover:bg-indigo-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
           <div class="text-3xl font-bold text-indigo-600 mb-1">📊</div>
           <p class="text-sm font-medium text-gray-800">Real-time</p>
           <p class="text-xs text-gray-600 mt-1">Data nilai dan kehadiran diperbarui secara langsung</p>
         </div>
-        <div>
+        <div class="p-4 rounded-xl hover:bg-green-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
           <div class="text-3xl font-bold text-green-600 mb-1">🔒</div>
           <p class="text-sm font-medium text-gray-800">Aman</p>
           <p class="text-xs text-gray-600 mt-1">Hak akses berbasis peran menjaga keamanan data</p>
         </div>
-        <div>
+        <div class="p-4 rounded-xl hover:bg-orange-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
           <div class="text-3xl font-bold text-orange-500 mb-1">⚡</div>
           <p class="text-sm font-medium text-gray-800">Efisien</p>
           <p class="text-xs text-gray-600 mt-1">Perhitungan nilai otomatis menghemat waktu guru</p>
