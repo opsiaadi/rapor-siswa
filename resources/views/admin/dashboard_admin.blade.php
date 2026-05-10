@@ -180,7 +180,6 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-white" id="modalName">Nama Siswa</h3>
-                        <p class="text-xs text-emerald-100/80" id="modalClass">Kelas -</p>
                     </div>
                 </div>
                 <button onclick="closeDetailModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">

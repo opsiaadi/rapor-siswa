@@ -115,8 +115,10 @@
 
     <div class="grid md:grid-cols-2 gap-10">
       <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
-        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-indigo-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z" clip-rule="evenodd"/>
+          </svg>
         </div>
         <h3 class="font-bold text-lg mb-2 text-gray-800">Visi</h3>
         <p class="text-gray-700 text-sm leading-relaxed">Menjadi solusi terdepan dalam digitalisasi sistem penilaian dan pelaporan akademik di lingkungan pendidikan Indonesia, sehingga proses evaluasi menjadi lebih transparan, efisien, dan mudah diakses.</p>
@@ -124,7 +126,9 @@
 
       <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <svg class="w-8 h-8 text-emerald-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7.171 12.906-2.153 6.411 2.672-.89 1.568 2.34 1.825-5.183m5.73-2.678 2.154 6.411-2.673-.89-1.568 2.34-1.825-5.183M9.165 4.3c.58.068 1.153-.17 1.515-.628a1.681 1.681 0 0 1 2.64 0 1.68 1.68 0 0 0 1.515.628 1.681 1.681 0 0 1 1.866 1.866c-.068.58.17 1.154.628 1.516a1.681 1.681 0 0 1 0 2.639 1.682 1.682 0 0 0-.628 1.515 1.681 1.681 0 0 1-1.866 1.866 1.681 1.681 0 0 0-1.516.628 1.681 1.681 0 0 1-2.639 0 1.681 1.681 0 0 0-1.515-.628 1.681 1.681 0 0 1-1.867-1.866 1.681 1.681 0 0 0-.627-1.515 1.681 1.681 0 0 1 0-2.64c.458-.361.696-.935.627-1.515A1.681 1.681 0 0 1 9.165 4.3ZM14 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
+          </svg>
         </div>
         <h3 class="font-bold text-lg mb-2 text-gray-800">Misi</h3>
         <p class="text-gray-700 text-sm leading-relaxed">Membantu sekolah dan institusi pendidikan mengelola data siswa, nilai akademik, dan kehadiran secara terpusat. Mendukung guru dalam proses pengajaran dan memberikan kemudahan bagi orang tua dalam memantau perkembangan anak.</p>
@@ -132,20 +136,35 @@
     </div>
 
     <div class="mt-12 bg-white rounded-2xl shadow-md p-8">
-      <h3 class="font-bold text-xl mb-4 text-center text-gray-800">Kenapa SiRapor?</h3>
+      <h3 class="font-bold text-xl mb-4 text-center text-gray-800">Kenapa EduReport?</h3>
       <div class="grid md:grid-cols-3 gap-6 text-center">
         <div class="p-4 rounded-xl hover:bg-indigo-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
-          <div class="text-3xl font-bold text-indigo-600 mb-1">📊</div>
+          <div class="text-3xl font-bold text-indigo-600 mb-4 flex items-center justify-center">
+              <svg class="w-12 h-12 text-lime-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4.5V19a1 1 0 0 0 1 1h15M7 14l4-4 4 4 5-5m0 0h-3.207M20 9v3.207"/>
+              </svg>
+          </div>
           <p class="text-sm font-medium text-gray-800">Real-time</p>
           <p class="text-xs text-gray-600 mt-1">Data nilai dan kehadiran diperbarui secara langsung</p>
         </div>
         <div class="p-4 rounded-xl hover:bg-green-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
-          <div class="text-3xl font-bold text-green-600 mb-1">🔒</div>
+          <div class="text-3xl font-bold text-indigo-600 mb-4 flex items-center justify-center">
+              <svg class="w-12 h-12 text-amber-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" d="M10 5a2 2 0 0 0-2 2v3h2.4A7.48 7.48 0 0 0 8 15.5a7.48 7.48 0 0 0 2.4 5.5H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1V7a4 4 0 1 1 8 0v1.15a7.446 7.446 0 0 0-1.943.685A.999.999 0 0 1 12 8.5V7a2 2 0 0 0-2-2Z" clip-rule="evenodd"/>
+                <path fill-rule="evenodd" d="M10 15.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm6.5-1.5a1 1 0 1 0-2 0v1.5a1 1 0 0 0 .293.707l1 1a1 1 0 0 0 1.414-1.414l-.707-.707V14Z" clip-rule="evenodd"/>
+              </svg>
+          </div>
           <p class="text-sm font-medium text-gray-800">Aman</p>
           <p class="text-xs text-gray-600 mt-1">Hak akses berbasis peran menjaga keamanan data</p>
         </div>
         <div class="p-4 rounded-xl hover:bg-orange-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
-          <div class="text-3xl font-bold text-orange-500 mb-1">⚡</div>
+          <div class="text-3xl font-bold text-orange-500 mb-1">
+            <div class="text-3xl font-bold text-indigo-600 mb-4 flex items-center justify-center">
+              <svg class="w-12 h-12 text-rose-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm14 18a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4ZM5 11a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H5Zm14 2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h4Z"/>
+              </svg>
+            </div>
+          </div>
           <p class="text-sm font-medium text-gray-800">Efisien</p>
           <p class="text-xs text-gray-600 mt-1">Perhitungan nilai otomatis menghemat waktu guru</p>
         </div>
