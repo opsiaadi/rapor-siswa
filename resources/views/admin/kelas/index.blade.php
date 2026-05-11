@@ -52,6 +52,7 @@
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider">No</th>
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider">Nama Kelas</th>
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider">Tingkat</th>
+                        <th scope="col" class="px-6 py-4 font-bold tracking-wider">Wali Kelas</th>
                         <th scope="col" class="px-6 py-4 font-bold tracking-wider text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -68,6 +69,20 @@
                         </div>
                     </td>
                     <td class="px-6 py-4 text-gray-600">{{ $kelas->tingkat ?? '-' }}</td>
+                    <td class="px-6 py-4">
+                        @if($kelas->waliKelas)
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
+                                <div>
+                                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                {{ $kelas->waliKelas->nama }}
+                            </span>
+                        @else
+                            <span class="text-gray-400 text-xs">-</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex items-center justify-center gap-1">
                             <a href="{{ route('admin.kelas.edit', $kelas->id) }}" class="text-gray-500 hover:text-amber-600 p-1.5 rounded-lg hover:bg-amber-50 transition-all duration-200 hover:scale-110 active:scale-95" title="Edit">
@@ -89,7 +104,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">
                         Tidak ada data kelas tersedia
                     </td>
                 </tr>

@@ -58,6 +58,7 @@
         <input type="hidden" name="kelas" value="{{ $filter['kelasId'] ?? '' }}">
         <input type="hidden" name="semester" value="{{ $filter['semester'] ?? '' }}">
         <input type="hidden" name="mapel" value="{{ $filter['mapelId'] ?? '' }}">
+        <input type="hidden" name="action" id="actionInput" value="">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>

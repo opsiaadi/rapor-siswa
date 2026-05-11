@@ -151,7 +151,7 @@
                         </svg>
                         <span>&copy; 2025 EduReport — Modul Wali Kelas</span>
                     </div>
-                    <span class="text-xs">v1.0.0</span>
+                    <span class="text-xs"></span>
                 </div>
             </footer>
         </div>

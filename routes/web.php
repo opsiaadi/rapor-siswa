@@ -64,7 +64,7 @@ Route::prefix('admin')->group(function (){
 // Guru 
 Route::prefix('guru')->group(function () {
     Route::get('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai');
-    Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama')->name('guru.dashboard');
+    Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('guru.dashboard');
     Route::post('/nilai', [GuruController::class, 'nilai'])->name('guru.nilai.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
@@ -76,4 +76,5 @@ Route::prefix('walikelas')->group(function () {
     Route::get('/siswa', [WalikelasController::class, 'siswa'])->name('walikelas.siswa');
     Route::get('/rapor/{siswaId}', [WalikelasController::class, 'rapor'])->name('walikelas.rapor');
     Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanKeterangan'])->name('walikelas.rapor.simpan');
+    Route::get('/rapor-lihat/{siswaId}', [WalikelasController::class, 'raporLihat'])->name('walikelas.rapor-lihat');
 });

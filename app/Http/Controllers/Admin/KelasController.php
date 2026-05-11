@@ -13,7 +13,7 @@ class KelasController extends Controller
 {
     public function index()
     {
-        $data = Kelas::all();
+        $data = Kelas::with('waliKelas')->get();
         return view('admin.kelas.index', compact('data'));
     }
 
