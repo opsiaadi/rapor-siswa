@@ -4,17 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\KelasMapel;
+use App\Models\Nilai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GuruController extends Controller
 {
-    private function getCurrentGuru()
+    private function getCurrentGuru(): ?Guru
     {
-        $user = session('user');
-        if (!$user || $user['role'] !== 'guru') {
-            return null;
+        if (Auth::guard('guru')->check()) {
+            return Auth::guard('guru')->user();
         }
-        return Guru::find($user['guru_id']);
+        return null;
     }
 
     private function getGuruMengajar($guruId)
@@ -146,6 +147,23 @@ class GuruController extends Controller
                 if ($harian && $uts && $uas) {
                     $nilaiSession[$siswaId]['nilai_akhir'] = round(($harian * 0.4) + ($uts * 0.3) + ($uas * 0.3), 1);
                 }
+
+                $nilai_akhir = $nilaiSession[$siswaId]['nilai_akhir'] ?? null;
+
+                Nilai::updateOrCreate(
+                    [
+                        'siswa_id' => $siswaId,
+                        'mapel_id' => $mapelId,
+                        'semester' => $semester,
+                    ],
+                    [
+                        'guru_id' => $guru->id,
+                        'harian' => $nilaiSession[$siswaId]['harian'] ?: null,
+                        'uts' => $nilaiSession[$siswaId]['uts'] ?: null,
+                        'uas' => $nilaiSession[$siswaId]['uas'] ?: null,
+                        'nilai_akhir' => $nilai_akhir,
+                    ]
+                );
             }
         }
 

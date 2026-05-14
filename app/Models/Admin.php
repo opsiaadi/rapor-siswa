@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Admin extends Model
+class Admin extends Authenticatable
 {
     use HasFactory;
 
@@ -15,6 +14,7 @@ class Admin extends Model
     protected $fillable = [
         'nama',
         'email',
+        'foto',
         'password',
         'role',
         'status',
@@ -24,8 +24,10 @@ class Admin extends Model
         'password',
     ];
 
-    public function setPasswordAttribute($value)
+    protected function casts(): array
     {
-        $this->attributes['password'] = Hash::make($value);
+        return [
+            'password' => 'hashed',
+        ];
     }
 }
