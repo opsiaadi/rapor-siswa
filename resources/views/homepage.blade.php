@@ -16,25 +16,25 @@
 
 <body class="bg-gray-100 text-gray-800">
 <!-- NAVBAR -->
-<nav class="bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+<nav class="bg-white border-b border-gray-200">
   <div class="max-w-screen-xl mx-auto px-4 py-2 flex items-center w-full">
     <!-- Logo & Title - Left -->
     <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="{{ asset('images/open-book.png')}}" class="h-10" alt="logo-rapor" />
-      <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SiRapor</span>
+      <span class="self-center text-2xl font-semibold whitespace-nowrap">SiRapor</span>
     </a>
 
     <!-- Navigation Menu - Center -->
     <div class="flex-1 hidden md:flex md:w-auto justify-center" id="navbar-default">
-      <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+      <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white md:dark:bg-gray-900">
         <li>
-          <a href="#" class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white relative after:absolute after:bottom-0 after:left-3 after:w-0 after:h-0.5 after:bg-blue-700 after:transition-all after:duration-300 md:after:w-0 hover:after:w-8" aria-current="page">Beranda</a>
+          <a href="#" class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 relative after:absolute after:bottom-0 after:left-3 after:w-0 after:h-0.5 after:bg-blue-700 after:transition-all after:duration-300 md:after:w-0 hover:after:w-8" aria-current="page">Beranda</a>
         </li>
         <li>
-          <a href="#fitur" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent transition-all duration-300 hover:scale-105 relative">Fitur</a>
+          <a href="#fitur" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white md:dark:hover:bg-transparent transition-all duration-300 hover:scale-105 relative">Fitur</a>
         </li>
         <li>
-          <a href="#tentang" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent transition-all duration-300 hover:scale-105 relative">Tentang</a>
+          <a href="#tentang" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white md:dark:hover:bg-transparent transition-all duration-300 hover:scale-105 relative">Tentang</a>
         </li>
       </ul>
     </div>
@@ -42,15 +42,15 @@
     <!-- Buttons - Right -->
     <div class="hidden md:flex gap-3">
       <form action="{{ route('login') }}" method="GET">
-        <button class="text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">Masuk</button>
+        <button class="text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">Masuk</button>
       </form>
       <form action="#">
-        <button class="text-sm font-medium text-white bg-blue-600 rounded-lg px-4 py-2 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">Daftar</button>
+        <button class="text-sm font-medium text-white bg-blue-600 rounded-lg px-4 py-2 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">Daftar</button>
       </form>
     </div>
 
     <!-- Mobile menu button - Right -->
-    <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+    <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-default" aria-expanded="false">
       <span class="sr-only">Open main menu</span>
       <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5h14a1 1 0 110 2H3a1 1 0 110-2zm0 4h14a1 1 0 110 2H3a1 1 0 110-2zm0 4h14a1 1 0 110 2H3a1 1 0 110-2z" clip-rule="evenodd"></path></svg>
     </button>
@@ -116,7 +116,7 @@
     <div class="grid md:grid-cols-2 gap-10">
       <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-8 h-8 text-indigo-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <svg class="w-8 h-8 text-indigo-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z" clip-rule="evenodd"/>
           </svg>
         </div>
@@ -126,7 +126,7 @@
 
       <div class="bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-          <svg class="w-8 h-8 text-emerald-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <svg class="w-8 h-8 text-emerald-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7.171 12.906-2.153 6.411 2.672-.89 1.568 2.34 1.825-5.183m5.73-2.678 2.154 6.411-2.673-.89-1.568 2.34-1.825-5.183M9.165 4.3c.58.068 1.153-.17 1.515-.628a1.681 1.681 0 0 1 2.64 0 1.68 1.68 0 0 0 1.515.628 1.681 1.681 0 0 1 1.866 1.866c-.068.58.17 1.154.628 1.516a1.681 1.681 0 0 1 0 2.639 1.682 1.682 0 0 0-.628 1.515 1.681 1.681 0 0 1-1.866 1.866 1.681 1.681 0 0 0-1.516.628 1.681 1.681 0 0 1-2.639 0 1.681 1.681 0 0 0-1.515-.628 1.681 1.681 0 0 1-1.867-1.866 1.681 1.681 0 0 0-.627-1.515 1.681 1.681 0 0 1 0-2.64c.458-.361.696-.935.627-1.515A1.681 1.681 0 0 1 9.165 4.3ZM14 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
           </svg>
         </div>
@@ -140,7 +140,7 @@
       <div class="grid md:grid-cols-3 gap-6 text-center">
         <div class="p-4 rounded-xl hover:bg-indigo-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
           <div class="text-3xl font-bold text-indigo-600 mb-4 flex items-center justify-center">
-              <svg class="w-12 h-12 text-lime-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <svg class="w-12 h-12 text-lime-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4.5V19a1 1 0 0 0 1 1h15M7 14l4-4 4 4 5-5m0 0h-3.207M20 9v3.207"/>
               </svg>
           </div>
@@ -149,7 +149,7 @@
         </div>
         <div class="p-4 rounded-xl hover:bg-green-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
           <div class="text-3xl font-bold text-indigo-600 mb-4 flex items-center justify-center">
-              <svg class="w-12 h-12 text-amber-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <svg class="w-12 h-12 text-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path fill-rule="evenodd" d="M10 5a2 2 0 0 0-2 2v3h2.4A7.48 7.48 0 0 0 8 15.5a7.48 7.48 0 0 0 2.4 5.5H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1V7a4 4 0 1 1 8 0v1.15a7.446 7.446 0 0 0-1.943.685A.999.999 0 0 1 12 8.5V7a2 2 0 0 0-2-2Z" clip-rule="evenodd"/>
                 <path fill-rule="evenodd" d="M10 15.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Zm6.5-1.5a1 1 0 1 0-2 0v1.5a1 1 0 0 0 .293.707l1 1a1 1 0 0 0 1.414-1.414l-.707-.707V14Z" clip-rule="evenodd"/>
               </svg>
@@ -160,7 +160,7 @@
         <div class="p-4 rounded-xl hover:bg-orange-50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 cursor-pointer">
           <div class="text-3xl font-bold text-orange-500 mb-1">
             <div class="text-3xl font-bold text-indigo-600 mb-4 flex items-center justify-center">
-              <svg class="w-12 h-12 text-rose-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <svg class="w-12 h-12 text-rose-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M5 3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm14 18a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4ZM5 11a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H5Zm14 2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h4Z"/>
               </svg>
             </div>

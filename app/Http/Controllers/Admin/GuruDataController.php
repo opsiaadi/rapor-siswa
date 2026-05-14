@@ -84,4 +84,10 @@ class GuruDataController extends Controller
 
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus.');
     }
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 }

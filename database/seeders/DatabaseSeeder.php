@@ -16,13 +16,13 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // 1. Buat Admin
+        // 1. Admin
         Admin::factory(3)->create();
 
-        // 2. Buat Mapel (5-7 mapel)
+        // 2. Mapel
         $mapels = Mapel::factory(7)->create();
 
-        // 3. Buat Guru (5 guru)
+        // 3. Guru
         $gurus = Guru::factory(5)->create();
 
         // 4. Attach mapel ke guru (setiap guru mengajar 1-2 mapel)
@@ -31,12 +31,12 @@ class DatabaseSeeder extends Seeder
             $guru->mapels()->attach($randomMapels->pluck('id')->toArray());
         }
 
-        // 5. Buat Kelas (3 kelas, isi wali_kelas_id)
+        // 5. Buat Kelas
         $kelas = Kelas::factory(3)->create([
             'wali_kelas_id' => $gurus->random()->id
         ]);
 
-        // 6. Buat Siswa (20 siswa, isi kelas_id)
+        // 6. Buat Siswa
         foreach ($kelas as $kls) {
             Siswa::factory(rand(5, 10))->create([
                 'kelas_id' => $kls->id

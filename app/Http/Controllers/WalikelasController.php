@@ -8,14 +8,16 @@ use App\Models\Siswa;
 use App\Models\Nilai;
 use App\Models\Mapel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WalikelasController extends Controller
 {
     private function getCurrentGuru(): ?Guru
     {
-        $user = session('user');
-        if (!$user || !isset($user['guru_id'])) return null;
-        return Guru::find($user['guru_id']);
+        if (Auth::guard('guru')->check()) {
+            return Auth::guard('guru')->user();
+        }
+        return null;
     }
     
     private function kelas()
@@ -155,8 +157,8 @@ class WalikelasController extends Controller
         $sw->update([
             'keterangan' => $request->keterangan ?? '',
             'keterangan_extra' => $request->keterangan_extra ?? '',
-            'kegatan' => $request->kegatan ?? '',
-            'ket_kegatan' => $request->ket_kegatan ?? '',
+            'kegiatan' => $request->kegiatan ?? '',
+            'ket_kegiatan' => $request->ket_kegiatan ?? '',
             'izin' => $request->izin ?? 0,
             'sakit' => $request->sakit ?? 0,
             'alpha' => $request->alpha ?? 0,

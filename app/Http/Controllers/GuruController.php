@@ -6,16 +6,16 @@ use App\Models\Guru;
 use App\Models\KelasMapel;
 use App\Models\Nilai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GuruController extends Controller
 {
-    private function getCurrentGuru()
+    private function getCurrentGuru(): ?Guru
     {
-        $user = session('user');
-        if (!$user || $user['role'] !== 'guru') {
-            return null;
+        if (Auth::guard('guru')->check()) {
+            return Auth::guard('guru')->user();
         }
-        return Guru::find($user['guru_id']);
+        return null;
     }
 
     private function getGuruMengajar($guruId)

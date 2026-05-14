@@ -1,5 +1,7 @@
 import './bootstrap';
-import 'flowbite';
-import './detail-modal.js';
-import './walikelas-search.js';
-import './admin-dashboard.js';
+
+import Alpine from 'alpinejs';
+
+window.Alpine = Alpine;
+
+Alpine.start();
