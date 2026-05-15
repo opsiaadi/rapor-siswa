@@ -23,7 +23,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('admin.mapel.update', $mapel->id) }}" method="POST" class="max-w-2xl">
+    <form action="{{ route('admin.mapel.update', $mapel->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
@@ -41,9 +41,9 @@
                 </div>
             </div>
 
-            <div class="p-6 space-y-5">
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
                 @if ($errors->any())
-                <div class="bg-red-50  border border-red-200  rounded-lg p-4">
+                <div class="md:col-span-full bg-red-50  border border-red-200  rounded-lg p-4">
                     <div class="flex items-start gap-3">
                         <svg class="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -104,4 +104,3 @@
     </form>
 </div>
 @endsection
-

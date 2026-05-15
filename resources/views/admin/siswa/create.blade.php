@@ -23,7 +23,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('admin.siswa.store') }}" method="POST" class="max-w-2xl">
+    <form action="{{ route('admin.siswa.store') }}" method="POST">
         @csrf
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
             <!-- Identitas -->
@@ -41,9 +41,9 @@
                 </div>
             </div>
 
-            <div class="p-6 space-y-5">
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
                 @if ($errors->any())
-                <div class="bg-red-50  border border-red-200  rounded-lg p-4">
+                <div class="md:col-span-full bg-red-50  border border-red-200  rounded-lg p-4">
                     <div class="flex items-start gap-3">
                         <svg class="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -107,7 +107,7 @@
                 </div>
 
                 <!-- Kelas -->
-                <div>
+                <div class="md:col-span-2">
                     <label for="kelas_id" class="block text-sm font-medium text-gray-700  mb-1.5">Kelas <span class="text-red-500">*</span></label>
                     <select name="kelas_id" id="kelas_id"
                         class="w-full px-3 py-2.5 border border-gray-300  rounded-lg text-gray-900  bg-white  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>

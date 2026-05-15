@@ -41,9 +41,9 @@
     </div>
 </div>
 
-<!-- Table -->
+<!-- Table (Desktop) -->
 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-    <div class="relative overflow-x-auto">
+    <div class="relative overflow-x-auto hidden md:block">
         <table class="w-full text-sm text-left text-gray-500 ">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200 ">
                 <tr>
@@ -74,7 +74,10 @@
                     <td class="px-6 py-4 text-gray-600">{{ $siswa->tahun_ajaran ?? '-' }}</td>
                     <td class="px-6 py-4">
                         <div class="flex items-center justify-center gap-1">
-                            <button onclick="openDetailModal('{{ strtoupper(substr($siswa->nama ?? 'S', 0, 1)) }}', '{{ $siswa->nama ?? '-' }}', '{{ $siswa->nis ?? '-' }}', '{{ $siswa->jenis_kelamin ?? '-' }}', '{{ $siswa->tahun_ajaran ?? '-' }}', '{{ $siswa->kelas->nama_kelas ?? '-' }}', '{{ $siswa->kelas->waliKelas->nama ?? '-' }}')" class="text-gray-500 hover:text-blue-600 p-1.5 rounded-lg hover:bg-blue-50 transition-all duration-200 hover:scale-110 active:scale-95" title="Detail Siswa">
+                            <button type="button"
+                                    data-modal-target="detailModal"
+                                    data-modal-toggle="detailModal"
+                                    onclick="openDetailModal('{{ strtoupper(substr($siswa->nama ?? 'S', 0, 1)) }}', '{{ $siswa->nama ?? '-' }}', '{{ $siswa->nis ?? '-' }}', '{{ $siswa->jenis_kelamin ?? '-' }}', '{{ $siswa->tahun_ajaran ?? '-' }}', '{{ $siswa->kelas->nama_kelas ?? '-' }}', '{{ $siswa->kelas->waliKelas->nama ?? '-' }}')" class="text-gray-500 hover:text-blue-600 p-1.5 rounded-lg hover:bg-blue-50 transition-all duration-200 hover:scale-110 active:scale-95" title="Detail Siswa">
                                 <svg class="w-6 h-6 text-sky-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                     <path fill-rule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
                                 </svg>
@@ -106,6 +109,71 @@
             </tbody>
      </table>
 </div>
+
+    <!-- Card View (Mobile) -->
+    <div class="block md:hidden divide-y divide-gray-100">
+        @forelse($data as $index => $siswa)
+        <div class="p-4 hover:bg-gray-50 transition-colors">
+            <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold">
+                        {{ strtoupper(substr($siswa->nama ?? 'S', 0, 1)) }}
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900 text-sm">{{ $siswa->nama ?? '-' }}</p>
+                        <p class="text-xs text-gray-500">#{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button type="button"
+                            data-modal-target="detailModal"
+                            data-modal-toggle="detailModal"
+                            onclick="openDetailModal('{{ strtoupper(substr($siswa->nama ?? 'S', 0, 1)) }}', '{{ $siswa->nama ?? '-' }}', '{{ $siswa->nis ?? '-' }}', '{{ $siswa->jenis_kelamin ?? '-' }}', '{{ $siswa->tahun_ajaran ?? '-' }}', '{{ $siswa->kelas->nama_kelas ?? '-' }}', '{{ $siswa->kelas->waliKelas->nama ?? '-' }}')" class="text-gray-500 hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-all" title="Detail Siswa">
+                        <svg class="w-5 h-5 text-sky-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <a href="{{ route('admin.siswa.edit', $siswa->id) }}" class="text-gray-500 hover:text-amber-600 p-2 rounded-lg hover:bg-amber-50 transition-all" title="Edit">
+                        <svg class="w-5 h-5 text-sky-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M14 4.182A4.136 4.136 0 0 1 16.9 3c1.087 0 2.13.425 2.899 1.182A4.01 4.01 0 0 1 21 7.037c0 1.068-.43 2.092-1.194 2.849L18.5 11.214l-5.8-5.71 1.287-1.31.012-.012Zm-2.717 2.763L6.186 12.13l2.175 2.141 5.063-5.218-2.141-2.108Zm-6.25 6.886-1.98 5.849a.992.992 0 0 0 .245 1.026 1.03 1.03 0 0 0 1.043.242L10.282 19l-5.25-5.168Zm6.954 4.01 5.096-5.186-2.218-2.183-5.063 5.218 2.185 2.15Z" clip-rule="evenodd"/>
+                        </svg>
+                    </a>
+                    <form action="{{ route('admin.siswa.destroy', $siswa->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus siswa ini?')">
+                        @csrf 
+                        @method('DELETE')
+                        <button type="submit" class="text-gray-500 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-all" title="Hapus">
+                            <svg class="w-5 h-5 text-sky-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5v14m-6-8h6m-6 4h6m4.506-1.494L15.012 12m0 0 1.506-1.506M15.012 12l1.506 1.506M15.012 12l-1.506-1.506M20 19H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1Z"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                    <span class="text-gray-400">NIS</span>
+                    <p class="font-medium text-gray-900 font-mono">{{ $siswa->nis ?? '-' }}</p>
+                </div>
+                <div>
+                    <span class="text-gray-400">JK</span>
+                    <p><span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">{{ $siswa->jenis_kelamin ?? '-' }}</span></p>
+                </div>
+                <div>
+                    <span class="text-gray-400">Tahun Ajaran</span>
+                    <p class="font-medium text-gray-900">{{ $siswa->tahun_ajaran ?? '-' }}</p>
+                </div>
+                <div>
+                    <span class="text-gray-400">Kelas</span>
+                    <p class="font-medium text-gray-900">{{ $siswa->kelas->nama_kelas ?? '-' }}</p>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="p-6 text-center text-gray-500 text-sm">
+            Tidak ada data siswa tersedia
+        </div>
+        @endforelse
+    </div>
 
     <!-- Pagination -->
     <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
@@ -140,7 +208,7 @@
                     <h3 class="text-lg font-bold text-white" id="modalName">Nama Siswa</h3>
                 </div>
             </div>
-            <button onclick="closeDetailModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">
+            <button type="button" data-modal-hide="detailModal" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
@@ -200,15 +268,10 @@
 
     <!-- Modal Footer -->
     <div class="flex items-center justify-end p-5 border-t border-gray-200 bg-gray-50 rounded-b-xl">
-        <button onclick="closeDetailModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+        <button type="button" data-modal-hide="detailModal" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
         Tutup
         </button>
     </div>
 </div>
 </div>
 @endsection
-
-@push('scripts')
-<script src="{{ asset('js/detail-modal.js') }}"></script>
-@endpush
-

@@ -22,6 +22,12 @@ class LoginController extends Controller
         }
 
         if ($request->isMethod('POST')) {
+            $request->validate([
+                'role' => 'required|in:admin,guru,walikelas',
+                'nik' => 'required|string',
+                'password' => 'required|string|min:6',
+            ]);
+
             $role = $request->input('role');
             $nik = $request->input('nik');
             $password = $request->input('password');

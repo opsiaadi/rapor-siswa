@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                     <label for="nama" class="mb-2 block text-sm font-medium text-gray-700">Nama Penandatangan</label>
                     <input id="nama" type="text" name="nama" value="{{ old('nama', $namaGuru ?? 'Wali Kelas') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Nama wali kelas">
@@ -81,10 +81,6 @@
                 <div>
                     <label for="role" class="mb-2 block text-sm font-medium text-gray-700">Peran</label>
                     <input id="role" type="text" name="role" value="{{ old('role', 'Wali Kelas') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Wali Kelas">
-                </div>
-                <div>
-                    <label for="ttd" class="mb-2 block text-sm font-medium text-gray-700">Upload Tanda Tangan</label>
-                    <input id="ttd" type="file" name="ttd" class="block w-full rounded-2xl border border-dashed border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm file:mr-4 file:rounded-full file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100">
                 </div>
             </div>
 

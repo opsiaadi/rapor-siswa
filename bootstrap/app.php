@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->append(\App\Http\Middleware\SecurityHeadersMiddleware::class);
+        $middleware->alias([
+            'walikelas' => \App\Http\Middleware\EnsureWalikelas::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

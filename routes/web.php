@@ -19,7 +19,7 @@ Route::get('/homepage', function () {
 });
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-Route::post('/login', [LoginController::class, 'index']);
+Route::post('/login', [LoginController::class, 'index'])->middleware('throttle:5,1');
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -41,7 +41,7 @@ Route::middleware('auth:guru')->prefix('guru')->name('guru.')->group(function ()
     Route::post('/nilai', [GuruController::class, 'nilai'])->name('nilai.post');
 });
 
-Route::middleware('auth:guru')->prefix('walikelas')->name('walikelas.')->group(function () {
+Route::middleware(['auth:guru', 'walikelas'])->prefix('walikelas')->name('walikelas.')->group(function () {
     Route::get('/dashboard', [WalikelasController::class, 'dashboard'])->name('dashboard');
     Route::get('/finalisasi', [WalikelasController::class, 'finalisasi'])->name('finalisasi');
     Route::get('/siswa', [WalikelasController::class, 'siswa'])->name('siswa');

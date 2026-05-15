@@ -57,6 +57,17 @@ class GuruController extends Controller
         }
 
         if ($request->isMethod('POST')) {
+            $request->validate([
+                'nilai' => 'nullable|array',
+                'nilai.harian.*' => 'nullable|numeric|min:0|max:100',
+                'nilai.uts.*' => 'nullable|numeric|min:0|max:100',
+                'nilai.uas.*' => 'nullable|numeric|min:0|max:100',
+                'mapel' => 'required',
+                'semester' => 'required|in:1,2',
+                'mengajar' => 'required',
+                'kelas' => 'required',
+            ]);
+
             $action = $request->input('action');
             $this->simpanNilai($request);
             if ($action === 'kirim') {

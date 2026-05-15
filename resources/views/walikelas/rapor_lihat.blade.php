@@ -127,7 +127,7 @@
         {{-- Absensi --}}
         <div class="px-8 py-6 border-b border-gray-200">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Absensi</h3>
-            <div class="flex gap-8">
+            <div class="flex flex-wrap gap-4 sm:gap-8">
                 <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm">Izin:</span>
                     <span class="font-semibold text-gray-900">{{ $siswa->izin ?? 0 }} hari</span>

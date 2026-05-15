@@ -15,23 +15,17 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans transition-colors duration-300">
-    <header class="lg:hidden bg-gradient-to-r from-emerald-700 via-emerald-800 to-green-900 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50 shadow-lg">
+    <header class="lg:hidden bg-gradient-to-r from-emerald-700 via-emerald-800 to-green-900 text-white px-4 py-3 flex items-center gap-3 sticky top-0 z-50 shadow-lg">
         <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" data-drawer-backdrop="true" class="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
-        <div class="flex items-center gap-2">
-            <img src="{{ asset('images/icons8-school-building-64.png') }}" alt="Kelas" class="w-8 h-8">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
-            <h1 class="text-lg font-bold">Rapor Siswa</h1>
-        </div>
+        <h1 class="text-lg font-bold">{{ $pageTitle ?? 'Dashboard' }}</h1>
     </header>
 
     <div class="flex">
-        <aside id="logo-sidebar" data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" data-drawer-backdrop="true" data-drawer-placement="left" class="fixed lg:fixed inset-y-0 left-0 z-40 w-64 min-h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col shadow-sm bg-white border-r border-gray-200">
+        <aside id="logo-sidebar" data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" data-drawer-backdrop="true" data-drawer-placement="left" class="fixed lg:fixed inset-y-0 left-0 z-[60] w-64 min-h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col shadow-sm bg-white border-r border-gray-200">
             @include('layouts.partials.sidebar-admin')
         </aside>
 

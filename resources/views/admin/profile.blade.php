@@ -34,7 +34,7 @@
     </div>
     @endif
 
-    <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data" class="max-w-2xl">
+    <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
@@ -92,29 +92,31 @@
                     </div>
                 </div>
 
-                <div>
-                    <label for="nama" class="block text-sm font-medium text-gray-700 mb-1.5">
-                        Nama Lengkap <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="nama" id="nama" value="{{ old('nama', $admin->nama) }}"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
-                        required>
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="nama" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Nama Lengkap <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="nama" id="nama" value="{{ old('nama', $admin->nama) }}"
+                            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                            required>
+                    </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
-                        Email <span class="text-red-500">*</span>
-                    </label>
-                    <input type="email" name="email" id="email" value="{{ old('email', $admin->email) }}"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
-                        required>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Email <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" name="email" id="email" value="{{ old('email', $admin->email) }}"
+                            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                            required>
+                    </div>
                 </div>
 
                 <div class="border-t border-gray-200 pt-5">
                     <h4 class="text-sm font-semibold text-gray-900 mb-4">Ganti Password</h4>
                     <p class="text-xs text-gray-500 mb-4">Kosongkan jika tidak ingin mengganti password.</p>
 
-                    <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">
                                 Password Baru
@@ -162,18 +164,3 @@
     </form>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-document.getElementById('foto')?.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            document.getElementById('preview-foto').src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-</script>
-@endpush

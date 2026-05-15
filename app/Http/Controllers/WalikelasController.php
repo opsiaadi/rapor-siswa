@@ -153,7 +153,17 @@ class WalikelasController extends Controller
     {
         $sw = $this->getSiswa($siswaId);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
-        
+
+        $request->validate([
+            'keterangan' => 'nullable|string|max:2000',
+            'keterangan_extra' => 'nullable|string|max:2000',
+            'kegiatan' => 'nullable|string|max:255',
+            'ket_kegiatan' => 'nullable|string|max:255',
+            'izin' => 'nullable|integer|min:0|max:365',
+            'sakit' => 'nullable|integer|min:0|max:365',
+            'alpha' => 'nullable|integer|min:0|max:365',
+        ]);
+
         $sw->update([
             'keterangan' => $request->keterangan ?? '',
             'keterangan_extra' => $request->keterangan_extra ?? '',
