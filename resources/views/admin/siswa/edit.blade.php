@@ -23,18 +23,13 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('admin.siswa.update', $siswa->id) }}" method="POST" class="max-w-2xl">
+    <form action="{{ route('admin.siswa.update', $siswa->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
             <!-- Identitas -->
             <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
                 <div class="flex items-center gap-3">
-                    <!-- <div class="w-10 h-10 rounded-lg bg-blue-300 flex items-center justify-center text-white">
-                        <svg class="w-6 h-6 text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M12 6a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm-1.5 8a4 4 0 0 0-4 4 2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 4 4 0 0 0-4-4h-3Zm6.82-3.096a5.51 5.51 0 0 0-2.797-6.293 3.5 3.5 0 1 1 2.796 6.292ZM19.5 18h.5a2 2 0 0 0 2-2 4 4 0 0 0-4-4h-1.1a5.503 5.503 0 0 1-.471.762A5.998 5.998 0 0 1 19.5 18ZM4 7.5a3.5 3.5 0 0 1 5.477-2.889 5.5 5.5 0 0 0-2.796 6.293A3.501 3.501 0 0 1 4 7.5ZM7.1 12H6a4 4 0 0 0-4 4 2 2 0 0 0 2 2h.5a5.998 5.998 0 0 1 3.071-5.238A5.505 5.505 0 0 1 7.1 12Z" clip-rule="evenodd"/>
-                        </svg>
-                    </div> -->
                     <div class="w-10 h-10 rounded-lg bg-blue-300 flex items-center justify-center text-blue-400">
                         <svg class="w-6 h-6 text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M12 6a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm-1.5 8a4 4 0 0 0-4 4 2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 4 4 0 0 0-4-4h-3Zm6.82-3.096a5.51 5.51 0 0 0-2.797-6.293 3.5 3.5 0 1 1 2.796 6.292ZM19.5 18h.5a2 2 0 0 0 2-2 4 4 0 0 0-4-4h-1.1a5.503 5.503 0 0 1-.471.762A5.998 5.998 0 0 1 19.5 18ZM4 7.5a3.5 3.5 0 0 1 5.477-2.889 5.5 5.5 0 0 0-2.796 6.293A3.501 3.501 0 0 1 4 7.5ZM7.1 12H6a4 4 0 0 0-4 4 2 2 0 0 0 2 2h.5a5.998 5.998 0 0 1 3.071-5.238A5.505 5.505 0 0 1 7.1 12Z" clip-rule="evenodd"/>
@@ -47,7 +42,25 @@
                 </div>
             </div>
 
-            <div class="p-6 space-y-5">
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                @if ($errors->any())
+                <div class="md:col-span-full bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-medium text-red-800">Terdapat kesalahan:</h4>
+                            <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 <!-- NIS -->
                 <div>
                     <label for="nis" class="block text-sm font-medium text-gray-700 mb-1.5">NIS <span class="text-red-500">*</span></label>
@@ -95,7 +108,7 @@
                 </div>
 
                 <!-- Kelas -->
-                <div>
+                <div class="md:col-span-2">
                     <label for="kelas_id" class="block text-sm font-medium text-gray-700 mb-1.5">Kelas <span class="text-red-500">*</span></label>
                     <select name="kelas_id" id="kelas_id"
                         class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" required>

@@ -9,9 +9,9 @@
 </svg>
 
 <div class="p-5 border-b border-gray-100">
-    <div class="flex items-center gap-2">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center">
-            <img src="{{ asset('images/open-book.png') }}" class>
+    <div class="flex items-center gap-2 shrink-0">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+            <img src="{{ asset('images/open-book.png') }}" class="w-full h-full object-contain">
         </div>
         <div>
             <h2 class="text-lg font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">EduReport</h2>
@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+<nav class="flex-1 p-4 space-y-1 overflow-y-auto min-h-0">
     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-3">Menu Utama</p>
 
     <a href="{{ route('admin.dashboard', ['id' => $id ?? 1, 'nama' => $userName ?? 'Admin']) }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-blue-50 hover:pl-4 hover:text-blue-700' }}">
@@ -76,7 +76,7 @@
     </div>
 </nav>
 
-<a href="{{ route('admin.profile') }}" class="block p-4 hover:bg-gray-50 transition-colors">
+<a href="{{ route('admin.profile') }}" class="block p-4 shrink-0 hover:bg-gray-50 transition-colors">
     @php $admin = Auth::guard('admin')->user(); @endphp
     <div class="flex items-center gap-1">
         <div class="w-16 h-16 rounded-full overflow-hidden ring-2 ring-white/30">

@@ -45,7 +45,7 @@
         </div>
 
         {{-- Table --}}
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-left text-sm">
                 <thead>
                     <tr class="border-b border-gray-200 bg-gray-50">
@@ -81,8 +81,30 @@
             </table>
         </div>
 
+        {{-- Mobile Card View --}}
+        <div class="block md:hidden space-y-3 px-6 py-4">
+            @forelse($siswaList as $siswa)
+            <div class="bg-white rounded-xl border border-gray-200 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 text-sm font-semibold text-white">
+                        {{ strtoupper(substr($siswa->nama ?? 'U', 0, 1)) }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-gray-900 truncate">{{ $siswa->nama }}</p>
+                        <p class="text-xs text-gray-500">{{ $siswa->nis }}</p>
+                    </div>
+                    <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 shrink-0">
+                        Keterangan
+                    </a>
+                </div>
+            </div>
+            @empty
+            <p class="text-center text-gray-500 py-4">Tidak ada data siswa.</p>
+            @endforelse
+        </div>
+
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-gray-200 bg-gray-50 px-6 py-3">
-            <p class="text-xs text-gray-500">Menampilkan 2 dari 2 siswa</p>
+            <p class="text-xs text-gray-500">Menampilkan {{ $siswaList->count() }} dari {{ $totalSiswa ?? $siswaList->count() }} siswa</p>
         </div>
     </div>
 </div>

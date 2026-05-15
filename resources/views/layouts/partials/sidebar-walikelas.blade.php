@@ -9,9 +9,9 @@
 </svg>
 
 <div class="p-5 border-b" style="border-color: #e5e7eb;">
-    <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center">
-            <img src="{{ asset('images/open-book.png')}}">
+    <div class="flex items-center gap-3 shrink-0">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+            <img src="{{ asset('images/open-book.png')}}" class="w-full h-full object-contain">
         </div>
         <div>
             <h2 class="text-lg font-bold text-gray-900">EduReport</h2>
@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+<nav class="flex-1 p-4 space-y-1 overflow-y-auto min-h-0">
     <p class="text-xs font-semibold uppercase tracking-wider px-3 mb-3 text-gray-400">Menu Wali Kelas</p>
 
     <a href="{{ route('walikelas.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:pl-4" style="{{ request()->routeIs('walikelas.dashboard') ? 'background-color: rgba(34, 211, 238, 0.12); color: #111827;' : 'color: #4b5563;' }}">
@@ -59,10 +59,10 @@
     </div>
 </nav>
 
-<div class="p-4">
+<div class="p-4 shrink-0">
     <div class="flex items-center gap-1">
-        <div class="w-16 h-16 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/30">
-            <img src="{{ asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-contain">
+        <div class="w-16 h-16 rounded-full bg-gradient-to-br flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/30 overflow-hidden">
+            <img src="{{ asset('images/users-avatar-svgrepo-com.svg') }}" class="w-full h-full object-contain">
         </div>
         <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold text-gray-900 truncate">{{ $namaGuru ?? 'Wali Kelas' }}</p>

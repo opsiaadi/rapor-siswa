@@ -91,7 +91,7 @@
             </a>
         </div>
         <div class="relative overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500 ">
+            <table class="hidden md:table w-full text-sm text-left text-gray-500 ">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50  ">
                     <tr>
                         <th scope="col" class="px-5 py-3">Nama Siswa</th>
@@ -121,6 +121,8 @@
                         </td>
                         <td class="px-5 py-3 text-center">
                             <button type="button"
+                                    data-modal-target="detailModal"
+                                    data-modal-toggle="detailModal"
                                     onclick="openDetailModal('{{ strtoupper(substr($s->nama ?? 'S', 0, 1)) }}', '{{ $s->nama ?? '-' }}', '{{ $s->nis ?? '-' }}', '{{ $s->jenis_kelamin ?? '-' }}', '{{ $s->tahun_ajaran ?? '-' }}', '{{ $s->kelas_nama ?? '-' }}', '{{ $s->wali_nama ?? '-' }}')"
                                     class="inline-flex items-center justify-center p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50    rounded-lg transition-colors"
                                     title="Detail Siswa">
@@ -137,6 +139,37 @@
                     @endforelse
                 </tbody>
             </table>
+
+            <div class="block md:hidden space-y-3">
+                @forelse($recentSiswa ?? [] as $s)
+                <div class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                            {{ strtoupper(substr($s->nama ?? 'U', 0, 1)) }}
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">{{ $s->nama ?? '-' }}</p>
+                            <p class="text-xs text-gray-500">{{ $s->nis ?? '-' }} · {{ $s->kelas_nama ?? '-' }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Aktif</span>
+                        <button type="button"
+                                data-modal-target="detailModal"
+                                data-modal-toggle="detailModal"
+                                onclick="openDetailModal('{{ strtoupper(substr($s->nama ?? 'S', 0, 1)) }}', '{{ $s->nama ?? '-' }}', '{{ $s->nis ?? '-' }}', '{{ $s->jenis_kelamin ?? '-' }}', '{{ $s->tahun_ajaran ?? '-' }}', '{{ $s->kelas_nama ?? '-' }}', '{{ $s->wali_nama ?? '-' }}')"
+                                class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                title="Detail Siswa">
+                            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                @empty
+                <p class="text-center text-gray-500 py-8">Belum ada data siswa</p>
+                @endforelse
+            </div>
         </div>
         </div>
 
@@ -182,9 +215,9 @@
                         <h3 class="text-lg font-bold text-white" id="modalName">Nama Siswa</h3>
                     </div>
                 </div>
-                <button onclick="closeDetailModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">
-                    <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                        <path fill-rule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+                <button type="button" data-modal-hide="detailModal" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
@@ -243,7 +276,7 @@
 
             <!-- Modal Footer -->
             <div class="flex items-center justify-end p-5 border-t border-gray-200  bg-gray-50  rounded-b-xl">
-                <button onclick="closeDetailModal()" class="px-4 py-2 text-sm font-medium text-gray-700  bg-white  border border-gray-300  rounded-lg hover:bg-gray-100  transition-colors">
+                <button type="button" data-modal-hide="detailModal" class="px-4 py-2 text-sm font-medium text-gray-700  bg-white  border border-gray-300  rounded-lg hover:bg-gray-100  transition-colors">
                     Tutup
                 </button>
             </div>
