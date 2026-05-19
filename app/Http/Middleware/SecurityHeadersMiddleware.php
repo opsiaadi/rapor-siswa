@@ -12,6 +12,13 @@ class SecurityHeadersMiddleware
     {
         $response = $next($request);
 
+        $response->headers->remove('X-Powered-By');
+        $response->headers->set('Server', '');
+
+        if (app()->environment('local')) {
+            return $response;
+        }
+
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-XSS-Protection', '0');

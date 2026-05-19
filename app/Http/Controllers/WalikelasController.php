@@ -9,6 +9,7 @@ use App\Models\Nilai;
 use App\Models\Mapel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class WalikelasController extends Controller
 {
@@ -56,9 +57,12 @@ class WalikelasController extends Controller
         });
     }
     
-    private function getSiswa($id): ?Siswa
+    private function getSiswa($id, $kelas): ?Siswa
     {
-        return Siswa::find($id);
+        $kelasIds = $kelas->pluck('id');
+        if ($kelasIds->isEmpty()) return null;
+        
+        return Siswa::where('id', $id)->whereIn('kelas_id', $kelasIds)->first();
     }
     
     public function dashboard()
@@ -120,11 +124,11 @@ class WalikelasController extends Controller
     
     public function rapor($siswaId)
     {
-        $sw = $this->getSiswa($siswaId);
+        $kelas = $this->kelas();
+        $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
         
         $guru = $this->getCurrentGuru();
-        $kelas = $this->kelas();
         
         return view('walikelas.rapor_siswa', [
             'id' => $guru?->id,
@@ -151,7 +155,8 @@ class WalikelasController extends Controller
     
     public function simpanKeterangan(Request $request, $siswaId)
     {
-        $sw = $this->getSiswa($siswaId);
+        $kelas = $this->kelas();
+        $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
         $request->validate([
@@ -180,11 +185,11 @@ class WalikelasController extends Controller
 
     public function raporLihat($siswaId)
     {
-        $sw = $this->getSiswa($siswaId);
+        $kelas = $this->kelas();
+        $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
         $guru = $this->getCurrentGuru();
-        $kelas = $this->kelas();
 
         $semester = request('semester', '1');
 
@@ -226,8 +231,8 @@ class WalikelasController extends Controller
                 'kelas_nama' => $sw->kelas ? $sw->kelas->nama_kelas : '-',
                 'keterangan' => $sw->keterangan ?? '',
                 'keterangan_extra' => $sw->keterangan_extra ?? '',
-                'kegatan' => $sw->kegatan ?? '',
-                'ket_kegatan' => $sw->ket_kegatan ?? '',
+                'kegiatan' => $sw->kegiatan ?? '',
+                'ket_kegiatan' => $sw->ket_kegiatan ?? '',
                 'izin' => $sw->izin ?? 0,
                 'sakit' => $sw->sakit ?? 0,
                 'alpha' => $sw->alpha ?? 0,
@@ -240,5 +245,66 @@ class WalikelasController extends Controller
             'semester' => $semester,
             'semesterList' => ['1' => 'Ganjil', '2' => 'Genap'],
         ]);
+    }
+
+    public function exportPdf($siswaId)
+    {
+        $kelas = $this->kelas();
+        $sw = $this->getSiswa($siswaId, $kelas);
+        if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
+
+        $semester = request('semester', '1');
+
+        $nilaiList = Nilai::with(['mapel', 'guru'])
+            ->where('siswa_id', $siswaId)
+            ->where('semester', $semester)
+            ->get()
+            ->map(function($n) {
+                $kkm = $n->mapel->kkm ?? 75;
+                $status = $n->nilai_akhir !== null
+                    ? ($n->nilai_akhir >= $kkm ? 'Lulus' : 'Tidak Lulus')
+                    : '-';
+                return (object) [
+                    'id' => $n->id,
+                    'mapel_nama' => $n->mapel->nama_mapel ?? '-',
+                    'kkm' => $kkm,
+                    'harian' => $n->harian ?? '-',
+                    'uts' => $n->uts ?? '-',
+                    'uas' => $n->uas ?? '-',
+                    'nilai_akhir' => $n->nilai_akhir ?? '-',
+                    'status' => $status,
+                ];
+            });
+
+        $rata_rata = $nilaiList->where('nilai_akhir', '!=', '-')->avg('nilai_akhir');
+        $rata_rata = $rata_rata ? round($rata_rata, 2) : '-';
+
+        $waliKelas = $sw->kelas ? $sw->kelas->waliKelas : null;
+
+        $pdf = Pdf::loadView('walikelas.rapor_pdf', [
+            'siswa' => (object) [
+                'id' => $sw->id,
+                'nis' => $sw->nis,
+                'nama' => $sw->nama,
+                'jenis_kelamin' => $sw->jenis_kelamin,
+                'tahun_ajaran' => $sw->tahun_ajaran ?? '-',
+                'kelas_nama' => $sw->kelas ? $sw->kelas->nama_kelas : '-',
+                'keterangan' => $sw->keterangan ?? '',
+                'kegiatan' => $sw->kegiatan ?? '',
+                'ket_kegiatan' => $sw->ket_kegiatan ?? '',
+                'izin' => $sw->izin ?? 0,
+                'sakit' => $sw->sakit ?? 0,
+                'alpha' => $sw->alpha ?? 0,
+            ],
+            'wali_kelas' => $waliKelas ? (object) ['nama' => $waliKelas->nama] : (object) ['nama' => '-'],
+            'nilaiList' => $nilaiList,
+            'rata_rata' => $rata_rata,
+            'semester' => $semester,
+            'semesterList' => ['1' => 'Ganjil', '2' => 'Genap'],
+        ]);
+
+        $filename = 'Rapor_' . ($sw->nis ?? 'unknown') . '_' . ($sw->nama ?? 'siswa') . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

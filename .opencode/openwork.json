@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "workspace": {
+    "name": "rapor-siswa",
+    "createdAt": 1779159947451,
+    "preset": "starter"
+  },
+  "authorizedRoots": [
+    "/opt/lampp/htdocs/rapor-siswa"
+  ],
+  "reload": null
+}

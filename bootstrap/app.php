@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\SecurityHeadersMiddleware::class);
         $middleware->alias([
             'walikelas' => \App\Http\Middleware\EnsureWalikelas::class,
+            'admin.active' => \App\Http\Middleware\EnsureAdminActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
