@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 
 class LoginController extends Controller
 {
@@ -32,14 +33,23 @@ class LoginController extends Controller
             $nik = $request->input('nik');
             $password = $request->input('password');
 
+            $limiterKey = $role . '|' . $nik;
+
+            if (RateLimiter::tooManyAttempts('login:' . $limiterKey, 5)) {
+                $seconds = RateLimiter::availableIn('login:' . $limiterKey);
+                return back()->with('error', 'Terlalu banyak percobaan login. Akun Anda dikunci sementara. Silakan coba lagi dalam ' . $seconds . ' detik.');
+            }
+
             if ($role === 'admin') {
                 if (Auth::guard('admin')->attempt(['email' => $nik, 'password' => $password])) {
+                    RateLimiter::clear('login:' . $limiterKey);
                     $admin = Auth::guard('admin')->user();
                     session(['role' => 'admin']);
                     return redirect()->route('admin.dashboard', ['id' => $admin->id, 'nama' => $admin->nama]);
                 }
             } else {
                 if (Auth::guard('guru')->attempt(['nik' => $nik, 'password' => $password])) {
+                    RateLimiter::clear('login:' . $limiterKey);
                     $guru = Auth::guard('guru')->user();
                     session(['role' => $role]);
 
@@ -56,6 +66,8 @@ class LoginController extends Controller
                         : redirect()->route('guru.dashboard');
                 }
             }
+
+            RateLimiter::hit('login:' . $limiterKey);
 
             return back()->with('error', 'NIK/Email atau password salah.')->withInput();
         }

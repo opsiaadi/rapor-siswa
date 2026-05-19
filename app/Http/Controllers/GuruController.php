@@ -139,12 +139,21 @@ class GuruController extends Controller
 
         if (!$mapelId || !$semester || !$guru) return;
 
+        $kelasIds = KelasMapel::where('guru_id', $guru->id)
+            ->whereNotNull('guru_id')
+            ->pluck('kelas_id');
+
+        if ($kelasIds->isEmpty()) return;
+
+        $validSiswaIds = \App\Models\Siswa::whereIn('kelas_id', $kelasIds)->pluck('id')->toArray();
+
         $key = "nilai_{$guru->id}_{$mapelId}_{$semester}";
         $nilaiSession = session($key, []);
 
         foreach ($nilaiData as $type => $siswaNilai) {
             foreach ($siswaNilai as $siswaId => $value) {
                 if ($value === '' || $value === null) continue;
+                if (!in_array((int) $siswaId, $validSiswaIds)) continue;
 
                 if (!isset($nilaiSession[$siswaId])) {
                     $nilaiSession[$siswaId] = ['harian' => '', 'uts' => '', 'uas' => '', 'nilai_akhir' => ''];
@@ -185,5 +194,105 @@ class GuruController extends Controller
     {
         return redirect()->route('guru.dashboard', ['id' => $id, 'namaGuru' => $namaGuru])
                         ->with('info', 'Halaman hasil belajar belum tersedia.');
+    }
+
+    public function daftarRapor()
+    {
+        $guru = $this->getCurrentGuru();
+        if (!$guru) {
+            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
+        }
+
+        $guruMengajar = $this->getGuruMengajar($guru->id);
+        $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
+
+        $siswaList = collect();
+        if ($kelasIds->isNotEmpty()) {
+            $siswaList = \App\Models\Siswa::with('kelas')
+                ->whereIn('kelas_id', $kelasIds)
+                ->get()
+                ->map(function($s) {
+                    return (object) [
+                        'id' => $s->id,
+                        'nis' => $s->nis,
+                        'nama' => $s->nama,
+                        'jenis_kelamin' => $s->jenis_kelamin,
+                        'kelas_nama' => $s->kelas ? $s->kelas->nama_kelas : '-',
+                    ];
+                });
+        }
+
+        return view('guru.daftar_rapor', [
+            'id' => $guru->id,
+            'namaGuru' => $guru->nama,
+            'siswaList' => $siswaList,
+        ]);
+    }
+
+    public function lihatRapor($siswaId)
+    {
+        $guru = $this->getCurrentGuru();
+        if (!$guru) {
+            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
+        }
+
+        $guruMengajar = $this->getGuruMengajar($guru->id);
+        $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
+
+        $siswa = \App\Models\Siswa::with('kelas')
+            ->where('id', $siswaId)
+            ->whereIn('kelas_id', $kelasIds)
+            ->first();
+
+        if (!$siswa) {
+            return redirect()->route('guru.rapor')->with('error', 'Siswa tidak ditemukan.');
+        }
+
+        $semester = request('semester', '1');
+        $mapelIds = $guruMengajar->pluck('mapel_id')->unique();
+
+        $nilaiList = \App\Models\Nilai::with('mapel')
+            ->where('siswa_id', $siswaId)
+            ->whereIn('mapel_id', $mapelIds)
+            ->where('semester', $semester)
+            ->get()
+            ->map(function($n) {
+                $kkm = $n->mapel->kkm ?? 75;
+                $status = $n->nilai_akhir !== null
+                    ? ($n->nilai_akhir >= $kkm ? 'Lulus' : 'Tidak Lulus')
+                    : '-';
+                return (object) [
+                    'mapel_nama' => $n->mapel->nama_mapel ?? '-',
+                    'kkm' => $kkm,
+                    'harian' => $n->harian ?? '-',
+                    'uts' => $n->uts ?? '-',
+                    'uas' => $n->uas ?? '-',
+                    'nilai_akhir' => $n->nilai_akhir ?? '-',
+                    'status' => $status,
+                ];
+            });
+
+        $rata_rata = $nilaiList->where('nilai_akhir', '!=', '-')->avg('nilai_akhir');
+        $rata_rata = $rata_rata ? round($rata_rata, 2) : '-';
+
+        return view('guru.rapor_lihat', [
+            'id' => $guru->id,
+            'namaGuru' => $guru->nama,
+            'siswa' => (object) [
+                'id' => $siswa->id,
+                'nis' => $siswa->nis,
+                'nama' => $siswa->nama,
+                'jenis_kelamin' => $siswa->jenis_kelamin,
+                'tahun_ajaran' => $siswa->tahun_ajaran ?? '-',
+                'kelas_nama' => $siswa->kelas ? $siswa->kelas->nama_kelas : '-',
+                'izin' => $siswa->izin ?? 0,
+                'sakit' => $siswa->sakit ?? 0,
+                'alpha' => $siswa->alpha ?? 0,
+            ],
+            'nilaiList' => $nilaiList,
+            'rata_rata' => $rata_rata,
+            'semester' => $semester,
+            'semesterList' => ['1' => 'Ganjil', '2' => 'Genap'],
+        ]);
     }
 }

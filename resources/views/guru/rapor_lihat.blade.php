@@ -1,24 +1,24 @@
-@extends('layouts.walikelas', [
-    'title' => 'Rapor Lengkap - ' . ($siswa->nama ?? 'Siswa'),
-    'pageTitle' => 'Rapor Lengkap',
-    'breadcrumb' => 'Finalisasi > Lihat Rapor',
+@extends('layouts.guru', [
+    'title' => 'Rapor Siswa - ' . ($siswa->nama ?? 'Siswa'),
+    'pageTitle' => 'Rapor Siswa',
+    'breadcrumb' => 'Lihat Rapor > ' . ($siswa->nama ?? 'Siswa'),
     'id' => $id ?? 1,
-    'namaGuru' => $namaGuru ?? 'Wali Kelas',
+    'namaGuru' => $namaGuru ?? 'Guru Mapel',
 ])
 
 @section('content')
 <div class="space-y-6">
-    {{-- Semester Selector --}}
+    {{-- Semester Selector & Back --}}
     <div class="flex items-center justify-between">
-        <form method="GET" action="{{ route('walikelas.rapor-lihat', ['siswaId' => $siswa->id]) }}" class="flex items-center gap-3">
+        <form method="GET" action="{{ route('guru.rapor.lihat', ['siswaId' => $siswa->id]) }}" class="flex items-center gap-3">
             <label for="semester" class="text-sm font-medium text-gray-700">Semester:</label>
-            <select name="semester" id="semester" onchange="this.form.submit()" class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+            <select name="semester" id="semester" onchange="this.form.submit()" class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500">
                 @foreach($semesterList as $key => $val)
                 <option value="{{ $key }}" {{ $semester == $key ? 'selected' : '' }}>{{ $val }}</option>
                 @endforeach
             </select>
         </form>
-        <a href="{{ route('walikelas.finalisasi') }}" class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
+        <a href="{{ route('guru.rapor') }}" class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
@@ -36,7 +36,7 @@
 
         {{-- Data Siswa --}}
         <div class="px-8 py-6 border-b border-gray-200">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                 <div>
                     <p class="text-gray-500 text-xs uppercase tracking-wider">Nama Siswa</p>
                     <p class="font-semibold text-gray-900">{{ $siswa->nama ?? '-' }}</p>
@@ -49,10 +49,6 @@
                     <p class="text-gray-500 text-xs uppercase tracking-wider">Kelas</p>
                     <p class="font-semibold text-gray-900">{{ $siswa->kelas_nama ?? '-' }}</p>
                 </div>
-                <div>
-                    <p class="text-gray-500 text-xs uppercase tracking-wider">Wali Kelas</p>
-                    <p class="font-semibold text-gray-900">{{ $wali_kelas->nama ?? '-' }}</p>
-                </div>
             </div>
             <div class="mt-3 text-sm">
                 <p class="text-gray-500 text-xs uppercase tracking-wider">Semester</p>
@@ -60,7 +56,7 @@
             </div>
         </div>
 
-        {{-- Tabel Nilai --}}
+        {{-- Tabel Nilai (Mapel yang Diampu) --}}
         <div class="px-8 py-6 border-b border-gray-200">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Nilai Mata Pelajaran</h3>
             <div class="overflow-x-auto">
@@ -104,8 +100,8 @@
                                     <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                     </svg>
-                                    <p>Belum ada nilai untuk semester ini</p>
-                                    <p class="text-xs text-gray-400">Nilai akan muncul setelah guru mengirim data</p>
+                                    <p>Belum ada nilai untuk mata pelajaran Anda</p>
+                                    <p class="text-xs text-gray-400">Nilai akan muncul setelah Anda mengirim data</p>
                                 </div>
                             </td>
                         </tr>
@@ -114,8 +110,8 @@
                     @if($nilaiList->count() > 0)
                     <tfoot>
                         <tr class="bg-gray-50">
-                            <td colspan="6" class="px-4 py-3 text-right font-bold text-gray-700 border border-gray-300">Rata-rata Nilai</td>
-                            <td class="px-4 py-3 text-center font-bold text-lg text-emerald-700 border border-gray-300">{{ $rata_rata }}</td>
+                            <td colspan="6" class="px-4 py-3 text-right font-bold text-gray-700 border border-gray-300">Rata-rata</td>
+                            <td class="px-4 py-3 text-center font-bold text-lg text-blue-700 border border-gray-300">{{ $rata_rata }}</td>
                             <td class="border border-gray-300"></td>
                         </tr>
                     </tfoot>
@@ -124,7 +120,7 @@
             </div>
         </div>
 
-        {{-- Absensi --}}
+        {{-- Absensi (Read-only) --}}
         <div class="px-8 py-6 border-b border-gray-200">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Absensi</h3>
             <div class="flex flex-wrap gap-4 sm:gap-8">
@@ -142,45 +138,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- Keterangan --}}
-        <div class="px-8 py-6 border-b border-gray-200">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Keterangan</h3>
-            <div class="space-y-3">
-                <div>
-                    <p class="text-sm text-gray-500">Deskripsi Siswa</p>
-                    <p class="text-gray-900">{{ $siswa->keterangan ?: '-' }}</p>
-                </div>
-                @if($siswa->kegiatan)
-                <div>
-                    <p class="text-sm text-gray-500">Ekstrakurikuler</p>
-                    <p class="text-gray-900">{{ $siswa->kegiatan }} - {{ $siswa->ket_kegiatan ?: '-' }}</p>
-                </div>
-                @endif
-            </div>
-        </div>
-
-        {{-- Tanda Tangan --}}
-        <div class="px-8 py-6 flex justify-between items-end">
-            <div class="text-center">
-                <p class="text-sm text-gray-500 mb-8">Wali Kelas</p>
-                <p class="font-semibold text-gray-900 underline">{{ $wali_kelas->nama ?? '-' }}</p>
-            </div>
-            <div class="text-center">
-                <p class="text-sm text-gray-500 mb-8">Mengetahui,</p>
-                <p class="font-semibold text-gray-900 underline">Kepala Sekolah</p>
-            </div>
-        </div>
-    </div>
-
-    {{-- Print Button --}}
-    <div class="flex justify-center">
-        <a href="{{ route('walikelas.rapor.pdf', ['siswaId' => $siswa->id, 'semester' => $semester]) }}" class="inline-flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:scale-105">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-            </svg>
-            Cetak Rapor
-        </a>
     </div>
 </div>
 @endsection

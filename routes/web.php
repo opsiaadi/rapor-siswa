@@ -19,11 +19,11 @@ Route::get('/homepage', function () {
 });
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-Route::post('/login', [LoginController::class, 'index'])->middleware('throttle:5,1');
+Route::post('/login', [LoginController::class, 'index']);
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth:admin', 'admin.active'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard/{id?}/{nama?}', [AdminController::class, 'tampilkan'])->name('dashboard');
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
     Route::put('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
@@ -39,6 +39,8 @@ Route::middleware('auth:guru')->prefix('guru')->name('guru.')->group(function ()
     Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('dashboard');
     Route::get('/nilai', [GuruController::class, 'nilai'])->name('nilai');
     Route::post('/nilai', [GuruController::class, 'nilai'])->name('nilai.post');
+    Route::get('/rapor', [GuruController::class, 'daftarRapor'])->name('rapor');
+    Route::get('/rapor/{siswaId}', [GuruController::class, 'lihatRapor'])->name('rapor.lihat');
 });
 
 Route::middleware(['auth:guru', 'walikelas'])->prefix('walikelas')->name('walikelas.')->group(function () {
@@ -48,4 +50,5 @@ Route::middleware(['auth:guru', 'walikelas'])->prefix('walikelas')->name('walike
     Route::get('/rapor/{siswaId}', [WalikelasController::class, 'rapor'])->name('rapor');
     Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanKeterangan'])->name('rapor.simpan');
     Route::get('/rapor-lihat/{siswaId}', [WalikelasController::class, 'raporLihat'])->name('rapor-lihat');
+    Route::get('/rapor/{siswaId}/pdf', [WalikelasController::class, 'exportPdf'])->name('rapor.pdf');
 });
