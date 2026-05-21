@@ -2,4 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 @import './boostrap';
-@import 'tailwindcss';
+@import 'flowbite';

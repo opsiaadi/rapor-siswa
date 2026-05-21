@@ -33,7 +33,7 @@
                     <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $stats['total_siswa'] ?? 0 }}</p>
                 </div>
                 <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                    <img src="{{ asset('storage/icons/icons8-group-96.png') }}" alt="Siswa" class="w-8 h-8">
+                    <img src="{{ asset('images/icons8-group-96.png') }}" alt="Siswa" class="w-8 h-8">
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
                     <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $stats['total_guru'] ?? 0 }}</p>
                 </div>
                 <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                    <img src="{{ asset('storage/icons/icons8-customer-48.png') }}" alt="Guru" class="w-8 h-8">
+                    <img src="{{ asset('images/icons8-customer-48.png') }}" alt="Guru" class="w-8 h-8">
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                     <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $stats['total_mapel'] ?? 0 }}</p>
                 </div>
                 <div class="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center">
-                    <img src="{{ asset('storage/icons/icons8-open-book-100.png') }}" alt="Mapel" class="w-8 h-8">
+                    <img src="{{ asset('images/icons8-open-book-100.png') }}" alt="Mapel" class="w-8 h-8">
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@
                     <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ $stats['total_kelas'] ?? 0 }}</p>
                 </div>
                 <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                    <img src="{{ asset('storage/icons/icons8-school-building-64.png') }}" alt="Kelas" class="w-8 h-8">
+                    <img src="{{ asset('images/icons8-school-building-64.png') }}" alt="Kelas" class="w-8 h-8">
                 </div>
             </div>
         </div>

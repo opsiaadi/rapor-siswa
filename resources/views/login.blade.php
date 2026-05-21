@@ -31,27 +31,17 @@
 
     <!-- Login Container -->
     <div class="w-full max-w-sm mx-4">
-
-        <!-- Brand Header -->
-        <div class="mb-7 text-center">
-            <div class="flex flex-col items-center gap-2.5">
+        <!-- Login Card -->
+        <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6">
+            <!-- Brand Header (Inside Card) -->
+            <div class="flex flex-col items-center gap-3 mb-6">
                 <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-emerald-600 rounded-2xl shadow-xl shadow-blue-500/20 flex items-center justify-center">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                 </div>
-                <h1 class="text-xl font-extrabold tracking-[0.15em] text-white">RAPOR SISWA</h1>
-                <p class="text-gray-200 text-[11px] tracking-wide uppercase opacity-80">Sistem Informasi Akademik Terpadu</p>
-            </div>
-        </div>
-
-        <!-- Login Card -->
-        <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6">
-
-            <!-- Header -->
-            <div class="mb-5">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Selamat Datang</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Silahkan masuk untuk mengakses portal Anda.</p>
+                <h1 class="text-2xl font-extrabold tracking-[0.15em] text-gray-900 dark:text-white">RAPOR SISWA</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-[11px] tracking-wide uppercase">Sistem Informasi Akademik Terpadu</p>
             </div>
 
             <!-- Form -->

@@ -71,10 +71,15 @@ class KelasController extends Controller
             'mapel' => collect(array_map(fn($mid) => ['id' => $mid], $mapelIds)),
             'kelasMapel' => collect([]),
         ]);
+        
+        // Get students in this class
+        $allSiswa = FakeDataHelper::getSiswa();
+        $siswaList = array_filter($allSiswa, fn($s) => $s['kelas_id'] == $id);
+        
         $guruList = collect(FakeDataHelper::getGuruOptions());
         $mapelList = collect(FakeDataHelper::getMapelOptions());
         $currentMapelGuru = $mapelGuru;
-        return view('admin.kelas.edit', compact('kelas', 'guruList', 'mapelList', 'currentMapelGuru'));
+        return view('admin.kelas.edit', compact('kelas', 'guruList', 'mapelList', 'currentMapelGuru', 'siswaList'));
     }
 
     public function update(Request $request, $id)
