@@ -10,6 +10,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WalikelasController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/produk', [ProductController::class, 'index']);
+
 Route::get('/', function () {
     return view('welcome');
 });
