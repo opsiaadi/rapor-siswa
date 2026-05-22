@@ -8,7 +8,6 @@ use App\Models\Guru;
 use App\Models\Mapel;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,13 +15,13 @@ class AdminController extends Controller
 {
     public function profile()
     {
-        $admin = Auth::guard('admin')->user();
+        $admin = $this->getCurrentAdmin();
         return view('admin.profile', compact('admin'));
     }
 
     public function updateProfile(Request $request)
     {
-        $admin = Auth::guard('admin')->user();
+        $admin = $this->getCurrentAdmin();
 
         $request->validate([
             'nama' => 'required|string|max:255',
@@ -52,7 +51,7 @@ class AdminController extends Controller
 
     public function removeFoto()
     {
-        $admin = Auth::guard('admin')->user();
+        $admin = $this->getCurrentAdmin();
         if ($admin->foto) {
             Storage::disk('public')->delete($admin->foto);
             $admin->foto = null;
@@ -63,7 +62,7 @@ class AdminController extends Controller
 
     public function tampilkan(Request $request, $id = null, $nama = null)
     {
-        $admin = Auth::guard('admin')->user();
+        $admin = $this->getCurrentAdmin();
         $id = $admin->id ?? $id;
         $nama = $admin->nama ?? $nama;
         // Stats dari database
@@ -106,7 +105,7 @@ class AdminController extends Controller
                     'id' => $s->id,
                     'nis' => $s->nis ?? '-',
                     'nama' => $s->nama ?? '-',
-                    'jenis_kelamin' => $s->jenis_kelamin ?? '-',
+                    'jenis_kelamin' => $s->jenis_kelamin?->value ?? '-',
                     'tahun_ajaran' => $s->tahun_ajaran ?? '-',
                     'kelas_id' => $s->kelas_id,
                     'kelas_nama' => $s->kelas->nama_kelas ?? '-',

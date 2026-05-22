@@ -52,9 +52,9 @@
                     <select name="role" id="roleSelect" 
                             class="block w-full px-3.5 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl text-sm text-gray-900 appearance-none cursor-pointer transition-all duration-300 hover:bg-white hover:border-blue-400 hover:shadow-md focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
                             required>
-                        <option value="admin">Admin TU</option>
-                        <option value="guru">Guru Pengampu</option>
-                        <option value="walikelas">Wali Kelas</option>
+                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin TU</option>
+                        <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru Pengampu</option>
+                        <option value="walikelas" {{ old('role') == 'walikelas' ? 'selected' : '' }}>Wali Kelas</option>
                     </select>
                 </div>
                 
