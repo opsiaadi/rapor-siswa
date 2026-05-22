@@ -32,10 +32,10 @@
                 @endif
 
                 <div class="space-y-1.5">
-                    <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-600 ml-1">NIK</label>
+                    <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-600 ml-1">NIK / Email</label>
                     <input type="text" name="nik" value="{{ old('nik') }}" 
                         class="block w-full px-3.5 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 transition-all duration-300 hover:bg-white hover:border-blue-400 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                        placeholder="Masukkan NIK"
+                        placeholder="Masukkan NIK atau Email"
                         required>
                 </div>
                 

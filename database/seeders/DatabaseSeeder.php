@@ -9,6 +9,7 @@ use App\Models\Mapel;
 use App\Models\Siswa;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -41,6 +42,33 @@ class DatabaseSeeder extends Seeder
             Siswa::factory(rand(5, 10))->create([
                 'kelas_id' => $kls->id
             ]);
+        }
+
+        // 7. Fix plain text passwords
+        $count = 0;
+
+        $admins = Admin::all();
+        foreach ($admins as $admin) {
+            $password = $admin->password;
+            if (!preg_match('/^\$2[ayb]\$/', $password)) {
+                $admin->password = Hash::make($password);
+                $admin->save();
+                $count++;
+            }
+        }
+
+        $gurus = Guru::all();
+        foreach ($gurus as $guru) {
+            $password = $guru->password;
+            if (!preg_match('/^\$2[ayb]\$/', $password)) {
+                $guru->password = Hash::make($password);
+                $guru->save();
+                $count++;
+            }
+        }
+
+        if ($count > 0) {
+            echo "Total passwords fixed: $count\n";
         }
     }
 }

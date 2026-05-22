@@ -50,5 +50,5 @@ Route::middleware(['auth:guru', 'walikelas'])->prefix('walikelas')->name('walike
     Route::get('/rapor/{siswaId}', [WalikelasController::class, 'rapor'])->name('rapor');
     Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanKeterangan'])->name('rapor.simpan');
     Route::get('/rapor-lihat/{siswaId}', [WalikelasController::class, 'raporLihat'])->name('rapor-lihat');
-    Route::get('/rapor/{siswaId}/pdf', [WalikelasController::class, 'exportPdf'])->name('rapor.pdf');
+    Route::get('/cetak/{siswaId}', [WalikelasController::class, 'cetakRapor'])->name('cetak.rapor');
 });
