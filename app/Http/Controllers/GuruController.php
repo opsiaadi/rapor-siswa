@@ -156,7 +156,7 @@ class GuruController extends Controller
                 if (!in_array((int) $siswaId, $validSiswaIds)) continue;
 
                 if (!isset($nilaiSession[$siswaId])) {
-                    $nilaiSession[$siswaId] = ['harian' => '', 'uts' => '', 'uas' => '', 'nilai_akhir' => ''];
+                    $nilaiSession[$siswaId] = ['harian' => null, 'uts' => null, 'uas' => null, 'nilai_akhir' => null];
                 }
                 $nilaiSession[$siswaId][$type] = floatval($value);
 
@@ -168,7 +168,7 @@ class GuruController extends Controller
                     $nilaiSession[$siswaId]['nilai_akhir'] = round(($harian * 0.4) + ($uts * 0.3) + ($uas * 0.3), 1);
                 }
 
-                $nilai_akhir = $nilaiSession[$siswaId]['nilai_akhir'] ?? null;
+                $nilai_akhir = $nilaiSession[$siswaId]['nilai_akhir'] ?: null;
 
                 Nilai::updateOrCreate(
                     [

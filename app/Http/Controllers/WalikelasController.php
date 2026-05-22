@@ -9,7 +9,6 @@ use App\Models\Nilai;
 use App\Models\Mapel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class WalikelasController extends Controller
 {
@@ -247,7 +246,7 @@ class WalikelasController extends Controller
         ]);
     }
 
-    public function exportPdf($siswaId)
+    public function cetakRapor($siswaId)
     {
         $kelas = $this->kelas();
         $sw = $this->getSiswa($siswaId, $kelas);
@@ -281,7 +280,7 @@ class WalikelasController extends Controller
 
         $waliKelas = $sw->kelas ? $sw->kelas->waliKelas : null;
 
-        $pdf = Pdf::loadView('walikelas.rapor_pdf', [
+        return view('walikelas.cetak_rapor', [
             'siswa' => (object) [
                 'id' => $sw->id,
                 'nis' => $sw->nis,
@@ -302,9 +301,5 @@ class WalikelasController extends Controller
             'semester' => $semester,
             'semesterList' => ['1' => 'Ganjil', '2' => 'Genap'],
         ]);
-
-        $filename = 'Rapor_' . ($sw->nis ?? 'unknown') . '_' . ($sw->nama ?? 'siswa') . '.pdf';
-
-        return $pdf->download($filename);
     }
 }

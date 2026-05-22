@@ -71,9 +71,15 @@
                     </td>
                     
                     <td class="px-6 py-4 text-right">
-<a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-blue-500/30 transition-all duration-200 hover:scale-105">
-                            Tambah Keterangan
-                        </a>
+                        <div class="flex items-center justify-end gap-2">
+                            <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-blue-500/30 transition-all duration-200 hover:scale-105">
+                                Tambah Keterangan
+                            </a>
+                            <a href="{{ route('walikelas.cetak.rapor', ['siswaId' => $siswa->id]) }}" target="_blank" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-emerald-500/30 transition-all duration-200 hover:scale-105">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                Cetak
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -93,9 +99,14 @@
                         <p class="font-medium text-gray-900 truncate">{{ $siswa->nama }}</p>
                         <p class="text-xs text-gray-500">{{ $siswa->nis }}</p>
                     </div>
-                    <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 shrink-0">
-                        Keterangan
-                    </a>
+                    <div class="flex flex-col gap-2 shrink-0">
+                        <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200">
+                            Keterangan
+                        </a>
+                        <a href="{{ route('walikelas.cetak.rapor', ['siswaId' => $siswa->id]) }}" target="_blank" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200">
+                            Cetak
+                        </a>
+                    </div>
                 </div>
             </div>
             @empty
@@ -111,18 +122,11 @@
 
     {{-- Action Buttons --}}
     <div class="flex items-center gap-2 mt-6">
-<button type="button" class="inline-flex items-center gap-2 rounded-xl bg-blue-700 hover:bg-blue-800 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-blue-700/30 active:scale-95 transition-all duration-200 hover:scale-105">
-            <svg class="w-6 h-6 text-cyan-100" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2 2 2 0 0 0 2 2h12a2 2 0 0 0 2-2 2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2V4a2 2 0 0 0-2-2h-7Zm-6 9a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-1h.5a2.5 2.5 0 0 0 0-5H5Zm1.5 3H6v-1h.5a.5.5 0 0 1 0 1Zm4.5-3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1.376A2.626 2.626 0 0 0 15 15.375v-1.75A2.626 2.626 0 0 0 12.375 11H11Zm1 5v-3h.375a.626.626 0 0 1 .625.626v1.748a.625.625 0 0 1-.626.626H12Zm5-5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1.376A2.626 2.626 0 0 0 15 15.375v-1.75A2.626 2.626 0 0 0 12.375 11H11Zm1 5v-3h.375a.626.626 0 0 1 .625.626v1.748a.625.625 0 0 1-.626.626H12Zm5-5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1.376A2.626 2.626 0 0 0 15 15.375v-1.75A2.626 2.626 0 0 0 12.375 11H11Zm1 5v-3h.375a.626.626 0 0 1 .625.626v1.748a.625.625 0 0 1-.626.626H12Zm5-5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1.376A2.626 2.626 0 0 0 15 15.375v-1.75A2.626 2.626 0 0 0 12.375 11H11Zm1 5v-3h.375a.626.626 0 0 1 .625.626v1.748a.625.625 0 0 1-.626.626H12Z" clip-rule="evenodd"/>
-            </svg>
-            Ekspor PDF
-        </button>
-        <button type="button" class="inline-flex items-center gap-2 rounded-xl border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 active:scale-95 transition-all duration-200 hover:scale-105">
-            <svg class="w-6 h-6 text-slate-600/70" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.926 10.898 15 7.727m-7.074 5.39L15 16.29M8 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm0-11a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/>
-            </svg>
-
-        Bagikan
-        </button>
+        @if($siswaList->count() > 0)
+        <a href="{{ route('walikelas.cetak.rapor', ['siswaId' => $siswaList->first()->id]) }}" target="_blank" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-600/30 active:scale-95 transition-all duration-200 hover:scale-105">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            Cetak Rapor Siswa
+        </a>
+        @endif
     </div>
 @endsection

@@ -9,6 +9,7 @@ use App\Models\Mapel;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -41,7 +42,7 @@ class AdminController extends Controller
         }
 
         if ($request->filled('password')) {
-            $admin->password = $request->password;
+            $admin->password = Hash::make($request->password);
         }
 
         $admin->save();
