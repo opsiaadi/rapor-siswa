@@ -8,62 +8,12 @@ use App\Models\Guru;
 use App\Models\Mapel;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
-    public function profile()
-    {
-        $admin = Auth::guard('admin')->user();
-        return view('admin.profile', compact('admin'));
-    }
-
-    public function updateProfile(Request $request)
-    {
-        $admin = Auth::guard('admin')->user();
-
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:admin,email,' . $admin->id,
-            'password' => 'nullable|min:6|confirmed',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        $admin->nama = $request->nama;
-        $admin->email = $request->email;
-
-        if ($request->hasFile('foto')) {
-            if ($admin->foto) {
-                Storage::disk('public')->delete($admin->foto);
-            }
-            $admin->foto = $request->file('foto')->store('foto-admin', 'public');
-        }
-
-        if ($request->filled('password')) {
-            $admin->password = Hash::make($request->password);
-        }
-
-        $admin->save();
-
-        return redirect()->route('admin.profile')->with('success', 'Profile berhasil diperbarui.');
-    }
-
-    public function removeFoto()
-    {
-        $admin = Auth::guard('admin')->user();
-        if ($admin->foto) {
-            Storage::disk('public')->delete($admin->foto);
-            $admin->foto = null;
-            $admin->save();
-        }
-        return redirect()->route('admin.profile')->with('success', 'Foto profil berhasil dihapus.');
-    }
-
     public function tampilkan(Request $request, $id = null, $nama = null)
     {
-        $admin = Auth::guard('admin')->user();
+        $admin = $this->getCurrentAdmin();
         $id = $admin->id ?? $id;
         $nama = $admin->nama ?? $nama;
         // Stats dari database
@@ -106,7 +56,7 @@ class AdminController extends Controller
                     'id' => $s->id,
                     'nis' => $s->nis ?? '-',
                     'nama' => $s->nama ?? '-',
-                    'jenis_kelamin' => $s->jenis_kelamin ?? '-',
+                    'jenis_kelamin' => $s->jenis_kelamin?->value ?? '-',
                     'tahun_ajaran' => $s->tahun_ajaran ?? '-',
                     'kelas_id' => $s->kelas_id,
                     'kelas_nama' => $s->kelas->nama_kelas ?? '-',

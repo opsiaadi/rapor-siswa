@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Kelas extends Model
 {
-    use HasFactory;
-
     protected $table = 'kelas';
 
     protected $fillable = [
@@ -45,5 +43,10 @@ class Kelas extends Model
     public function kelasMapels(): HasMany
     {
         return $this->hasMany(KelasMapel::class);
+    }
+
+    public static function findByWaliKelasId(int $guruId): Collection
+    {
+        return static::where('wali_kelas_id', $guruId)->get();
     }
 }

@@ -49,12 +49,12 @@
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                    <label for="kegatan" class="mb-2 block text-sm font-medium text-gray-700"> Kegiatan</label>
-                    <input id="kegatan" type="text" name="kegatan" value="{{ old('kegatan', $siswa->kegatan ?? '') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500" placeholder="Pramuka, Paskibra, PMR">
+                    <label for="kegiatan" class="mb-2 block text-sm font-medium text-gray-700"> Kegiatan</label>
+                    <input id="kegiatan" type="text" name="kegiatan" value="{{ old('kegiatan', $siswa->kegiatan ?? '') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500" placeholder="Pramuka, Paskibra, PMR">
                 </div>
                 <div>
-                    <label for="ket_kegatan" class="mb-2 block text-sm font-medium text-gray-700">Keterangan Kegiatan</label>
-                    <input id="ket_kegatan" type="text" name="ket_kegatan" value="{{ old('ket_kegatan', $siswa->ket_kegatan ?? '') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500" placeholder="Aktif dan disiplin">
+                    <label for="ket_kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Keterangan Kegiatan</label>
+                    <input id="ket_kegiatan" type="text" name="ket_kegiatan" value="{{ old('ket_kegiatan', $siswa->ket_kegiatan ?? '') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500" placeholder="Aktif dan disiplin">
                 </div>
             </div>
 

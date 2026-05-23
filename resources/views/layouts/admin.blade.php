@@ -44,7 +44,7 @@
                     </button>
 
                     @php $adminUser = Auth::guard('admin')->user(); @endphp
-                    <a href="{{ route('admin.profile') }}" class="flex items-center gap-1 pl-4 border-l border-white/20 hover:bg-white/5 rounded-lg px-2 py-1 transition-colors">
+                    <a href="{{ route('admin.profile.index') }}" class="flex items-center gap-1 pl-4 border-l border-white/20 hover:bg-white/5 rounded-lg px-2 py-1 transition-colors">
                         <div class="w-14 h-14 rounded-full overflow-hidden">
                             <img src="{{ $adminUser && $adminUser->foto ? Storage::disk('public')->url($adminUser->foto) : asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover"> 
                         </div>

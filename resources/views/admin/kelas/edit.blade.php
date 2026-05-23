@@ -172,8 +172,8 @@
                                 <td class="px-2 py-2 font-mono text-xs">{{ $siswa->nis }}</td>
                                 <td class="px-2 py-2">{{ $siswa->nama }}</td>
                                 <td class="px-2 py-2 text-center">
-                                    <span class="px-2 py-0.5 rounded text-xs {{ $siswa->jenis_kelamin === 'L' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
-                                        {{ $siswa->jenis_kelamin }}
+                                    <span class="px-2 py-0.5 rounded text-xs {{ $siswa->jenis_kelamin?->value === 'L' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
+                                        {{ $siswa->jenis_kelamin?->value }}
                                     </span>
                                 </td>
                             </tr>
