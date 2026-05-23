@@ -77,13 +77,13 @@
 </nav>
 
 <a href="{{ route('admin.profile.index') }}" class="block p-4 shrink-0 hover:bg-gray-50 transition-colors">
-    @php $admin = Auth::guard('admin')->user(); @endphp
+    @php $authUser = Auth::user(); @endphp
     <div class="flex items-center gap-1">
         <div class="w-16 h-16 rounded-full overflow-hidden ring-2 ring-white/30">
-            <img src="{{ $admin && $admin->foto ? Storage::disk('public')->url($admin->foto) : asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover">
+            <img src="{{ $authUser && $authUser->foto ? Storage::disk('public')->url($authUser->foto) : asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover">
         </div>
         <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-gray-700 truncate">{{ $admin->nama ?? ($userName ?? 'Admin') }}</p>
+            <p class="text-sm font-semibold text-gray-700 truncate">{{ $authUser->nama ?? ($userName ?? 'Admin') }}</p>
             <p class="text-xs text-gray-500 truncate">Admin TU</p>
         </div>
     </div>

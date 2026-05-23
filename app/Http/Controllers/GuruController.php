@@ -37,17 +37,17 @@ class GuruController extends Controller
 
     public function nama($id = null, $namaGuru = null)
     {
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
         return view('guru.dashboard_guru', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
-            'guruMengajar' => $this->getGuruMengajar($guru->id),
+            'id' => $user->id,
+            'namaGuru' => $user->nama,
+            'guruMengajar' => $this->getGuruMengajar($user->id),
         ]);
     }
 
     public function nilai(Request $request)
     {
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
 
         if ($request->isMethod('POST')) {
             $request->validate([
@@ -61,12 +61,12 @@ class GuruController extends Controller
                 'kelas' => 'required',
             ]);
 
-            $key = "nilai_{$guru->id}_{$request->mapel}_{$request->semester}";
+            $key = "nilai_{$user->id}_{$request->mapel}_{$request->semester}";
             $nilaiSession = $this->nilaiMapperService->saveNilaiFromRequest(
                 $request->input('nilai', []),
                 $request->mapel,
                 $request->semester,
-                $guru,
+                $user,
                 session($key, [])
             );
             session([$key => $nilaiSession]);
@@ -75,7 +75,7 @@ class GuruController extends Controller
             return redirect()->back()->with('success', $message);
         }
 
-        $guruMengajar = $this->getGuruMengajar($guru->id);
+        $guruMengajar = $this->getGuruMengajar($user->id);
 
         $filter = [
             'mengajarId' => $request->input('mengajar'),
@@ -97,12 +97,12 @@ class GuruController extends Controller
             ->values();
 
         $siswaList = $this->nilaiMapperService->buildSiswaNilaiList(
-            $filter['kelasId'], $filter['mapelId'], $guru, $filter
+            $filter['kelasId'], $filter['mapelId'], $user, $filter
         );
 
         return view('guru.input-nilai', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
+            'id' => $user->id,
+            'namaGuru' => $user->nama,
             'siswaList' => $siswaList,
             'guruMengajar' => $guruMengajar,
             'kelasList' => $kelasList,
@@ -110,17 +110,11 @@ class GuruController extends Controller
         ]);
     }
 
-    public function hasilbelajar($id = null, $namaGuru = null)
-    {
-        return redirect()->route('guru.dashboard', ['id' => $id, 'namaGuru' => $namaGuru])
-        ->with('info', 'Halaman hasil belajar belum tersedia.');
-    }
-
     public function daftarRapor()
     {
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
 
-        $guruMengajar = $this->getGuruMengajar($guru->id);
+        $guruMengajar = $this->getGuruMengajar($user->id);
         $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
 
         $siswaList = collect();
@@ -130,17 +124,17 @@ class GuruController extends Controller
         }
 
         return view('guru.daftar_rapor', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
+            'id' => $user->id,
+            'namaGuru' => $user->nama,
             'siswaList' => $siswaList,
         ]);
     }
 
     public function lihatRapor($siswaId)
     {
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
 
-        $guruMengajar = $this->getGuruMengajar($guru->id);
+        $guruMengajar = $this->getGuruMengajar($user->id);
         $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
 
         $siswa = Siswa::findByIdInKelasIds($siswaId, $kelasIds->toArray());
@@ -158,8 +152,8 @@ class GuruController extends Controller
         $rata_rata = $this->nilaiMapperService->calculateRataRata($nilaiList);
 
         return view('guru.rapor_lihat', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
+            'id' => $user->id,
+            'namaGuru' => $user->nama,
             'siswa' => Siswa::toRaporDetail($siswa),
             'nilaiList' => $nilaiList,
             'rata_rata' => $rata_rata,

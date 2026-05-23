@@ -20,7 +20,7 @@ class Kelas extends Model
 
     public function waliKelas(): BelongsTo
     {
-        return $this->belongsTo(Guru::class, 'wali_kelas_id');
+        return $this->belongsTo(User::class, 'wali_kelas_id');
     }
 
     public function siswa(): HasMany
@@ -33,11 +33,6 @@ class Kelas extends Model
         return $this->belongsToMany(Mapel::class, 'kelas_mapel', 'kelas_id', 'mapel_id')
             ->withPivot('guru_id')
             ->withTimestamps();
-    }
-
-    public function kelasMapel(): HasMany
-    {
-        return $this->hasMany(KelasMapel::class);
     }
 
     public function kelasMapels(): HasMany

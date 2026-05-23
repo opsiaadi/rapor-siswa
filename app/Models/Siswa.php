@@ -19,6 +19,7 @@ class Siswa extends Model
         'tahun_ajaran',
         'kelas_id',
         'keterangan',
+        'keterangan_extra',
         'kegiatan',
         'ket_kegiatan',
         'izin',
