@@ -28,7 +28,7 @@ class KelasMapel extends Model
 
     public function guru(): BelongsTo
     {
-        return $this->belongsTo(Guru::class);
+        return $this->belongsTo(User::class);
     }
 
     public static function findByGuruId(int $guruId): Collection

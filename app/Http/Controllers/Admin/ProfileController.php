@@ -11,47 +11,47 @@ class ProfileController extends Controller
 {
     public function edit()
     {
-        $admin = $this->getCurrentAdmin();
-        return view('admin.profile', compact('admin'));
+        $user = $this->getCurrentUser();
+        return view('admin.profile', compact('user'));
     }
 
     public function update(Request $request)
     {
-        $admin = $this->getCurrentAdmin();
+        $user = $this->getCurrentUser();
 
         $request->validate([
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:admin,email,' . $admin->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $admin->nama = $request->nama;
-        $admin->email = $request->email;
+        $user->nama = $request->nama;
+        $user->email = $request->email;
 
         if ($request->hasFile('foto')) {
-            if ($admin->foto) {
-                Storage::disk('public')->delete($admin->foto);
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
             }
-            $admin->foto = $request->file('foto')->store('foto-admin', 'public');
+            $user->foto = $request->file('foto')->store('foto-admin', 'public');
         }
 
         if ($request->filled('password')) {
-            $admin->password = Hash::make($request->password);
+            $user->password = Hash::make($request->password);
         }
 
-        $admin->save();
+        $user->save();
 
         return redirect()->route('admin.profile.index')->with('success', 'Profile berhasil diperbarui.');
     }
 
     public function destroyFoto()
     {
-        $admin = $this->getCurrentAdmin();
-        if ($admin->foto) {
-            Storage::disk('public')->delete($admin->foto);
-            $admin->foto = null;
-            $admin->save();
+        $user = $this->getCurrentUser();
+        if ($user->foto) {
+            Storage::disk('public')->delete($user->foto);
+            $user->foto = null;
+            $user->save();
         }
         return redirect()->route('admin.profile.index')->with('success', 'Foto profil berhasil dihapus.');
     }

@@ -24,10 +24,10 @@ class WalikelasController extends Controller
     
     private function kelas()
     {
-        $guru = $this->getCurrentGuru();
-        if (!$guru) return collect();
+        $user = $this->getCurrentUser();
+        if (!$user) return collect();
 
-        return Kelas::findByWaliKelasId($guru->id);
+        return Kelas::findByWaliKelasId($user->id);
     }
     
     private function siswaData($kelas)
@@ -56,31 +56,31 @@ class WalikelasController extends Controller
     
     public function dashboard()
     {
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
         $kelas = $this->kelas();
         $siswa = $this->siswaData($kelas);
         
         return view('walikelas.dashboard', [
-            'id' => $guru?->id,
-            'namaGuru' => $guru?->nama,
+            'id' => $user?->id,
+            'namaGuru' => $user?->nama,
             'selectedClass' => $this->kelasUtama($kelas),
             'totalSiswa' => $siswa->count(),
             'stats' => [
                 'kelas_perwalian' => $kelas->count(),
-                'mapel_diampu' => $guru ? $guru->mapels->count() : 0,
+                'mapel_diampu' => $user ? $user->mapels->count() : 0,
             ]
         ]);
     }
     
     public function finalisasi()
     {
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
         $kelas = $this->kelas();
         $siswaList = $this->siswaData($kelas);
 
         return view('walikelas.form_finalisasi', [
-            'id' => $guru?->id,
-            'namaGuru' => $guru?->nama,
+            'id' => $user?->id,
+            'namaGuru' => $user?->nama,
             'siswaList' => $siswaList,
             'totalSiswa' => $siswaList->count(),
         ]);
@@ -88,12 +88,12 @@ class WalikelasController extends Controller
     
     public function siswa()
     {
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
         $kelas = $this->kelas();
 
         return view('walikelas.data_siswa', [
-            'id' => $guru?->id,
-            'namaGuru' => $guru?->nama,
+            'id' => $user?->id,
+            'namaGuru' => $user?->nama,
             'siswaList' => $this->siswaData($kelas),
             'totalSiswa' => $this->siswaData($kelas)->count(),
             'nilaiList' => collect([]),
@@ -127,11 +127,11 @@ class WalikelasController extends Controller
         $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
-        $guru = $this->getCurrentGuru();
+        $user = $this->getCurrentUser();
 
         return view('walikelas.rapor_siswa', [
-            'id' => $guru?->id,
-            'namaGuru' => $guru?->nama,
+            'id' => $user?->id,
+            'namaGuru' => $user?->nama,
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
         ]);
@@ -161,9 +161,9 @@ class WalikelasController extends Controller
             return Pdf::loadView('walikelas.rapor_pdf', $data)->download('rapor-' . $sw->nama . '-' . $semester . '.pdf');
         }
 
-        $guru = $this->getCurrentGuru();
-        $data['id'] = $guru?->id;
-        $data['namaGuru'] = $guru?->nama;
+        $user = $this->getCurrentUser();
+        $data['id'] = $user?->id;
+        $data['namaGuru'] = $user?->nama;
         $data['kelasUtama'] = $this->kelasUtama($kelas);
 
         return view('walikelas.rapor_lihat', $data);

@@ -3,15 +3,12 @@
 namespace Database\Seeders;
 
 use App\Enums\JenisKelamin;
-use App\Enums\RoleAdmin;
-use App\Models\Admin;
-use App\Models\Guru;
+use App\Models\User;
 use App\Models\Kelas;
 use App\Models\Mapel;
 use App\Models\Siswa;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,16 +16,15 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // 1. Admin
-        Admin::create([
+        User::create([
             'nama' => 'Admin Utama',
+            'name' => 'Admin Utama',
             'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'role' => RoleAdmin::SuperAdmin,
+            'password' => 'password',
+            'role' => 'super_admin',
             'status' => 'aktif',
         ]);
 
-        // 2. Mapel
         $mapelData = [
             ['kode_mapel' => 'MAT', 'nama_mapel' => 'Matematika', 'kkm' => 75],
             ['kode_mapel' => 'BIN', 'nama_mapel' => 'Bahasa Indonesia', 'kkm' => 78],
@@ -43,26 +39,28 @@ class DatabaseSeeder extends Seeder
             $mapels->push(Mapel::create($data));
         }
 
-        // 3. Guru
         $guruData = [
-            ['nik' => '12345678901234', 'nama' => 'Budi Santoso', 'email' => 'budi@example.com', 'password' => Hash::make('password')],
-            ['nik' => '12345678901235', 'nama' => 'Siti Aminah', 'email' => 'siti@example.com', 'password' => Hash::make('password')],
-            ['nik' => '12345678901236', 'nama' => 'Ahmad Rizal', 'email' => 'ahmad@example.com', 'password' => Hash::make('password')],
-            ['nik' => '12345678901237', 'nama' => 'Dewi Lestari', 'email' => 'dewi@example.com', 'password' => Hash::make('password')],
-            ['nik' => '12345678901238', 'nama' => 'Rudi Hermawan', 'email' => 'rudi@example.com', 'password' => Hash::make('password')],
+            ['nik' => '12345678901234', 'nama' => 'Budi Santoso', 'email' => 'budi@example.com'],
+            ['nik' => '12345678901235', 'nama' => 'Siti Aminah', 'email' => 'siti@example.com'],
+            ['nik' => '12345678901236', 'nama' => 'Ahmad Rizal', 'email' => 'ahmad@example.com'],
+            ['nik' => '12345678901237', 'nama' => 'Dewi Lestari', 'email' => 'dewi@example.com'],
+            ['nik' => '12345678901238', 'nama' => 'Rudi Hermawan', 'email' => 'rudi@example.com'],
         ];
         $gurus = collect();
         foreach ($guruData as $data) {
-            $gurus->push(Guru::create($data));
+            $gurus->push(User::create([
+                ...$data,
+                'name' => $data['nama'],
+                'password' => 'password',
+                'role' => 'guru',
+            ]));
         }
 
-        // 4. Attach mapel ke guru (setiap guru mengajar 1-2 mapel)
         foreach ($gurus as $guru) {
             $randomMapels = $mapels->random(rand(1, 2));
             $guru->mapels()->attach($randomMapels->pluck('id')->toArray());
         }
 
-        // 5. Buat Kelas
         $kelasData = [
             ['nama_kelas' => 'X-RPL 1', 'tingkat' => 'X'],
             ['nama_kelas' => 'XI-TKJ 2', 'tingkat' => 'XI'],
@@ -76,7 +74,6 @@ class DatabaseSeeder extends Seeder
             ]));
         }
 
-        // 6. Buat Siswa
         $siswaTemplate = [
             ['nama' => 'Andi Pratama', 'jenis_kelamin' => JenisKelamin::L, 'tahun_ajaran' => '2024/2025'],
             ['nama' => 'Bella Khairunisa', 'jenis_kelamin' => JenisKelamin::P, 'tahun_ajaran' => '2024/2025'],

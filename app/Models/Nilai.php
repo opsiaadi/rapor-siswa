@@ -45,7 +45,7 @@ class Nilai extends Model
 
     public function guru(): BelongsTo
     {
-        return $this->belongsTo(Guru::class);
+        return $this->belongsTo(User::class);
     }
 
     public static function findBySiswaMapelSemester(int $siswaId, array $mapelIds, string $semester): Collection

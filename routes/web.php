@@ -11,20 +11,14 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WalikelasController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/homepage', function () {
-    return view('homepage');
-});
+Route::view('/', 'welcome');
+Route::view('/homepage', 'homepage');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'index']);
-
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth:admin', 'admin.active'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin,super_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard/{id?}/{nama?}', [AdminController::class, 'tampilkan'])->name('dashboard');
     Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'edit')->name('index');
@@ -38,7 +32,7 @@ Route::middleware(['auth:admin', 'admin.active'])->prefix('admin')->name('admin.
     Route::resource('/siswa', SiswaController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 });
 
-Route::middleware('auth:guru')->prefix('guru')->name('guru.')->group(function () {
+Route::middleware(['auth', 'role:guru,walikelas'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('dashboard');
     Route::get('/nilai', [GuruController::class, 'nilai'])->name('nilai');
     Route::post('/nilai', [GuruController::class, 'nilai'])->name('nilai.post');
@@ -46,7 +40,7 @@ Route::middleware('auth:guru')->prefix('guru')->name('guru.')->group(function ()
     Route::get('/rapor/{siswaId}', [GuruController::class, 'lihatRapor'])->name('rapor.lihat');
 });
 
-Route::middleware(['auth:guru', 'guru'])->prefix('walikelas')->name('walikelas.')->group(function () {
+Route::middleware(['auth', 'role:walikelas'])->prefix('walikelas')->name('walikelas.')->group(function () {
     Route::get('/dashboard', [WalikelasController::class, 'dashboard'])->name('dashboard');
     Route::get('/finalisasi', [WalikelasController::class, 'finalisasi'])->name('finalisasi');
     Route::get('/siswa', [WalikelasController::class, 'siswa'])->name('siswa');

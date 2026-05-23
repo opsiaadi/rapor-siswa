@@ -63,11 +63,11 @@ class NilaiMapperService
                 }
                 $nilaiSession[$siswaId][$type] = floatval($value);
 
-                $harian = $nilaiSession[$siswaId]['harian'] ?? 0;
-                $uts = $nilaiSession[$siswaId]['uts'] ?? 0;
-                $uas = $nilaiSession[$siswaId]['uas'] ?? 0;
+                $harian = $nilaiSession[$siswaId]['harian'] ?? null;
+                $uts = $nilaiSession[$siswaId]['uts'] ?? null;
+                $uas = $nilaiSession[$siswaId]['uas'] ?? null;
 
-                if ($harian && $uts && $uas) {
+                if ($harian !== null && $uts !== null && $uas !== null) {
                     $nilaiSession[$siswaId]['nilai_akhir'] = $this->gradeProcessor->calculateFinalGrade($harian, $uts, $uas);
                 }
 
@@ -79,10 +79,10 @@ class NilaiMapperService
                     ],
                     [
                         'guru_id' => $guru->id,
-                        'harian' => $nilaiSession[$siswaId]['harian'] ?: null,
-                        'uts' => $nilaiSession[$siswaId]['uts'] ?: null,
-                        'uas' => $nilaiSession[$siswaId]['uas'] ?: null,
-                        'nilai_akhir' => $nilaiSession[$siswaId]['nilai_akhir'] ?: null,
+                        'harian' => $nilaiSession[$siswaId]['harian'] ?? null,
+                        'uts' => $nilaiSession[$siswaId]['uts'] ?? null,
+                        'uas' => $nilaiSession[$siswaId]['uas'] ?? null,
+                        'nilai_akhir' => $nilaiSession[$siswaId]['nilai_akhir'] ?? null,
                     ]
                 );
             }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Siswa;
-use App\Models\Guru;
+use App\Models\User;
 use App\Models\Mapel;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
@@ -13,28 +13,25 @@ class AdminController extends Controller
 {
     public function tampilkan(Request $request, $id = null, $nama = null)
     {
-        $admin = $this->getCurrentAdmin();
-        $id = $admin->id ?? $id;
-        $nama = $admin->nama ?? $nama;
-        // Stats dari database
+        $user = $this->getCurrentUser();
+        $id = $user->id ?? $id;
+        $nama = $user->nama ?? $nama;
+
         $stats = [
             'total_siswa' => Siswa::count(),
-            'total_guru' => Guru::count(),
+            'total_guru' => User::whereIn('role', ['guru', 'walikelas'])->count(),
             'total_mapel' => Mapel::count(),
             'total_kelas' => Kelas::count(),
         ];
         
-        // Get unique tahun ajaran from siswa
         $tahunAjaranList = Siswa::distinct()->pluck('tahun_ajaran')->filter()->sort()->values();
         
         if ($tahunAjaranList->isEmpty()) {
             $tahunAjaranList = collect(['2024/2025']);
         }
         
-        // Selected tahun ajaran
         $selectedTA = $request->input('tahun_ajaran') ?? $tahunAjaranList->last();
         
-        // Hitung jumlah siswa per kelas
         $kelasPerKelas = Kelas::withCount(['siswa' => function($query) use ($selectedTA) {
             $query->where('tahun_ajaran', $selectedTA);
         }])->get()->map(function($kelas) {
@@ -46,7 +43,6 @@ class AdminController extends Controller
         
         $totalSiswa = $kelasPerKelas->sum('siswa_count');
         
-        // Recent siswa (last 5)
         $recentSiswa = Siswa::with('kelas.waliKelas')
             ->orderBy('created_at', 'desc')
             ->limit(5)
