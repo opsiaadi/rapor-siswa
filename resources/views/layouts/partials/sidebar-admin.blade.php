@@ -76,7 +76,7 @@
     </div>
 </nav>
 
-<a href="{{ route('admin.profile') }}" class="block p-4 shrink-0 hover:bg-gray-50 transition-colors">
+<a href="{{ route('admin.profile.index') }}" class="block p-4 shrink-0 hover:bg-gray-50 transition-colors">
     @php $admin = Auth::guard('admin')->user(); @endphp
     <div class="flex items-center gap-1">
         <div class="w-16 h-16 rounded-full overflow-hidden ring-2 ring-white/30">

@@ -6,9 +6,9 @@ use App\Enums\Semester;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Nilai;
-use App\Models\Mapel;
 use App\Interfaces\GradeProcessor;
 use App\Services\NilaiMapperService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class WalikelasController extends Controller
@@ -59,22 +59,15 @@ class WalikelasController extends Controller
         $guru = $this->getCurrentGuru();
         $kelas = $this->kelas();
         $siswa = $this->siswaData($kelas);
-        $kelasUtama = $kelas->first();
-        $totalSiswa = $siswa->count();
         
         return view('walikelas.dashboard', [
             'id' => $guru?->id,
             'namaGuru' => $guru?->nama,
-            'kelasList' => $kelas,
-            'assignedClasses' => $kelas,
             'selectedClass' => $this->kelasUtama($kelas),
-            'siswaList' => $siswa,
-            'totalSiswa' => $totalSiswa,
+            'totalSiswa' => $siswa->count(),
             'stats' => [
                 'kelas_perwalian' => $kelas->count(),
-                'total_siswa' => $siswa->count(),
                 'mapel_diampu' => $guru ? $guru->mapels->count() : 0,
-                'kelas_utama' => $kelasUtama ? $kelasUtama->nama_kelas : '-'
             ]
         ]);
     }
@@ -84,15 +77,12 @@ class WalikelasController extends Controller
         $guru = $this->getCurrentGuru();
         $kelas = $this->kelas();
         $siswaList = $this->siswaData($kelas);
-        $totalSiswa = $siswaList->count();
 
         return view('walikelas.form_finalisasi', [
             'id' => $guru?->id,
             'namaGuru' => $guru?->nama,
-            'assignedClasses' => $kelas,
-            'kelasUtama' => $this->kelasUtama($kelas),
             'siswaList' => $siswaList,
-            'totalSiswa' => $totalSiswa
+            'totalSiswa' => $siswaList->count(),
         ]);
     }
     
@@ -106,8 +96,6 @@ class WalikelasController extends Controller
             'namaGuru' => $guru?->nama,
             'siswaList' => $this->siswaData($kelas),
             'totalSiswa' => $this->siswaData($kelas)->count(),
-            'assignedClasses' => $kelas,
-            'kelasUtama' => $this->kelasUtama($kelas),
             'nilaiList' => collect([]),
         ]);
     }
@@ -118,7 +106,7 @@ class WalikelasController extends Controller
         $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
-        $request->validate([
+        $validated = $request->validate([
             'keterangan' => 'nullable|string|max:2000',
             'keterangan_extra' => 'nullable|string|max:2000',
             'kegiatan' => 'nullable|string|max:255',
@@ -128,70 +116,56 @@ class WalikelasController extends Controller
             'alpha' => 'nullable|integer|min:0|max:365',
         ]);
 
-        $sw->update([
-            'keterangan' => $request->keterangan ?? '',
-            'keterangan_extra' => $request->keterangan_extra ?? '',
-            'kegiatan' => $request->kegiatan ?? '',
-            'ket_kegiatan' => $request->ket_kegiatan ?? '',
-            'izin' => $request->izin ?? 0,
-            'sakit' => $request->sakit ?? 0,
-            'alpha' => $request->alpha ?? 0,
-            'status_rapor' => 'sudah',
-        ]);
+        $sw->update([...$validated, 'status_rapor' => 'sudah']);
         
         return redirect()->route('walikelas.finalisasi')->with('success', 'Keterangan berhasil disimpan.');
     }
 
-    public function raporLihat($siswaId)
+    public function rapor($siswaId)
     {
         $kelas = $this->kelas();
         $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
         $guru = $this->getCurrentGuru();
-        $semester = request('semester', '1');
 
-        $nilaiModels = Nilai::findBySiswaSemester($siswaId, $semester);
-        $nilaiList = $this->nilaiMapperService->mapNilaiList($nilaiModels);
-        $rata_rata = $this->nilaiMapperService->calculateRataRata($nilaiList);
-
-        $waliKelas = $sw->kelas ? $sw->kelas->waliKelas : null;
-
-        return view('walikelas.rapor_lihat', [
+        return view('walikelas.rapor_siswa', [
             'id' => $guru?->id,
             'namaGuru' => $guru?->nama,
-            'siswa' => Siswa::toRaporDetail($sw),
-            'wali_kelas' => $waliKelas ? (object) ['nama' => $waliKelas->nama] : (object) ['nama' => '-'],
+            'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
-            'assignedClasses' => $kelas,
-            'nilaiList' => $nilaiList,
-            'rata_rata' => $rata_rata,
-            'semester' => $semester,
-            'semesterList' => Semester::labels(),
         ]);
     }
 
-    public function cetakRapor($siswaId)
+    public function lihatRapor($siswaId)
     {
         $kelas = $this->kelas();
         $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
         $semester = request('semester', '1');
+        $nilaiList = $this->nilaiMapperService->mapNilaiList(Nilai::findBySiswaSemester($siswaId, $semester));
 
-        $nilaiModels = Nilai::findBySiswaSemester($siswaId, $semester);
-        $nilaiList = $this->nilaiMapperService->mapNilaiList($nilaiModels);
-        $rata_rata = $this->nilaiMapperService->calculateRataRata($nilaiList);
-
-        $waliKelas = $sw->kelas ? $sw->kelas->waliKelas : null;
-
-        return view('walikelas.cetak_rapor', [
+        $data = [
             'siswa' => Siswa::toRaporDetail($sw),
-            'wali_kelas' => $waliKelas ? (object) ['nama' => $waliKelas->nama] : (object) ['nama' => '-'],
+            'wali_kelas' => $sw->kelas?->waliKelas
+                ? (object) ['nama' => $sw->kelas->waliKelas->nama]
+                : (object) ['nama' => '-'],
             'nilaiList' => $nilaiList,
-            'rata_rata' => $rata_rata,
+            'rata_rata' => $this->nilaiMapperService->calculateRataRata($nilaiList),
             'semester' => $semester,
             'semesterList' => Semester::labels(),
-        ]);
+        ];
+
+        if (request()->route()->named('walikelas.cetak.rapor')) {
+            return Pdf::loadView('walikelas.rapor_pdf', $data)->download('rapor-' . $sw->nama . '-' . $semester . '.pdf');
+        }
+
+        $guru = $this->getCurrentGuru();
+        $data['id'] = $guru?->id;
+        $data['namaGuru'] = $guru?->nama;
+        $data['kelasUtama'] = $this->kelasUtama($kelas);
+
+        return view('walikelas.rapor_lihat', $data);
     }
 }

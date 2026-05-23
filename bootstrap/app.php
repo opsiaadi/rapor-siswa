@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(\App\Http\Middleware\SecurityHeadersMiddleware::class);
         $middleware->alias([
-            'walikelas' => \App\Http\Middleware\EnsureWalikelas::class,
+            'guru' => \App\Http\Middleware\EnsureGuru::class,
             'admin.active' => \App\Http\Middleware\EnsureAdminActive::class,
         ]);
     })
