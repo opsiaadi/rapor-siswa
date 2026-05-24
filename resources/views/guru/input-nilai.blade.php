@@ -60,7 +60,7 @@
         <input type="hidden" name="kelas" value="{{ $filter['kelasId'] ?? '' }}">
         <input type="hidden" name="semester" value="{{ $filter['semester'] ?? '' }}">
         <input type="hidden" name="mapel" value="{{ $filter['mapelId'] ?? '' }}">
-        <input type="hidden" name="action" id="actionInput" value="">
+        
         <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-sm">
                 <thead>
@@ -157,16 +157,14 @@
         @if(!$siswaList->isEmpty())
         <div class="flex justify-between mt-6 pt-4 border-t border-gray-200">
             <div class="flex gap-3">
-                <button type="button" onclick="editNilai()" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95">
+                <a href="{{ route('guru.nilai.edit', ['kelasId' => $filter['kelasId'], 'mapelId' => $filter['mapelId'], 'semester' => $filter['semester']]) }}"
+                    class="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/30">
                     Edit
-                </button>
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-green-500/30">
-                    Simpan
+                </a>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/30">
+                    Kirim
                 </button>
             </div>
-            <button type="button" onclick="kirimNilai()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/30">
-                Kirim
-            </button>
         </div>
         @endif
     </form>
@@ -176,5 +174,17 @@
     Silakan pilih data mengajar untuk mulai input nilai.
 </div>
 @endif
-
+<script>
+(function() {
+    var form = document.getElementById('nilaiForm');
+    if (!form) return;
+    form.addEventListener('submit', function() {
+        this.querySelectorAll('input[type="number"]').forEach(function(input) {
+            if (input.offsetParent === null) {
+                input.disabled = true;
+            }
+        });
+    });
+})();
+</script>
 @endsection
