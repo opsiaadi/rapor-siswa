@@ -35,7 +35,9 @@ Route::middleware(['auth', 'role:admin,super_admin'])->prefix('admin')->name('ad
 Route::middleware(['auth', 'role:guru,walikelas'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('dashboard');
     Route::get('/nilai', [GuruController::class, 'nilai'])->name('nilai');
-    Route::post('/nilai', [GuruController::class, 'nilai'])->name('nilai.post');
+    Route::post('/nilai', [GuruController::class, 'kirimNilai'])->name('nilai.post');
+    Route::get('/nilai/edit/{kelasId}/{mapelId}/{semester?}', [GuruController::class, 'editNilai'])->name('nilai.edit');
+    Route::post('/nilai/update', [GuruController::class, 'updateNilai'])->name('nilai.update');
     Route::get('/rapor', [GuruController::class, 'daftarRapor'])->name('rapor');
     Route::get('/rapor/{siswaId}', [GuruController::class, 'lihatRapor'])->name('rapor.lihat');
 });
@@ -45,7 +47,8 @@ Route::middleware(['auth', 'role:walikelas'])->prefix('walikelas')->name('walike
     Route::get('/finalisasi', [WalikelasController::class, 'finalisasi'])->name('finalisasi');
     Route::get('/siswa', [WalikelasController::class, 'siswa'])->name('siswa');
     Route::get('/rapor/{siswaId}', [WalikelasController::class, 'rapor'])->name('rapor');
+    Route::get('/rapor/{siswaId}/edit', [WalikelasController::class, 'editRapor'])->name('rapor.edit');
     Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanKeterangan'])->name('rapor.simpan');
     Route::get('/rapor-lihat/{siswaId}', [WalikelasController::class, 'lihatRapor'])->name('rapor-lihat');
-    Route::get('/cetak/{siswaId}', [WalikelasController::class, 'raporLihat'])->name('cetak.rapor');
+    Route::get('/cetak/{siswaId}', [WalikelasController::class, 'lihatRapor'])->name('cetak.rapor');
 });

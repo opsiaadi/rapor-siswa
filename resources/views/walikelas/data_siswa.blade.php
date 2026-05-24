@@ -72,8 +72,9 @@
                     
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
-                            <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-blue-500/30 transition-all duration-200 hover:scale-105">
-                                Tambah Keterangan
+                            @php $hasKeterangan = !empty($siswa->keterangan); @endphp
+                            <a href="{{ $hasKeterangan ? route('walikelas.rapor.edit', ['siswaId' => $siswa->id]) : route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full {{ $hasKeterangan ? 'bg-cyan-800 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700' }} active:scale-95 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-blue-500/30 transition-all duration-200 hover:scale-105">
+                                {{ $hasKeterangan ? 'Edit' : 'Tambah Keterangan' }}
                             </a>
                             <a href="{{ route('walikelas.cetak.rapor', ['siswaId' => $siswa->id]) }}" target="_blank" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-emerald-500/30 transition-all duration-200 hover:scale-105">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
@@ -100,8 +101,9 @@
                         <p class="text-xs text-gray-500">{{ $siswa->nis }}</p>
                     </div>
                     <div class="flex flex-col gap-2 shrink-0">
-                        <a href="{{ route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200">
-                            Keterangan
+                        @php $hasKeterangan = !empty($siswa->keterangan); @endphp
+                        <a href="{{ $hasKeterangan ? route('walikelas.rapor.edit', ['siswaId' => $siswa->id]) : route('walikelas.rapor', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center justify-center gap-1.5 rounded-full {{ $hasKeterangan ? 'bg-cyan-800 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700' }} px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200">
+                            {{ $hasKeterangan ? 'Edit' : 'Keterangan' }}
                         </a>
                         <a href="{{ route('walikelas.cetak.rapor', ['siswaId' => $siswa->id]) }}" target="_blank" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200">
                             Cetak

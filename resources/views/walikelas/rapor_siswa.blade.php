@@ -1,7 +1,23 @@
+@php
+$isEdit = ($mode ?? 'tambah') === 'edit';
+$formTitle = $isEdit ? 'Edit Keterangan' : 'Tambah Keterangan';
+$pageTitle = $formTitle . ' - ' . ($siswa->nama ?? 'Siswa');
+$breadcrumb = $isEdit
+    ? 'Finalisasi > Edit ' . ($siswa->nama ?? 'Siswa')
+    : 'Rapor > ' . ($siswa->nama ?? 'Siswa');
+
+$kegiatanOptions = ['Pramuka', 'Paskibra', 'PMR', 'OSIS', 'Ekstra Olahraga', 'Ekstra Seni'];
+$kegiatanVal = old('kegiatan', $siswa->kegiatan ?? '');
+$isCustomKegiatan = $kegiatanVal && !in_array($kegiatanVal, $kegiatanOptions);
+
+$ketKegiatanOptions = ['Aktif', 'Cukup Aktif', 'Tidak Aktif'];
+$ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
+@endphp
+
 @extends('layouts.walikelas', [
-    'title' => 'Rapor Siswa - ' . ($siswa->nama ?? 'Siswa'),
-    'pageTitle' => 'Rapor Siswa',
-    'breadcrumb' => 'Rapor > Edit ' . ($siswa->nama ?? 'Siswa'),
+    'title' => $pageTitle,
+    'pageTitle' => $formTitle,
+    'breadcrumb' => $breadcrumb,
     'id' => $id ?? 1,
     'namaGuru' => $namaGuru ?? 'Wali Kelas',
 ])
@@ -35,52 +51,99 @@
     {{-- Rapor Form --}}
     <div class="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
         <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Form Rapor Siswa</h3>
-            <p class="mt-1 text-sm text-gray-500">Lengkapi keterangan, kegiatan, absensi, dan tanda tangan untuk siswa ini.</p>
+            <h3 class="text-lg font-semibold text-gray-900">{{ $formTitle }}</h3>
+            <p class="mt-1 text-sm text-gray-500">Lengkapi keterangan siswa, ekstrakurikuler, absensi, dan tanda tangan untuk siswa ini.</p>
         </div>
 
         <form action="{{ route('walikelas.rapor.simpan', ['siswaId' => $siswa->id]) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
 
+            {{-- Section: Deskripsi Siswa --}}
+            <div class="border-b border-gray-100 pb-5">
+                <div class="mb-3">
+                    <h4 class="text-sm font-semibold text-gray-800">Deskripsi Siswa</h4>
+                    <p class="text-xs text-gray-400">Catatan umum mengenai perkembangan dan sikap siswa selama satu semester.</p>
+                </div>
+                <div>
+                    <label for="keterangan" class="mb-2 block text-sm font-medium text-gray-700">Keterangan Siswa</label>
+                    <textarea id="keterangan" name="keterangan" rows="4" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Contoh: menunjukkan perkembangan yang konsisten dalam akademik dan siap naik kelas.">{{ old('keterangan', $siswa->keterangan ?? '') }}</textarea>
+                </div>
+            </div>
+
+            {{-- Section: Ekstrakurikuler --}}
+            <div class="border-b border-gray-100 pb-5">
+                <div class="mb-3">
+                    <h4 class="text-sm font-semibold text-gray-800">Ekstrakurikuler</h4>
+                    <p class="text-xs text-gray-400">Kegiatan di luar jam pelajaran yang diikuti siswa beserta tingkat keaktifannya.</p>
+                </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label for="kegiatan_select" class="mb-2 block text-sm font-medium text-gray-700">Nama Kegiatan</label>
+                        <select id="kegiatan_select" onchange="syncKegiatan()"
+                            class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <option value="">-- Pilih Ekstrakurikuler --</option>
+                            @foreach($kegiatanOptions as $opt)
+                            <option value="{{ $opt }}" {{ !$isCustomKegiatan && $kegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                            @endforeach
+                            <option value="__other__" {{ $isCustomKegiatan ? 'selected' : '' }}>Lainnya</option>
+                        </select>
+                        <input type="text" id="kegiatan_custom" value="{{ $isCustomKegiatan ? $kegiatanVal : '' }}"
+                            oninput="syncKegiatan()"
+                            placeholder="Tulis nama kegiatan..."
+                            class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500"
+                            style="{{ $isCustomKegiatan ? 'display:block' : 'display:none' }}">
+                        <input type="hidden" name="kegiatan" id="kegiatan" value="{{ $kegiatanVal }}">
+                    </div>
+                    <div>
+                        <label for="ket_kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Keaktifan</label>
+                        <select id="ket_kegiatan" name="ket_kegiatan"
+                            class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <option value="">-- Pilih Keaktifan --</option>
+                            @foreach($ketKegiatanOptions as $opt)
+                            <option value="{{ $opt }}" {{ $ketKegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Section: Absensi --}}
+            <div class="border-b border-gray-100 pb-5">
+                <div class="mb-3">
+                    <h4 class="text-sm font-semibold text-gray-800">Absensi</h4>
+                    <p class="text-xs text-gray-400">Jumlah hari ketidakhadiran siswa selama satu semester.</p>
+                </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div>
+                        <label for="izin" class="mb-2 block text-sm font-medium text-gray-700">Izin</label>
+                        <input id="izin" type="number" min="0" name="izin" value="{{ old('izin', $siswa->izin ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
+                    </div>
+                    <div>
+                        <label for="sakit" class="mb-2 block text-sm font-medium text-gray-700">Sakit</label>
+                        <input id="sakit" type="number" min="0" name="sakit" value="{{ old('sakit', $siswa->sakit ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
+                    </div>
+                    <div>
+                        <label for="alpha" class="mb-2 block text-sm font-medium text-gray-700">Tanpa Keterangan</label>
+                        <input id="alpha" type="number" min="0" name="alpha" value="{{ old('alpha', $siswa->alpha ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            {{-- Section: Tanda Tangan --}}
             <div>
-                <label for="keterangan" class="mb-2 block text-sm font-medium text-gray-700">Keterangan Siswa</label>
-                <textarea id="keterangan" name="keterangan" rows="4" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Contoh: menunjukkan perkembangan yang konsisten dan siap naik kelas.">{{ old('keterangan', $siswa->keterangan ?? '') }}</textarea>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                    <label for="kegiatan" class="mb-2 block text-sm font-medium text-gray-700"> Kegiatan</label>
-                    <input id="kegiatan" type="text" name="kegiatan" value="{{ old('kegiatan', $siswa->kegiatan ?? '') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500" placeholder="Pramuka, Paskibra, PMR">
+                <div class="mb-3">
+                    <h4 class="text-sm font-semibold text-gray-800">Tanda Tangan</h4>
+                    <p class="text-xs text-gray-400">Data yang akan tercantum pada blok tanda tangan rapor.</p>
                 </div>
-                <div>
-                    <label for="ket_kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Keterangan Kegiatan</label>
-                    <input id="ket_kegiatan" type="text" name="ket_kegiatan" value="{{ old('ket_kegiatan', $siswa->ket_kegiatan ?? '') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500" placeholder="Aktif dan disiplin">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div>
-                    <label for="izin" class="mb-2 block text-sm font-medium text-gray-700">Izin</label>
-                    <input id="izin" type="number" min="0" name="izin" value="{{ old('izin', $siswa->izin ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
-                </div>
-                <div>
-                    <label for="sakit" class="mb-2 block text-sm font-medium text-gray-700">Sakit</label>
-                    <input id="sakit" type="number" min="0" name="sakit" value="{{ old('sakit', $siswa->sakit ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
-                </div>
-                <div>
-                    <label for="alpha" class="mb-2 block text-sm font-medium text-gray-700">Tanpa Keterangan</label>
-                    <input id="alpha" type="number" min="0" name="alpha" value="{{ old('alpha', $siswa->alpha ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                    <label for="nama" class="mb-2 block text-sm font-medium text-gray-700">Nama Penandatangan</label>
-                    <input id="nama" type="text" name="nama" value="{{ old('nama', $namaGuru ?? 'Wali Kelas') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Nama wali kelas">
-                </div>
-                <div>
-                    <label for="role" class="mb-2 block text-sm font-medium text-gray-700">Peran</label>
-                    <input id="role" type="text" name="role" value="{{ old('role', 'Wali Kelas') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Wali Kelas">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label for="nama" class="mb-2 block text-sm font-medium text-gray-700">Nama Wali Kelas</label>
+                        <input id="nama" type="text" name="nama" value="{{ old('nama', $namaGuru ?? 'Wali Kelas') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Nama wali kelas">
+                    </div>
+                    <div>
+                        <label for="role" class="mb-2 block text-sm font-medium text-gray-700">Jabatan</label>
+                        <input id="role" type="text" name="role" value="{{ old('role', 'Wali Kelas') }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Wali Kelas">
+                    </div>
                 </div>
             </div>
 
@@ -98,3 +161,25 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function syncKegiatan() {
+    const select = document.getElementById('kegiatan_select');
+    const custom = document.getElementById('kegiatan_custom');
+    const hidden = document.getElementById('kegiatan');
+
+    if (select.value === '__other__') {
+        custom.style.display = 'block';
+        hidden.value = custom.value;
+    } else {
+        custom.style.display = 'none';
+        hidden.value = select.value;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    syncKegiatan();
+});
+</script>
+@endpush

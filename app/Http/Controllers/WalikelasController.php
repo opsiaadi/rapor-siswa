@@ -134,6 +134,24 @@ class WalikelasController extends Controller
             'namaGuru' => $user?->nama,
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
+            'mode' => 'tambah',
+        ]);
+    }
+
+    public function editRapor($siswaId)
+    {
+        $kelas = $this->kelas();
+        $sw = $this->getSiswa($siswaId, $kelas);
+        if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
+
+        $user = $this->getCurrentUser();
+
+        return view('walikelas.rapor_siswa', [
+            'id' => $user?->id,
+            'namaGuru' => $user?->nama,
+            'siswa' => $sw,
+            'kelasUtama' => $this->kelasUtama($kelas),
+            'mode' => 'edit',
         ]);
     }
 
