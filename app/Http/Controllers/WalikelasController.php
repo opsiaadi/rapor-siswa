@@ -6,19 +6,16 @@ use App\Enums\Semester;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Nilai;
-use App\Interfaces\GradeProcessor;
 use App\Services\NilaiMapperService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class WalikelasController extends Controller
 {
-    private GradeProcessor $gradeProcessor;
     private NilaiMapperService $nilaiMapperService;
 
-    public function __construct(GradeProcessor $gradeProcessor, NilaiMapperService $nilaiMapperService)
+    public function __construct(NilaiMapperService $nilaiMapperService)
     {
-        $this->gradeProcessor = $gradeProcessor;
         $this->nilaiMapperService = $nilaiMapperService;
     }
     
@@ -161,7 +158,7 @@ class WalikelasController extends Controller
         $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
-        $semester = request('semester', '1');
+        $semester = request('semester', '2');
         $nilaiList = $this->nilaiMapperService->mapNilaiList(Nilai::findBySiswaSemester($siswaId, $semester));
 
         $data = [

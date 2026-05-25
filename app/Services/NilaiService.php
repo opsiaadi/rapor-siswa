@@ -7,14 +7,12 @@ use App\Models\KelasMapel;
 use App\Models\Mapel;
 use App\Models\Nilai;
 use App\Models\Siswa;
-use App\Interfaces\GradeProcessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection as BaseCollection;
 
 class NilaiService
 {
     public function __construct(
-        private GradeProcessor $gradeProcessor,
         private NilaiMapperService $nilaiMapperService,
     ) {}
 
@@ -68,7 +66,7 @@ class NilaiService
 
             $nilai_akhir = null;
             if ($harian !== null && $uts !== null && $uas !== null) {
-                $nilai_akhir = $this->gradeProcessor->calculateFinalGrade($harian, $uts, $uas);
+                $nilai_akhir = round(($harian * 0.4) + ($uts * 0.3) + ($uas * 0.3), 1);
             }
 
             Nilai::updateOrCreate(
@@ -112,7 +110,7 @@ class NilaiService
                 'nilai_akhir' => $nilai_akhir,
                 'nilai_id' => $n?->id ?? null,
                 'status_kkm' => $nilai_akhir !== null
-                    ? ($this->gradeProcessor->isPassedKKM($nilai_akhir, $kkm) ? 'lulus' : 'tidak_lulus')
+                    ? ($nilai_akhir >= $kkm ? 'lulus' : 'tidak_lulus')
                     : null,
             ];
         });

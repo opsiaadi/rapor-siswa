@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
-use App\Enums\JenisKelamin;
-use App\Enums\StatusRapor;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Siswa extends Model
 {
+    const L = 'L';
+    const P = 'P';
+    const RAPOR_BELUM = 'belum';
+    const RAPOR_SUDAH = 'sudah';
+
     protected $table = 'siswa';
 
     protected $fillable = [
@@ -31,8 +34,8 @@ class Siswa extends Model
     protected function casts(): array
     {
         return [
-            'jenis_kelamin' => JenisKelamin::class,
-            'status_rapor' => StatusRapor::class,
+            'jenis_kelamin' => 'string',
+            'status_rapor' => 'string',
         ];
     }
 
@@ -68,7 +71,7 @@ class Siswa extends Model
             'id' => $siswa->id,
             'nis' => $siswa->nis,
             'nama' => $siswa->nama,
-            'jenis_kelamin' => $siswa->jenis_kelamin?->value ?? '-',
+            'jenis_kelamin' => $siswa->jenis_kelamin ?? '-',
             'kelas_nama' => $siswa->kelas ? $siswa->kelas->nama_kelas : '-',
         ];
     }
@@ -79,7 +82,7 @@ class Siswa extends Model
             'id' => $siswa->id,
             'nis' => $siswa->nis,
             'nama' => $siswa->nama,
-            'jenis_kelamin' => $siswa->jenis_kelamin?->value ?? '-',
+            'jenis_kelamin' => $siswa->jenis_kelamin ?? '-',
             'tahun_ajaran' => $siswa->tahun_ajaran ?? '-',
             'kelas_nama' => $siswa->kelas ? $siswa->kelas->nama_kelas : '-',
             'keterangan' => $siswa->keterangan ?? '',
@@ -98,7 +101,7 @@ class Siswa extends Model
             'id' => $siswa->id,
             'nis' => $siswa->nis,
             'nama' => $siswa->nama,
-            'jenis_kelamin' => $siswa->jenis_kelamin?->value ?? '-',
+            'jenis_kelamin' => $siswa->jenis_kelamin ?? '-',
             'tahun_ajaran' => $siswa->tahun_ajaran ?? '-',
             'kelas_id' => $siswa->kelas_id,
             'kelas' => $siswa->kelas
@@ -109,7 +112,7 @@ class Siswa extends Model
             'izin' => $siswa->izin ?? 0,
             'sakit' => $siswa->sakit ?? 0,
             'alpha' => $siswa->alpha ?? 0,
-            'status_rapor' => $siswa->status_rapor?->value ?? 'belum',
+            'status_rapor' => $siswa->status_rapor ?? 'belum',
             'nilai_rata_rata' => $rata_rata,
         ];
     }

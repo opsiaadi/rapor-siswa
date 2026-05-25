@@ -83,12 +83,12 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
                     <div class="flex gap-6">
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="jenis_kelamin" value="L" {{ old('jenis_kelamin', $siswa->jenis_kelamin?->value ?? '') == 'L' ? 'checked' : '' }}
+                            <input type="radio" name="jenis_kelamin" value="L" {{ old('jenis_kelamin', $siswa->jenis_kelamin ?? '') == 'L' ? 'checked' : '' }}
                                 class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                             <span class="text-sm text-gray-700">Laki-laki</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="jenis_kelamin" value="P" {{ old('jenis_kelamin', $siswa->jenis_kelamin?->value ?? '') == 'P' ? 'checked' : '' }}
+                            <input type="radio" name="jenis_kelamin" value="P" {{ old('jenis_kelamin', $siswa->jenis_kelamin ?? '') == 'P' ? 'checked' : '' }}
                                 class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                             <span class="text-sm text-gray-700">Perempuan</span>
                         </label>
