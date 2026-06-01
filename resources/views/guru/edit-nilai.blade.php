@@ -10,8 +10,9 @@
 <div class="bg-gray-50 p-4 rounded-xl overflow-hidden">
     <h3 class="text-sm font-semibold text-gray-700 mb-4">Edit Nilai - Kelas {{ $kelasId ?? '' }} (Semester {{ $semester ?? '1' }})</h3>
 
-    <form id="editNilaiForm" action="{{ route('guru.nilai.update') }}" method="POST">
+    <form id="editNilaiForm" action="{{ route('guru.nilai.post') }}" method="POST">
         @csrf
+        <input type="hidden" name="action" value="update">
         <input type="hidden" name="mapel_id" value="{{ $mapelId }}">
         <input type="hidden" name="semester" value="{{ $semester }}">
         <input type="hidden" name="kelas_id" value="{{ $kelasId }}">

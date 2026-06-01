@@ -56,6 +56,7 @@
     
     <form id="nilaiForm" action="{{ route('guru.nilai') }}" method="POST">
         @csrf
+        <input type="hidden" name="action" value="kirim">
         <input type="hidden" name="mengajar" value="{{ $filter['mengajarId'] ?? '' }}">
         <input type="hidden" name="kelas" value="{{ $filter['kelasId'] ?? '' }}">
         <input type="hidden" name="semester" value="{{ $filter['semester'] ?? '' }}">

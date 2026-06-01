@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Dashboard Guru' }} - Sistem Pengolahan Rapor Siswa</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/notifications.js'])
     <style>
         .icon-gradient {
             stroke: url(#iconGradient);
@@ -36,12 +36,23 @@
                     <p class="text-sm text-blue-100/80">{{ $breadcrumb ?? 'Selamat datang di sistem pengolahan rapor siswa' }}</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button class="p-2 rounded-lg text-blue-100 hover:text-white hover:bg-white/10 transition-colors relative">
-                        <svg class="w-6 h-6 text-tial-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5.365V3m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175 0 .593 0 1.292-.538 1.292H5.538C5 18 5 17.301 5 16.708c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 12 5.365ZM8.733 18c.094.852.306 1.54.944 2.112a3.48 3.48 0 0 0 4.646 0c.638-.572 1.236-1.26 1.33-2.112h-6.92Z"/>
-                        </svg>
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-400 rounded-full"></span>
-                    </button>
+                    <div class="relative" id="notif-dropdown">
+                        <button type="button" onclick="toggleNotifDropdown()" class="p-2 rounded-lg text-blue-100 hover:text-white hover:bg-white/10 transition-colors relative">
+                            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5.365V3m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175 0 .593 0 1.292-.538 1.292H5.538C5 18 5 17.301 5 16.708c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 12 5.365ZM8.733 18c.094.852.306 1.54.944 2.112a3.48 3.48 0 0 0 4.646 0c.638-.572 1.236-1.26 1.33-2.112h-6.92Z"/>
+                            </svg>
+                            <span id="notif-badge" class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full hidden">0</span>
+                        </button>
+                        <div id="notif-panel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
+                                <h3 class="text-sm font-semibold text-gray-800">Notifikasi</h3>
+                                <button type="button" onclick="markAllRead()" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Tandai semua dibaca</button>
+                            </div>
+                            <div id="notif-list" class="max-h-80 overflow-y-auto divide-y divide-gray-100">
+                                <p class="px-4 py-6 text-center text-sm text-gray-400">Memuat notifikasi...</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="flex items-center gap-1 pl-4 border-l border-white/20">
                         <div class="w-14 h-14 rounded-full overflow-hidden">
@@ -72,5 +83,17 @@
             </footer>
         </div>
     </div>
+
+    <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2"></div>
+
+    <script>
+    window.__notif = {
+        url: '{{ route("guru.notifications") }}',
+        readUrl: '{{ url("guru/notifications") }}',
+        csrf: '{{ csrf_token() }}',
+        @if (session('success')) flashSuccess: '{{ session("success") }}', @endif
+        @if (session('error')) flashError: '{{ session("error") }}', @endif
+    };
+    </script>
 </body>
 </html>

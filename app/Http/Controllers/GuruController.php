@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas;
+use App\Models\Mapel;
+use App\Models\Notification;
+use App\Models\User;
 use App\Services\NilaiMapperService;
 use App\Services\NilaiService;
 use Illuminate\Http\Request;
@@ -55,6 +59,15 @@ class GuruController extends Controller
         ]);
     }
 
+    public function editNilai($kelasId, $mapelId, $semester = '1')
+    {
+        return redirect()->route('guru.nilai', [
+            'kelas_id' => $kelasId,
+            'mapel_id' => $mapelId,
+            'semester' => $semester,
+        ]);
+    }
+
     public function kirimNilai(Request $request)
     {
         $user = $this->getCurrentUser();
@@ -78,12 +91,41 @@ class GuruController extends Controller
 
         $mengajar = $this->nilaiService->findMengajarId($kelasId, $mapelId, $user->id);
 
+        $kelasNama = Kelas::find($kelasId)?->nama_kelas ?? "ID {$kelasId}";
+        $mapelNama = Mapel::find($mapelId)?->nama_mapel ?? "ID {$mapelId}";
+
+        $action = $request->input('action', 'kirim');
+        $notifTitle = $action === 'update' ? 'Nilai Diperbarui' : 'Nilai Terkirim';
+        $notifMsg = $action === 'update'
+            ? "Nilai {$mapelNama} untuk kelas {$kelasNama} berhasil diperbarui."
+            : "Nilai {$mapelNama} untuk kelas {$kelasNama} berhasil dikirim.";
+        $flashMsg = $action === 'update' ? 'Nilai berhasil diperbarui.' : 'Nilai berhasil dikirim.';
+
+        Notification::create([
+            'user_id' => $user->id,
+            'title' => $notifTitle,
+            'message' => $notifMsg,
+            'type' => 'success',
+            'url' => route('guru.nilai', ['mengajar' => $mengajar, 'kelas' => $kelasId, 'mapel' => $mapelId, 'semester' => $request->semester]),
+        ]);
+
+        $admins = User::whereIn('role', ['admin', 'super_admin'])->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'title' => $notifTitle,
+                'message' => "{$user->nama} mengirim nilai {$mapelNama} untuk kelas {$kelasNama} Semester {$request->semester}",
+                'type' => 'success',
+                'url' => route('admin.guru.index'),
+            ]);
+        }
+
         return redirect()->route('guru.nilai', [
             'mengajar' => $mengajar,
             'kelas' => $kelasId,
             'mapel' => $mapelId,
             'semester' => $request->semester,
-        ])->with('success', 'Nilai berhasil disimpan.');
+        ])->with('success', $flashMsg);
     }
 
     public function daftarRapor()
