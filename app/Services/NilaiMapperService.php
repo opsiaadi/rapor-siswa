@@ -2,22 +2,18 @@
 
 namespace App\Services;
 
-use App\Interfaces\GradeProcessor;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as BaseCollection;
 
 class NilaiMapperService
 {
-    public function __construct(
-        private GradeProcessor $gradeProcessor
-    ) {}
 
     public function mapNilaiList(Collection $nilaiList): BaseCollection
     {
         return $nilaiList->map(function ($n) {
             $kkm = $n->mapel->kkm ?? 75;
             $status = $n->nilai_akhir !== null
-                ? ($this->gradeProcessor->isPassedKKM($n->nilai_akhir, $kkm) ? 'Lulus' : 'Tidak Lulus')
+                ? ($n->nilai_akhir >= $kkm ? 'Lulus' : 'Tidak Lulus')
                 : '-';
             return (object) [
                 'id' => $n->id,
@@ -39,7 +35,12 @@ class NilaiMapperService
             ->pluck('nilai_akhir')
             ->toArray();
 
-        return $this->gradeProcessor->calculateAverage($nilaiAkhirValues);
+        $valid = array_filter($nilaiAkhirValues, fn($n) => $n !== '-' && $n !== null);
+        if (empty($valid)) {
+            return '-';
+        }
+
+        return round(array_sum($valid) / count($valid), 2);
     }
 
 }

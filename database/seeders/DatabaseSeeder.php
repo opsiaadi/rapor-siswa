@@ -2,10 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\JenisKelamin;
-use App\Models\User;
-use App\Models\Kelas;
-use App\Models\Mapel;
 use App\Models\Siswa;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -75,11 +71,11 @@ class DatabaseSeeder extends Seeder
         }
 
         $siswaTemplate = [
-            ['nama' => 'Andi Pratama', 'jenis_kelamin' => JenisKelamin::L, 'tahun_ajaran' => '2024/2025'],
-            ['nama' => 'Bella Khairunisa', 'jenis_kelamin' => JenisKelamin::P, 'tahun_ajaran' => '2024/2025'],
-            ['nama' => 'Citra Dewi', 'jenis_kelamin' => JenisKelamin::P, 'tahun_ajaran' => '2024/2025'],
-            ['nama' => 'Doni Saputra', 'jenis_kelamin' => JenisKelamin::L, 'tahun_ajaran' => '2024/2025'],
-            ['nama' => 'Eka Putri', 'jenis_kelamin' => JenisKelamin::P, 'tahun_ajaran' => '2024/2025'],
+            ['nama' => 'Andi Pratama', 'jenis_kelamin' => Siswa::L, 'tahun_ajaran' => '2024/2025'],
+            ['nama' => 'Bella Khairunisa', 'jenis_kelamin' => Siswa::P, 'tahun_ajaran' => '2024/2025'],
+            ['nama' => 'Citra Dewi', 'jenis_kelamin' => Siswa::P, 'tahun_ajaran' => '2024/2025'],
+            ['nama' => 'Doni Saputra', 'jenis_kelamin' => Siswa::L, 'tahun_ajaran' => '2024/2025'],
+            ['nama' => 'Eka Putri', 'jenis_kelamin' => Siswa::P, 'tahun_ajaran' => '2024/2025'],
         ];
         $nisCounter = 900000;
         foreach ($kelas as $kls) {

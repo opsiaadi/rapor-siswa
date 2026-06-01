@@ -4,21 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Enums\Semester;
 use App\Models\Kelas;
+use App\Models\Notification;
 use App\Models\Siswa;
 use App\Models\Nilai;
-use App\Interfaces\GradeProcessor;
+use App\Models\User;
 use App\Services\NilaiMapperService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class WalikelasController extends Controller
 {
-    private GradeProcessor $gradeProcessor;
     private NilaiMapperService $nilaiMapperService;
 
-    public function __construct(GradeProcessor $gradeProcessor, NilaiMapperService $nilaiMapperService)
+    public function __construct(NilaiMapperService $nilaiMapperService)
     {
-        $this->gradeProcessor = $gradeProcessor;
         $this->nilaiMapperService = $nilaiMapperService;
     }
     
@@ -117,6 +116,18 @@ class WalikelasController extends Controller
         ]);
 
         $sw->update([...$validated, 'status_rapor' => 'sudah']);
+
+        $admins = User::whereIn('role', ['admin', 'super_admin'])->get();
+        $waliUser = $this->getCurrentUser();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'title' => 'Rapor Difinalisasi',
+                'message' => "{$waliUser->nama} memfinalisasi rapor {$sw->nama} di kelas " . ($sw->kelas?->nama_kelas ?? '-'),
+                'type' => 'success',
+                'url' => route('admin.siswa.index'),
+            ]);
+        }
         
         return redirect()->route('walikelas.finalisasi')->with('success', 'Keterangan berhasil disimpan.');
     }
@@ -161,7 +172,7 @@ class WalikelasController extends Controller
         $sw = $this->getSiswa($siswaId, $kelas);
         if (!$sw) return redirect()->route('walikelas.siswa')->with('error', 'Siswa tidak ditemukan.');
 
-        $semester = request('semester', '1');
+        $semester = request('semester', '2');
         $nilaiList = $this->nilaiMapperService->mapNilaiList(Nilai::findBySiswaSemester($siswaId, $semester));
 
         $data = [

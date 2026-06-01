@@ -6,6 +6,7 @@ import './auto-guru';
 import './admin-dashboard';
 import './search';
 import './login';
+import './toggle-password';
 
 window.Alpine = Alpine;
 

@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Interfaces\GradeProcessor;
-use App\Services\GradeCalculationService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -13,7 +11,6 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(GradeProcessor::class, GradeCalculationService::class);
     }
 
     public function boot(): void
