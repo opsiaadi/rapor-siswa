@@ -52,7 +52,7 @@ class AdminController extends Controller
                     'id' => $s->id,
                     'nis' => $s->nis ?? '-',
                     'nama' => $s->nama ?? '-',
-                    'jenis_kelamin' => $s->jenis_kelamin?->value ?? '-',
+                    'jenis_kelamin' => $s->jenis_kelamin ?? '-',
                     'tahun_ajaran' => $s->tahun_ajaran ?? '-',
                     'kelas_id' => $s->kelas_id,
                     'kelas_nama' => $s->kelas->nama_kelas ?? '-',
