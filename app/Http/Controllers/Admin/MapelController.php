@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Helpers\FakeDataHelper;
+use App\Models\Mapel;
 use Illuminate\Http\Request;
 
 class MapelController extends Controller
 {
     public function index()
     {
-        $data = collect(array_map(fn($m) => (object) $m, FakeDataHelper::getMapel()));
+        $data = Mapel::all();
         return view('admin.mapel.index', compact('data'));
     }
 
@@ -21,41 +21,51 @@ class MapelController extends Controller
 
     public function store(Request $request)
     {
-        $data = FakeDataHelper::getMapel();
-        $data[] = [
-            'id' => FakeDataHelper::nextId($data),
+        $request->validate([
+            'kode_mapel' => 'required|unique:mapel,kode_mapel',
+            'nama_mapel' => 'required',
+            'kkm' => 'required|integer|min:0|max:100',
+        ]);
+
+        Mapel::create([
             'kode_mapel' => $request->kode_mapel,
             'nama_mapel' => $request->nama_mapel,
-            'kkm' => (int) $request->kkm,
-        ];
-        FakeDataHelper::saveMapel($data);
+            'kkm' => $request->kkm,
+        ]);
+
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $item = FakeDataHelper::findById(FakeDataHelper::getMapel(), $id);
-        if (!$item) return redirect()->route('admin.mapel.index')->with('error', 'Data tidak ditemukan.');
-        $mapel = (object) $item;
+        $mapel = Mapel::findOrFail($id);
         return view('admin.mapel.edit', compact('mapel'));
     }
 
     public function update(Request $request, $id)
     {
-        $data = FakeDataHelper::getMapel();
-        FakeDataHelper::updateById($data, $id, [
+        $mapel = Mapel::findOrFail($id);
+
+        $request->validate([
+            'kode_mapel' => 'required|unique:mapel,kode_mapel,' . $id,
+            'nama_mapel' => 'required',
+            'kkm' => 'required|integer|min:0|max:100',
+        ]);
+
+        $mapel->update([
             'kode_mapel' => $request->kode_mapel,
             'nama_mapel' => $request->nama_mapel,
-            'kkm' => (int) $request->kkm,
+            'kkm' => $request->kkm,
         ]);
-        FakeDataHelper::saveMapel($data);
+
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $data = FakeDataHelper::removeById(FakeDataHelper::getMapel(), $id);
-        FakeDataHelper::saveMapel($data);
+        $mapel = Mapel::findOrFail($id);
+        $mapel->delete();
+
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil dihapus.');
     }
 }

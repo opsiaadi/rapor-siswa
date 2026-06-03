@@ -17,3 +17,4 @@ class ProductController extends Controller
         return view('list_product', compact('data'));
     }
 }
+

@@ -3,108 +3,134 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Helpers\FakeDataHelper;
+use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\Mapel;
+use App\Models\KelasMapel;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
     public function index()
     {
-        // Hitung jumlah siswa per kelas DARI data siswa real (session)
-        $siswaPerKelas = [];
-        foreach (FakeDataHelper::getSiswa() as $s) {
-            $kid = $s['kelas_id'] ?? null;
-            if ($kid) {
-                $siswaPerKelas[$kid] = ($siswaPerKelas[$kid] ?? 0) + 1;
-            }
-        }
-
-        $kelas = array_map(fn($k) => (object) array_merge($k, [
-            'wali_kelas' => (object) ['id' => $k['wali_kelas_id'] ?? null, 'nama' => $k['wali_nama'] ?? '-'],
-            'siswa' => collect(range(1, $siswaPerKelas[$k['id']] ?? 0)),
-            'siswa_count' => $siswaPerKelas[$k['id']] ?? 0,
-            'mapel' => collect([]),
-        ]), FakeDataHelper::getKelas());
-        $data = collect($kelas);
+        $data = Kelas::with('waliKelas')->get();
         return view('admin.kelas.index', compact('data'));
     }
 
     public function create()
     {
-        $guruList = collect(FakeDataHelper::getGuruOptions());
-        $mapelList = collect(FakeDataHelper::getMapelOptions());
-        return view('admin.kelas.create', compact('guruList', 'mapelList'));
-    }
+        $guruList = Guru::with('mapels')->get();
+        $mapelList = Mapel::all();
 
-    public function store(Request $request)
-    {
-        $data = FakeDataHelper::getKelas();
-        $waliId = (int) ($request->wali_kelas_id ?? 0);
-        $waliGuru = collect(FakeDataHelper::getGuruOptions())->firstWhere('id', $waliId);
-        $waliNama = $waliGuru->nama ?? '-';
+        // Build mapel_id => [guru_id, ...] mapping using Eloquent collection
+        $mapelGuruMap = $guruList->flatMap(function ($guru) {
+            return $guru->mapels->map(function ($mapel) use ($guru) {
+                return ['mapel_id' => $mapel->id, 'guru_id' => $guru->id];
+            });
+        })->groupBy('mapel_id')->map(function ($group) {
+            return $group->pluck('guru_id')->toArray();
+        })->toArray();
 
-        $newId = FakeDataHelper::nextId($data);
-        $data[] = [
-            'id' => $newId,
-            'nama_kelas' => $request->nama_kelas,
-            'tingkat' => $request->tingkat,
-            'wali_kelas_id' => $waliId ?: null,
-            'wali_nama' => $waliNama,
-            'siswa_count' => 0,
-            'mapel_ids' => $request->mapel_ids ?? [],
-            'mapel_guru' => $request->mapel_guru ?? [],
-        ];
-        FakeDataHelper::saveKelas($data);
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
+        $currentMapelGuru = [];
+        return view('admin.kelas.create', compact('guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap'));
     }
 
     public function edit($id)
     {
-        $item = FakeDataHelper::findById(FakeDataHelper::getKelas(), $id);
-        if (!$item) return redirect()->route('admin.kelas.index')->with('error', 'Data tidak ditemukan.');
-        
-        $mapelIds = $item['mapel_ids'] ?? [];
-        $mapelGuru = $item['mapel_guru'] ?? [];
-        
-        $kelas = (object) array_merge($item, [
-            'wali_kelas' => (object) ['id' => $item['wali_kelas_id'] ?? null, 'nama' => $item['wali_nama'] ?? '-'],
-            'mapel' => collect(array_map(fn($mid) => ['id' => $mid], $mapelIds)),
-            'kelasMapel' => collect([]),
+        $kelas = Kelas::with(['siswa', 'kelasMapels.guru', 'kelasMapels.mapel'])->findOrFail($id);
+        $guruList = Guru::with('mapels')->get();
+        $mapelList = Mapel::all();
+
+        $siswaList = $kelas->siswa;
+
+        // Build current mapel_guru mapping using Eloquent pluck
+        $currentMapelGuru = $kelas->kelasMapels->pluck('guru_id', 'mapel_id')->toArray();
+
+        // Build mapel_guru map for JS using Eloquent collection
+        $mapelGuruMap = $guruList->flatMap(function ($guru) {
+            return $guru->mapels->map(function ($mapel) use ($guru) {
+                return ['mapel_id' => $mapel->id, 'guru_id' => $guru->id];
+            });
+        })->groupBy('mapel_id')->map(function ($group) {
+            return $group->pluck('guru_id')->toArray();
+        })->toArray();
+
+        return view('admin.kelas.edit', compact('kelas', 'siswaList', 'guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama_kelas' => 'required',
+            'tingkat' => 'required',
         ]);
-        
-        // Get students in this class
-        $allSiswa = FakeDataHelper::getSiswa();
-        $siswaList = array_filter($allSiswa, fn($s) => $s['kelas_id'] == $id);
-        
-        $guruList = collect(FakeDataHelper::getGuruOptions());
-        $mapelList = collect(FakeDataHelper::getMapelOptions());
-        $currentMapelGuru = $mapelGuru;
-        return view('admin.kelas.edit', compact('kelas', 'guruList', 'mapelList', 'currentMapelGuru', 'siswaList'));
+
+        $kelas = Kelas::create([
+            'nama_kelas' => $request->nama_kelas,
+            'tingkat' => $request->tingkat,
+            'wali_kelas_id' => $request->wali_kelas_id ?: null,
+        ]);
+
+        // Save mapel and guru pengampu to kelas_mapel
+        if ($request->mapel_ids) {
+            foreach ($request->mapel_ids as $mapelId) {
+                $guruId = $request->mapel_guru[$mapelId] ?? null;
+                if ($guruId) {
+                    KelasMapel::create([
+                        'kelas_id' => $kelas->id,
+                        'mapel_id' => $mapelId,
+                        'guru_id' => $guruId,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
     {
-        $data = FakeDataHelper::getKelas();
-        $waliId = (int) ($request->wali_kelas_id ?? 0);
-        $waliGuru = collect(FakeDataHelper::getGuruOptions())->firstWhere('id', $waliId);
-        $waliNama = $waliGuru ? $waliGuru->nama : '-';
+        $kelas = Kelas::findOrFail($id);
 
-        FakeDataHelper::updateById($data, $id, [
+        $request->validate([
+            'nama_kelas' => 'required',
+            'tingkat' => 'required',
+        ]);
+
+        $kelas->update([
             'nama_kelas' => $request->nama_kelas,
             'tingkat' => $request->tingkat,
-            'wali_kelas_id' => $waliId ?: null,
-            'wali_nama' => $waliNama,
-            'mapel_ids' => $request->mapel_ids ?? [],
-            'mapel_guru' => $request->mapel_guru ?? [],
+            'wali_kelas_id' => $request->wali_kelas_id ?: null,
         ]);
-        FakeDataHelper::saveKelas($data);
+
+        // Update kelas_mapel entries using Eloquent
+        KelasMapel::where('kelas_id', $id)->delete();
+
+        if ($request->mapel_ids) {
+            foreach ($request->mapel_ids as $mapelId) {
+                $guruId = $request->mapel_guru[$mapelId] ?? null;
+                if ($guruId) {
+                    KelasMapel::create([
+                        'kelas_id' => $kelas->id,
+                        'mapel_id' => $mapelId,
+                        'guru_id' => $guruId,
+                    ]);
+                }
+            }
+        }
+
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $data = FakeDataHelper::removeById(FakeDataHelper::getKelas(), $id);
-        FakeDataHelper::saveKelas($data);
+        $kelas = Kelas::findOrFail($id);
+
+        // Delete related kelas_mapel first
+        KelasMapel::where('kelas_id', $id)->delete();
+
+        $kelas->delete();
+
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }
 }

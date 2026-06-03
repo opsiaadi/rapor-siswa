@@ -3,59 +3,116 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Helpers\FakeDataHelper;
+use App\Models\Siswa;
+use App\Models\Guru;
+use App\Models\Mapel;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
-    function tampilkan(Request $request, $id = 'ADM001', $nama = 'Admin TU'){
-        $stats = FakeDataHelper::getDashboardStats();
-        $kelasData = FakeDataHelper::getKelasOptions();
-        $allSiswa = FakeDataHelper::getSiswa();
+    public function profile()
+    {
+        $admin = Auth::guard('admin')->user();
+        return view('admin.profile', compact('admin'));
+    }
 
-        // Get unique tahun ajaran from siswa data
-        $tahunAjaranList = collect($allSiswa)
-            ->pluck('tahun_ajaran')
-            ->filter()
-            ->unique()
-            ->sort()
-            ->values()
-            ->toArray();
-        if (empty($tahunAjaranList)) {
-            $tahunAjaranList = ['2024/2025'];
-        }
+    public function updateProfile(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
 
-        // Selected tahun ajaran: from query param OR default to latest
-        $selectedTA = $request->input('tahun_ajaran');
-        if (!$selectedTA) {
-            $selectedTA = end($tahunAjaranList);
-        }
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:admin,email,' . $admin->id,
+            'password' => 'nullable|min:6|confirmed',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-        // Filter siswa by tahun ajaran yang dipilih
-        $filteredSiswa = array_filter($allSiswa, fn($s) => ($s['tahun_ajaran'] ?? '') === $selectedTA);
+        $admin->nama = $request->nama;
+        $admin->email = $request->email;
 
-        // Hitung jumlah siswa per kelas berdasarkan filtered siswa
-        $kelasPerKelas = [];
-        foreach ($kelasData as $k) {
-            $count = 0;
-            foreach ($filteredSiswa as $s) {
-                if (($s['kelas_id'] ?? 0) == ($k->id ?? 0)) $count++;
+        if ($request->hasFile('foto')) {
+            if ($admin->foto) {
+                Storage::disk('public')->delete($admin->foto);
             }
-            $kelasPerKelas[] = (object) [
-                'nama_kelas' => $k->nama_kelas,
-                'siswa_count' => $count,
-            ];
+            $admin->foto = $request->file('foto')->store('foto-admin', 'public');
         }
 
-        $totalSiswa = array_sum(array_column($kelasPerKelas, 'siswa_count'));
+        if ($request->filled('password')) {
+            $admin->password = $request->password;
+        }
 
-        $recentSiswa = array_map(function($s) use ($kelasData) {
-            $kelasObj = collect($kelasData)->firstWhere('id', $s['kelas_id'] ?? null);
-            return (object) array_merge($s, [
-                'wali_nama' => $kelasObj->wali_nama ?? '-',
-            ]);
-        }, FakeDataHelper::getRecentSiswa(5));
+        $admin->save();
 
+        return redirect()->route('admin.profile')->with('success', 'Profile berhasil diperbarui.');
+    }
+
+    public function removeFoto()
+    {
+        $admin = Auth::guard('admin')->user();
+        if ($admin->foto) {
+            Storage::disk('public')->delete($admin->foto);
+            $admin->foto = null;
+            $admin->save();
+        }
+        return redirect()->route('admin.profile')->with('success', 'Foto profil berhasil dihapus.');
+    }
+
+    public function tampilkan(Request $request, $id = null, $nama = null)
+    {
+        $admin = Auth::guard('admin')->user();
+        $id = $admin->id ?? $id;
+        $nama = $admin->nama ?? $nama;
+        // Stats dari database
+        $stats = [
+            'total_siswa' => Siswa::count(),
+            'total_guru' => Guru::count(),
+            'total_mapel' => Mapel::count(),
+            'total_kelas' => Kelas::count(),
+        ];
+        
+        // Get unique tahun ajaran from siswa
+        $tahunAjaranList = Siswa::distinct()->pluck('tahun_ajaran')->filter()->sort()->values();
+        
+        if ($tahunAjaranList->isEmpty()) {
+            $tahunAjaranList = collect(['2024/2025']);
+        }
+        
+        // Selected tahun ajaran
+        $selectedTA = $request->input('tahun_ajaran') ?? $tahunAjaranList->last();
+        
+        // Hitung jumlah siswa per kelas
+        $kelasPerKelas = Kelas::withCount(['siswa' => function($query) use ($selectedTA) {
+            $query->where('tahun_ajaran', $selectedTA);
+        }])->get()->map(function($kelas) {
+            return (object) [
+                'nama_kelas' => $kelas->nama_kelas,
+                'siswa_count' => $kelas->siswa_count,
+            ];
+        });
+        
+        $totalSiswa = $kelasPerKelas->sum('siswa_count');
+        
+        // Recent siswa (last 5)
+        $recentSiswa = Siswa::with('kelas.waliKelas')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function($s) {
+                return (object) [
+                    'id' => $s->id,
+                    'nis' => $s->nis ?? '-',
+                    'nama' => $s->nama ?? '-',
+                    'jenis_kelamin' => $s->jenis_kelamin ?? '-',
+                    'tahun_ajaran' => $s->tahun_ajaran ?? '-',
+                    'kelas_id' => $s->kelas_id,
+                    'kelas_nama' => $s->kelas->nama_kelas ?? '-',
+                    'wali_nama' => $s->kelas->waliKelas->nama ?? '-',
+                ];
+            });
+        
         return view('admin.dashboard_admin', [
             'id' => $id,
             'nama' => $nama,
