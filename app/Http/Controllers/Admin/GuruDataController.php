@@ -3,63 +3,91 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Helpers\FakeDataHelper;
+use App\Models\Guru;
+use App\Models\Mapel;
 use Illuminate\Http\Request;
 
 class GuruDataController extends Controller
 {
     public function index()
     {
-        $data = collect(array_map(fn($g) => (object) $g, FakeDataHelper::getGuru()));
+        $data = Guru::with('mapels')->get();
         return view('admin.guru.index', compact('data'));
     }
 
     public function create()
     {
-        $mapelList = collect(FakeDataHelper::getMapelOptions());
+        $mapelList = Mapel::all();
         return view('admin.guru.create', compact('mapelList'));
     }
 
     public function store(Request $request)
     {
-        $data = FakeDataHelper::getGuru();
-        $data[] = [
-            'id' => FakeDataHelper::nextId($data),
+        $request->validate([
+            'nik' => 'required|unique:guru,nik',
+            'nama' => 'required',
+            'email' => 'required|email|unique:guru,email',
+            'password' => 'required',
+        ]);
+
+        $guru = Guru::create([
             'nik' => $request->nik,
             'nama' => $request->nama,
             'email' => $request->email,
-            'mapel_ids' => $request->mapel_ids ?? [],
-        ];
-        FakeDataHelper::saveGuru($data);
+            'password' => $request->password,
+        ]);
+
+        if ($request->has('mapel_ids')) {
+            $guru->mapels()->sync($request->mapel_ids);
+        }
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $item = FakeDataHelper::findById(FakeDataHelper::getGuru(), $id);
-        if (!$item) return redirect()->route('admin.guru.index')->with('error', 'Data tidak ditemukan.');
-        $guru = (object) $item;
-        $mapelList = collect(FakeDataHelper::getMapelOptions());
+        $guru = Guru::with('mapels')->findOrFail($id);
+        $mapelList = Mapel::all();
         return view('admin.guru.edit', compact('guru', 'mapelList'));
     }
 
     public function update(Request $request, $id)
     {
-        $data = FakeDataHelper::getGuru();
-        FakeDataHelper::updateById($data, $id, [
+        $guru = Guru::findOrFail($id);
+
+        $request->validate([
+            'nik' => 'required|unique:guru,nik,' . $id,
+            'nama' => 'required',
+            'email' => 'required|email|unique:guru,email,' . $id,
+        ]);
+
+        $guru->update([
             'nik' => $request->nik,
             'nama' => $request->nama,
             'email' => $request->email,
-            'mapel_ids' => $request->mapel_ids ?? [],
+            'password' => $request->password ?: $guru->password,
         ]);
-        FakeDataHelper::saveGuru($data);
+
+        if ($request->has('mapel_ids')) {
+            $guru->mapels()->sync($request->mapel_ids);
+        } else {
+            $guru->mapels()->sync([]);
+        }
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $data = FakeDataHelper::removeById(FakeDataHelper::getGuru(), $id);
-        FakeDataHelper::saveGuru($data);
+        $guru = Guru::findOrFail($id);
+        $guru->delete();
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus.');
+    }
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
     }
 }

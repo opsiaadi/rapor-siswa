@@ -18,6 +18,13 @@ class Siswa extends Model
         'jenis_kelamin',
         'tahun_ajaran',
         'kelas_id',
+        'keterangan',
+        'kegiatan',
+        'ket_kegiatan',
+        'izin',
+        'sakit',
+        'alpha',
+        'status_rapor',
     ];
 
     public function kelas(): BelongsTo

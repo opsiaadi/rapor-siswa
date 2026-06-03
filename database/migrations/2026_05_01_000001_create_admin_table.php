@@ -8,17 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('siswa', function (Blueprint $table) {
+        Schema::create('admin', function (Blueprint $table) {
             $table->id();
-            $table->string('nis')->unique();
             $table->string('nama');
-            $table->string('kelas');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('role')->default('admin');
+            $table->string('status')->default('aktif');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('siswa');
+        Schema::dropIfExists('admin');
     }
 };

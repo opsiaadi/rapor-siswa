@@ -2,7 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Admin;
+use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\Mapel;
+use App\Models\Siswa;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -10,16 +14,33 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Admin
+        Admin::factory(3)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // 2. Mapel
+        $mapels = Mapel::factory(7)->create();
+
+        // 3. Guru
+        $gurus = Guru::factory(5)->create();
+
+        // 4. Attach mapel ke guru (setiap guru mengajar 1-2 mapel)
+        foreach ($gurus as $guru) {
+            $randomMapels = $mapels->random(rand(1, 2));
+            $guru->mapels()->attach($randomMapels->pluck('id')->toArray());
+        }
+
+        // 5. Buat Kelas
+        $kelas = Kelas::factory(3)->create([
+            'wali_kelas_id' => $gurus->random()->id
         ]);
+
+        // 6. Buat Siswa
+        foreach ($kelas as $kls) {
+            Siswa::factory(rand(5, 10))->create([
+                'kelas_id' => $kls->id
+            ]);
+        }
     }
 }
