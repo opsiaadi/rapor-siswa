@@ -3,23 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kelas;
+use App\Enums\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
 
 class LoginController extends Controller
 {
     public function index(Request $request)
     {
-        if (Auth::guard('admin')->check()) {
-            $admin = Auth::guard('admin')->user();
-            return redirect()->route('admin.dashboard', ['id' => $admin->id, 'nama' => $admin->nama]);
-        }
-        if (Auth::guard('guru')->check()) {
-            $role = session('role', 'guru');
-            return $role === 'walikelas'
-                ? redirect()->route('walikelas.dashboard')
-                : redirect()->route('guru.dashboard');
+        if (Auth::check()) {
+            $user = Auth::user();
+            return match ($user->role) {
+                UserRole::Admin, UserRole::SuperAdmin => redirect()->route('admin.dashboard', ['id' => $user->id, 'nama' => $user->nama]),
+                UserRole::Walikelas => redirect()->route('walikelas.dashboard'),
+                default => redirect()->route('guru.dashboard', ['id' => $user->id, 'namaGuru' => $user->nama]),
+            };
         }
 
         if ($request->isMethod('POST')) {
@@ -30,44 +28,27 @@ class LoginController extends Controller
             ]);
 
             $role = $request->input('role');
-            $nik = $request->input('nik');
+            $credential = $request->input('nik');
             $password = $request->input('password');
+            $field = $role === 'admin' ? 'email' : 'nik';
 
-            $limiterKey = $role . '|' . $nik;
+            if (Auth::attempt([$field => $credential, 'password' => $password])) {
+                $user = Auth::user();
 
-            if (RateLimiter::tooManyAttempts('login:' . $limiterKey, 5)) {
-                $seconds = RateLimiter::availableIn('login:' . $limiterKey);
-                return back()->with('error', 'Terlalu banyak percobaan login. Akun Anda dikunci sementara. Silakan coba lagi dalam ' . $seconds . ' detik.');
-            }
-
-            if ($role === 'admin') {
-                if (Auth::guard('admin')->attempt(['email' => $nik, 'password' => $password])) {
-                    RateLimiter::clear('login:' . $limiterKey);
-                    $admin = Auth::guard('admin')->user();
-                    session(['role' => 'admin']);
-                    return redirect()->route('admin.dashboard', ['id' => $admin->id, 'nama' => $admin->nama]);
-                }
-            } else {
-                if (Auth::guard('guru')->attempt(['nik' => $nik, 'password' => $password])) {
-                    RateLimiter::clear('login:' . $limiterKey);
-                    $guru = Auth::guard('guru')->user();
-                    session(['role' => $role]);
-
-                    if ($role === 'walikelas') {
-                        $isWalikelas = Kelas::where('wali_kelas_id', $guru->id)->exists();
-                        if (!$isWalikelas) {
-                            Auth::guard('guru')->logout();
-                            return back()->with('error', 'Anda tidak terdaftar sebagai wali kelas.');
-                        }
+                if ($role === 'walikelas') {
+                    $isWalikelas = Kelas::where('wali_kelas_id', $user->id)->exists();
+                    if (!$isWalikelas) {
+                        Auth::logout();
+                        return back()->with('error', 'Anda tidak terdaftar sebagai wali kelas.');
                     }
-
-                    return $role === 'walikelas'
-                        ? redirect()->route('walikelas.dashboard')
-                        : redirect()->route('guru.dashboard');
                 }
-            }
 
-            RateLimiter::hit('login:' . $limiterKey);
+                return match ($role) {
+                    'admin' => redirect()->route('admin.dashboard', ['id' => $user->id, 'nama' => $user->nama]),
+                    'walikelas' => redirect()->route('walikelas.dashboard'),
+                    default => redirect()->route('guru.dashboard', ['id' => $user->id, 'namaGuru' => $user->nama]),
+                };
+            }
 
             return back()->with('error', 'NIK/Email atau password salah.')->withInput();
         }
@@ -77,8 +58,7 @@ class LoginController extends Controller
 
     public function logout()
     {
-        Auth::guard('admin')->logout();
-        Auth::guard('guru')->logout();
+        Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
         return redirect('/login');

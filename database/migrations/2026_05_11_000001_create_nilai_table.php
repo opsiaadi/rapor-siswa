@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswa')->onDelete('cascade');
             $table->foreignId('mapel_id')->constrained('mapel')->onDelete('cascade');
-            $table->foreignId('guru_id')->constrained('guru')->onDelete('cascade');
+            $table->foreignId('guru_id')->constrained('users')->onDelete('cascade');
             $table->string('semester'); // 1 atau 2
             $table->decimal('harian', 5, 2)->nullable();
             $table->decimal('uts', 5, 2)->nullable();

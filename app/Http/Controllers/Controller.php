@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
-class ProductController extends Controller
+abstract class Controller
 {
-    public function index()
+    protected function getCurrentUser(): ?User
     {
-        $data = [
-            ['id' => 1, 'produk' => 'Laptop Gaming'],
-            ['id' => 2, 'produk' => 'Mouse Wireless'],
-            ['id' => 3, 'produk' => 'Keyboard Mechanical'],
-        ];
-
-        return view('list_product', compact('data'));
+        return Auth::user();
     }
 }
 

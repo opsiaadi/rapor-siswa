@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\Semester;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Nilai extends Model
 {
-    use HasFactory;
-
     protected $table = 'nilai';
 
     protected $fillable = [
@@ -23,12 +22,16 @@ class Nilai extends Model
         'nilai_akhir',
     ];
 
-    protected $casts = [
-        'harian' => 'float',
-        'uts' => 'float',
-        'uas' => 'float',
-        'nilai_akhir' => 'float',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'harian' => 'float',
+            'uts' => 'float',
+            'uas' => 'float',
+            'nilai_akhir' => 'float',
+            'semester' => Semester::class,
+        ];
+    }
 
     public function siswa(): BelongsTo
     {
@@ -42,6 +45,32 @@ class Nilai extends Model
 
     public function guru(): BelongsTo
     {
-        return $this->belongsTo(Guru::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public static function findBySiswaMapelSemester(int $siswaId, array $mapelIds, string $semester): Collection
+    {
+        return static::with('mapel')
+            ->where('siswa_id', $siswaId)
+            ->whereIn('mapel_id', $mapelIds)
+            ->where('semester', $semester)
+            ->get();
+    }
+
+    public static function findBySiswaSemester(int $siswaId, string $semester): Collection
+    {
+        return static::with(['mapel', 'guru'])
+            ->where('siswa_id', $siswaId)
+            ->where('semester', $semester)
+            ->get();
+    }
+
+    public static function getRataRata(int $siswaId, string $semester): float|string
+    {
+        $avg = static::where('siswa_id', $siswaId)
+            ->where('semester', $semester)
+            ->avg('nilai_akhir');
+
+        return $avg !== null ? round($avg, 1) : '-';
     }
 }

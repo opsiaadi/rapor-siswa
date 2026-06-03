@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('kelas_mapel', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kelas_id')->nullable()->constrained('kelas')->onDelete('cascade');
+            $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
             $table->foreignId('mapel_id')->constrained('mapel')->onDelete('cascade');
-            $table->foreignId('guru_id')->constrained('guru')->onDelete('cascade');
+            $table->foreignId('guru_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
 
             $table->unique(['kelas_id', 'mapel_id', 'guru_id']);
