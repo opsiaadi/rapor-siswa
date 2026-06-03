@@ -134,7 +134,7 @@
     },
     "homepage": "https://github.com/opsiaadi/rapor-siswa#readme",
     "devDependencies": {
-        "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/forms": "^0.5.11",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
         "postcss": "^8.4.31",
