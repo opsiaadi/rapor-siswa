@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin Utama',
             'email' => 'admin@example.com',
             'password' => 'password',
-            'role' => 'super_admin',
+            'role' => 'admin',
             'status' => 'aktif',
         ]);
 
