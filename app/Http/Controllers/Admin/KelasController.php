@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Guru;
+use App\Models\User;
 use App\Models\Kelas;
 use App\Models\Mapel;
 use App\Models\KelasMapel;
@@ -19,10 +19,9 @@ class KelasController extends Controller
 
     public function create()
     {
-        $guruList = Guru::with('mapels')->get();
+        $guruList = User::whereIn('role', ['guru', 'walikelas'])->with('mapels')->get();
         $mapelList = Mapel::all();
 
-        // Build mapel_id => [guru_id, ...] mapping using Eloquent collection
         $mapelGuruMap = $guruList->flatMap(function ($guru) {
             return $guru->mapels->map(function ($mapel) use ($guru) {
                 return ['mapel_id' => $mapel->id, 'guru_id' => $guru->id];
@@ -38,15 +37,12 @@ class KelasController extends Controller
     public function edit($id)
     {
         $kelas = Kelas::with(['siswa', 'kelasMapels.guru', 'kelasMapels.mapel'])->findOrFail($id);
-        $guruList = Guru::with('mapels')->get();
+        $guruList = User::whereIn('role', ['guru', 'walikelas'])->with('mapels')->get();
         $mapelList = Mapel::all();
 
         $siswaList = $kelas->siswa;
-
-        // Build current mapel_guru mapping using Eloquent pluck
         $currentMapelGuru = $kelas->kelasMapels->pluck('guru_id', 'mapel_id')->toArray();
 
-        // Build mapel_guru map for JS using Eloquent collection
         $mapelGuruMap = $guruList->flatMap(function ($guru) {
             return $guru->mapels->map(function ($mapel) use ($guru) {
                 return ['mapel_id' => $mapel->id, 'guru_id' => $guru->id];
@@ -71,7 +67,6 @@ class KelasController extends Controller
             'wali_kelas_id' => $request->wali_kelas_id ?: null,
         ]);
 
-        // Save mapel and guru pengampu to kelas_mapel
         if ($request->mapel_ids) {
             foreach ($request->mapel_ids as $mapelId) {
                 $guruId = $request->mapel_guru[$mapelId] ?? null;
@@ -103,7 +98,6 @@ class KelasController extends Controller
             'wali_kelas_id' => $request->wali_kelas_id ?: null,
         ]);
 
-        // Update kelas_mapel entries using Eloquent
         KelasMapel::where('kelas_id', $id)->delete();
 
         if ($request->mapel_ids) {
@@ -125,10 +119,7 @@ class KelasController extends Controller
     public function destroy($id)
     {
         $kelas = Kelas::findOrFail($id);
-
-        // Delete related kelas_mapel first
         KelasMapel::where('kelas_id', $id)->delete();
-
         $kelas->delete();
 
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');

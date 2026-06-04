@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Guru;
+use App\Models\User;
 use App\Models\Mapel;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class GuruDataController extends Controller
 {
     public function index()
     {
-        $data = Guru::with('mapels')->get();
+        $data = User::whereIn('role', ['guru', 'walikelas'])->with('mapels')->get();
         return view('admin.guru.index', compact('data'));
     }
 
@@ -24,21 +24,23 @@ class GuruDataController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nik' => 'required|unique:guru,nik',
+            'nik' => 'required|unique:users,nik',
             'nama' => 'required',
-            'email' => 'required|email|unique:guru,email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required',
         ]);
 
-        $guru = Guru::create([
+        $user = User::create([
             'nik' => $request->nik,
             'nama' => $request->nama,
+            'name' => $request->nama,
             'email' => $request->email,
             'password' => $request->password,
+            'role' => 'guru',
         ]);
 
         if ($request->has('mapel_ids')) {
-            $guru->mapels()->sync($request->mapel_ids);
+            $user->mapels()->sync($request->mapel_ids);
         }
 
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil ditambahkan.');
@@ -46,32 +48,38 @@ class GuruDataController extends Controller
 
     public function edit($id)
     {
-        $guru = Guru::with('mapels')->findOrFail($id);
+        $user = User::with('mapels')->findOrFail($id);
         $mapelList = Mapel::all();
-        return view('admin.guru.edit', compact('guru', 'mapelList'));
+        return view('admin.guru.edit', compact('user', 'mapelList'));
     }
 
     public function update(Request $request, $id)
     {
-        $guru = Guru::findOrFail($id);
+        $user = User::findOrFail($id);
 
         $request->validate([
-            'nik' => 'required|unique:guru,nik,' . $id,
+            'nik' => 'required|unique:users,nik,' . $id,
             'nama' => 'required',
-            'email' => 'required|email|unique:guru,email,' . $id,
+            'email' => 'required|email|unique:users,email,' . $id,
         ]);
 
-        $guru->update([
+        $data = [
             'nik' => $request->nik,
             'nama' => $request->nama,
+            'name' => $request->nama,
             'email' => $request->email,
-            'password' => $request->password ?: $guru->password,
-        ]);
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = $request->password;
+        }
+
+        $user->update($data);
 
         if ($request->has('mapel_ids')) {
-            $guru->mapels()->sync($request->mapel_ids);
+            $user->mapels()->sync($request->mapel_ids);
         } else {
-            $guru->mapels()->sync([]);
+            $user->mapels()->sync([]);
         }
 
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil diperbarui.');
@@ -79,15 +87,9 @@ class GuruDataController extends Controller
 
     public function destroy($id)
     {
-        $guru = Guru::findOrFail($id);
-        $guru->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
 
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus.');
-    }
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed',
-        ];
     }
 }

@@ -23,7 +23,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('admin.guru.update', $guru->id) }}" method="POST">
+    <form action="{{ route('admin.guru.update', $user->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
@@ -67,7 +67,7 @@
                     <label for="nik" class="block mb-2.5 text-sm font-medium text-gray-700">
                         NIK <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="nik" id="nik" value="{{ old('nik', $guru->nik ?? '') }}"
+                    <input type="text" name="nik" id="nik" value="{{ old('nik', $user->nik ?? '') }}"
                         class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                         placeholder="Contoh: 198501012010011001" required>
                 </div>
@@ -77,7 +77,7 @@
                     <label for="nama" class="block mb-2.5 text-sm font-medium text-gray-700">
                         Nama Guru <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="nama" id="nama" value="{{ old('nama', $guru->nama ?? '') }}"
+                    <input type="text" name="nama" id="nama" value="{{ old('nama', $user->nama ?? '') }}"
                         class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                         placeholder="Masukkan nama lengkap" required>
                 </div>
@@ -87,7 +87,7 @@
                     <label for="email" class="block mb-2.5 text-sm font-medium text-gray-700">
                         Email <span class="text-red-500">*</span>
                     </label>
-                    <input type="email" name="email" id="email" value="{{ old('email', $guru->email ?? '') }}"
+                    <input type="email" name="email" id="email" value="{{ old('email', $user->email ?? '') }}"
                         class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                         placeholder="guru@sekolah.sch.id" required>
                 </div>
@@ -97,9 +97,18 @@
                     <label for="password" class="block mb-2.5 text-sm font-medium text-gray-700">
                         Password <span class="text-red-500">*</span>
                     </label>
-                    <input type="password" name="password" id="password"
-                        class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                        placeholder="Minimal 8 karakter">
+                    <div class="relative">
+                        <input type="password" name="password" id="password"
+                            class="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                            placeholder="Minimal 8 karakter">
+                        <button type="button" onclick="togglePassword('password', this)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
                     <p class="mt-1.5 text-xs text-gray-500">Kosongkan jika tidak ingin mengubah</p>
                 </div>
             </div>
@@ -122,7 +131,7 @@
                     @forelse ($mapelList as $mapel)
                     <label class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                         @php
-                            $selectedMapels = old('mapel_ids', $guru->mapels->pluck('id')->toArray());
+                            $selectedMapels = old('mapel_ids', $user->mapels->pluck('id')->toArray());
                         @endphp
                         <input type="checkbox" name="mapel_ids[]" value="{{ $mapel->id }}" 
                         {{ in_array($mapel->id, $selectedMapels) ? 'checked' : '' }}
