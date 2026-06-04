@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Services\NilaiMapperService;
 use App\Services\NilaiService;
+use App\Models\Nilai;
 use Illuminate\Http\Request;
 
 class GuruController extends Controller
@@ -44,6 +45,15 @@ class GuruController extends Controller
             }
         }
 
+        $isLocked = false;
+
+        if ($kelasId && $mapelId) {
+            $isLocked = Nilai::where('mapel_id', $mapelId)
+                ->where('semester', $semester)
+                ->where('status', 'dikirim')
+                ->exists();
+        }
+
         return view($editMode ? 'guru.edit-nilai' : 'guru.input-nilai', [
             'id' => $user->id,
             'namaGuru' => $user->nama,
@@ -56,6 +66,7 @@ class GuruController extends Controller
             'kelasId' => $kelasId,
             'mapelId' => $mapelId,
             'semester' => $semester,
+            'isLocked' => $isLocked,
         ]);
     }
 
@@ -88,6 +99,12 @@ class GuruController extends Controller
             $request->semester,
             $user
         );
+
+        Nilai::where('mapel_id', $mapelId)
+            ->where('semester', $request->semester)
+            ->update([
+                'status' => 'dikirim'
+            ]);
 
         $mengajar = $this->nilaiService->findMengajarId($kelasId, $mapelId, $user->id);
 
