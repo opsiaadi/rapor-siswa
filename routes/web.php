@@ -25,7 +25,7 @@ Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'index']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', 'role:admin,super_admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard/{id?}/{nama?}', [AdminController::class, 'tampilkan'])->name('dashboard');
     Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
         Route::get('/', 'edit')->name('index');
