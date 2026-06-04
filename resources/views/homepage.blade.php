@@ -42,16 +42,6 @@
             </button>
         </div>
     </div>
-    <div class="hidden md:hidden border-t border-gray-100" id="mobile-menu">
-        <div class="px-4 py-3 space-y-2">
-            <a href="#hero" class="block px-3 py-2 text-sm font-medium text-emerald-600 rounded-lg bg-emerald-50">Beranda</a>
-            <a href="#fitur" class="block px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50">Fitur</a>
-            <a href="#tentang" class="block px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50">Tentang</a>
-            <a href="#kontak" class="block px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50">Kontak</a>
-            <hr class="my-2">
-            <a href="{{ route('login') }}" class="block px-3 py-2 text-sm font-medium text-center text-white bg-emerald-600 rounded-lg">Masuk</a>
-        </div>
-    </div>
 </nav>
 
 <!-- ==================== HERO ==================== -->
