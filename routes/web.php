@@ -11,6 +11,12 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WalikelasController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RaporController; 
+
+Route::get('/rapor', [RaporController::class, 'show']);
+
+Route::post('/rapor', [RaporController::class, 'simpan'])->name('rapor.simpan');
 
 Route::view('/', 'welcome');
 Route::view('/homepage', 'homepage');

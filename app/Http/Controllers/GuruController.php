@@ -45,6 +45,15 @@ class GuruController extends Controller
             }
         }
 
+        $isLocked = false;
+
+        if ($kelasId && $mapelId) {
+            $isLocked = Nilai::where('mapel_id', $mapelId)
+                ->where('semester', $semester)
+                ->where('status', 'dikirim')
+                ->exists();
+        }
+
         return view($editMode ? 'guru.edit-nilai' : 'guru.input-nilai', [
             'id' => $user->id,
             'namaGuru' => $user->nama,
@@ -57,6 +66,7 @@ class GuruController extends Controller
             'kelasId' => $kelasId,
             'mapelId' => $mapelId,
             'semester' => $semester,
+            'isLocked' => $isLocked,
         ]);
     }
 
