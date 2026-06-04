@@ -2,297 +2,166 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Guru;
-use App\Models\KelasMapel;
+use App\Models\Kelas;
+use App\Models\Mapel;
+use App\Models\Notification;
+use App\Models\User;
+use App\Services\NilaiMapperService;
+use App\Services\NilaiService;
 use App\Models\Nilai;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class GuruController extends Controller
 {
-    private function getCurrentGuru(): ?Guru
-    {
-        if (Auth::guard('guru')->check()) {
-            return Auth::guard('guru')->user();
-        }
-        return null;
-    }
-
-    private function getGuruMengajar($guruId)
-    {
-        return KelasMapel::with(['mapel', 'kelas'])
-            ->where('guru_id', $guruId)
-            ->whereNotNull('guru_id')
-            ->get()
-            ->map(function($m) {
-                return (object) [
-                    'id' => $m->id,
-                    'mapel_id' => $m->mapel_id,
-                    'mapel_nama' => $m->mapel->nama_mapel ?? '-',
-                    'kelas_id' => $m->kelas_id,
-                    'kelas_nama' => $m->kelas->nama_kelas ?? '-',
-                    'semester' => '1',
-                ];
-            });
-    }
+    public function __construct(
+        private NilaiMapperService $nilaiMapperService,
+        private NilaiService $nilaiService,
+    ) {}
 
     public function nama($id = null, $namaGuru = null)
     {
-        $guru = $this->getCurrentGuru();
-        if (!$guru) {
-            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
-        }
+        $user = $this->getCurrentUser();
         return view('guru.dashboard_guru', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
-            'guruMengajar' => $this->getGuruMengajar($guru->id),
+            'id' => $user->id,
+            'namaGuru' => $user->nama,
+            'guruMengajar' => $this->nilaiService->getGuruMengajar($user->id),
         ]);
     }
 
     public function nilai(Request $request)
     {
-        $guru = $this->getCurrentGuru();
-        if (!$guru) {
-            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
-        }
+        $user = $this->getCurrentUser();
+        $guruMengajar = $this->nilaiService->getGuruMengajar($user->id);
+        $filter = $this->nilaiService->resolveFilter($request, $guruMengajar);
 
-        if ($request->isMethod('POST')) {
-            $request->validate([
-                'nilai' => 'nullable|array',
-                'nilai.harian.*' => 'nullable|numeric|min:0|max:100',
-                'nilai.uts.*' => 'nullable|numeric|min:0|max:100',
-                'nilai.uas.*' => 'nullable|numeric|min:0|max:100',
-                'mapel' => 'required',
-                'semester' => 'required|in:1,2',
-                'mengajar' => 'required',
-                'kelas' => 'required',
-            ]);
+        $kelasId = $request->input('kelas_id', $filter['kelasId']);
+        $mapelId = $request->input('mapel_id', $filter['mapelId']);
+        $semester = $request->input('semester', $filter['semester']);
+        $editMode = $request->has('kelas_id');
 
-            $action = $request->input('action');
-            $this->simpanNilai($request);
-            if ($action === 'kirim') {
-                return redirect()->back()->with('success', 'Nilai terkirim.');
-            }
-            return redirect()->back()->with('success', 'Nilai berhasil disimpan.');
-        }
-
-        $guruMengajar = $this->getGuruMengajar($guru->id);
-
-        $filter = [
-            'mengajarId' => $request->input('mengajar'),
-            'kelasId' => $request->input('kelas'),
-            'semester' => $request->input('semester', '1'),
-            'mapelId' => $request->input('mapel'),
-        ];
-
-        if ($filter['mengajarId']) {
-            $selected = $guruMengajar->firstWhere('id', $filter['mengajarId']);
-            if ($selected) {
-                $filter['mapelId'] = $selected->mapel_id;
-                $filter['kelasId'] = $selected->kelas_id;
+        if ($kelasId && $mapelId && $editMode) {
+            if (!in_array((int) $kelasId, $guruMengajar->pluck('kelas_id')->toArray())) {
+                return redirect()->route('guru.nilai')->with('error', 'Akses ditolak.');
             }
         }
 
-        $key = "nilai_{$guru->id}_{$filter['mapelId']}_{$filter['semester']}";
-        $nilaiSession = session($key, []);
+        $isLocked = false;
 
-        $kelasList = $guruMengajar->pluck('kelas_nama', 'kelas_id')->map(fn($nama, $id) => (object) ['id' => $id, 'nama_kelas' => $nama])->values();
-
-        $siswaList = collect();
-        if ($filter['kelasId'] && $filter['mapelId']) {
-            $siswaList = \App\Models\Siswa::where('kelas_id', $filter['kelasId'])->get()->map(function($siswa) use ($nilaiSession) {
-                $nilai = $nilaiSession[$siswa->id] ?? [];
-                $harian = $nilai['harian'] ?? null;
-                $uts = $nilai['uts'] ?? null;
-                $uas = $nilai['uas'] ?? null;
-                $nilai_akhir = $nilai['nilai_akhir'] ?? null;
-                $status_kkm = $nilai_akhir !== null ? ($nilai_akhir >= 75 ? 'lulus' : 'tidak_lulus') : null;
-
-                return (object) [
-                    'id' => $siswa->id,
-                    'nama' => $siswa->nama,
-                    'harian' => $harian,
-                    'uts' => $uts,
-                    'uas' => $uas,
-                    'nilai_akhir' => $nilai_akhir,
-                    'status_kkm' => $status_kkm,
-                ];
-            });
+        if ($kelasId && $mapelId) {
+            $isLocked = Nilai::where('mapel_id', $mapelId)
+                ->where('semester', $semester)
+                ->where('status', 'dikirim')
+                ->exists();
         }
 
-        return view('guru.input-nilai', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
-            'siswaList' => $siswaList,
+        return view($editMode ? 'guru.edit-nilai' : 'guru.input-nilai', [
+            'id' => $user->id,
+            'namaGuru' => $user->nama,
+            'siswaList' => $kelasId && $mapelId
+                ? $this->nilaiService->getSiswaNilaiForEdit((int) $kelasId, (int) $mapelId, $semester)
+                : collect(),
             'guruMengajar' => $guruMengajar,
-            'kelasList' => $kelasList,
+            'kelasList' => $this->nilaiService->getKelasDropdownList($guruMengajar),
             'filter' => $filter,
+            'kelasId' => $kelasId,
+            'mapelId' => $mapelId,
+            'semester' => $semester,
+            'isLocked' => $isLocked,
         ]);
     }
 
-    private function simpanNilai(Request $request)
+    public function editNilai($kelasId, $mapelId, $semester = '1')
     {
-        $nilaiData = $request->input('nilai', []);
-        $mapelId = $request->input('mapel');
-        $semester = $request->input('semester');
-        $guru = $this->getCurrentGuru();
-
-        if (!$mapelId || !$semester || !$guru) return;
-
-        $kelasIds = KelasMapel::where('guru_id', $guru->id)
-            ->whereNotNull('guru_id')
-            ->pluck('kelas_id');
-
-        if ($kelasIds->isEmpty()) return;
-
-        $validSiswaIds = \App\Models\Siswa::whereIn('kelas_id', $kelasIds)->pluck('id')->toArray();
-
-        $key = "nilai_{$guru->id}_{$mapelId}_{$semester}";
-        $nilaiSession = session($key, []);
-
-        foreach ($nilaiData as $type => $siswaNilai) {
-            foreach ($siswaNilai as $siswaId => $value) {
-                if ($value === '' || $value === null) continue;
-                if (!in_array((int) $siswaId, $validSiswaIds)) continue;
-
-                if (!isset($nilaiSession[$siswaId])) {
-                    $nilaiSession[$siswaId] = ['harian' => '', 'uts' => '', 'uas' => '', 'nilai_akhir' => ''];
-                }
-                $nilaiSession[$siswaId][$type] = floatval($value);
-
-                $harian = $nilaiSession[$siswaId]['harian'] ?? 0;
-                $uts = $nilaiSession[$siswaId]['uts'] ?? 0;
-                $uas = $nilaiSession[$siswaId]['uas'] ?? 0;
-
-                if ($harian && $uts && $uas) {
-                    $nilaiSession[$siswaId]['nilai_akhir'] = round(($harian * 0.4) + ($uts * 0.3) + ($uas * 0.3), 1);
-                }
-
-                $nilai_akhir = $nilaiSession[$siswaId]['nilai_akhir'] ?? null;
-
-                Nilai::updateOrCreate(
-                    [
-                        'siswa_id' => $siswaId,
-                        'mapel_id' => $mapelId,
-                        'semester' => $semester,
-                    ],
-                    [
-                        'guru_id' => $guru->id,
-                        'harian' => $nilaiSession[$siswaId]['harian'] ?: null,
-                        'uts' => $nilaiSession[$siswaId]['uts'] ?: null,
-                        'uas' => $nilaiSession[$siswaId]['uas'] ?: null,
-                        'nilai_akhir' => $nilai_akhir,
-                    ]
-                );
-            }
-        }
-
-        session([$key => $nilaiSession]);
+        return redirect()->route('guru.nilai', [
+            'kelas_id' => $kelasId,
+            'mapel_id' => $mapelId,
+            'semester' => $semester,
+        ]);
     }
 
-    public function hasilbelajar($id = null, $namaGuru = null)
+    public function kirimNilai(Request $request)
     {
-        return redirect()->route('guru.dashboard', ['id' => $id, 'namaGuru' => $namaGuru])
-                        ->with('info', 'Halaman hasil belajar belum tersedia.');
+        $user = $this->getCurrentUser();
+        $mapelId = (int) ($request->mapel_id ?? $request->mapel);
+        $kelasId = (int) ($request->kelas_id ?? $request->kelas);
+
+        $request->validate(array_merge(NilaiService::nilaiFieldRules(), [
+            'semester' => 'required|in:1,2',
+            'mapel' => 'required_without:mapel_id|integer',
+            'mapel_id' => 'required_without:mapel|integer',
+            'kelas' => 'required_without:kelas_id|integer',
+            'kelas_id' => 'required_without:kelas|integer',
+        ]));
+
+        $this->nilaiService->saveNilaiBatch(
+            $request->input('nilai', []),
+            $mapelId,
+            $request->semester,
+            $user
+        );
+
+        Nilai::where('mapel_id', $mapelId)
+            ->where('semester', $request->semester)
+            ->update([
+                'status' => 'dikirim'
+            ]);
+
+        $mengajar = $this->nilaiService->findMengajarId($kelasId, $mapelId, $user->id);
+
+        $kelasNama = Kelas::find($kelasId)?->nama_kelas ?? "ID {$kelasId}";
+        $mapelNama = Mapel::find($mapelId)?->nama_mapel ?? "ID {$mapelId}";
+
+        $action = $request->input('action', 'kirim');
+        $notifTitle = $action === 'update' ? 'Nilai Diperbarui' : 'Nilai Terkirim';
+        $notifMsg = $action === 'update'
+            ? "Nilai {$mapelNama} untuk kelas {$kelasNama} berhasil diperbarui."
+            : "Nilai {$mapelNama} untuk kelas {$kelasNama} berhasil dikirim.";
+        $flashMsg = $action === 'update' ? 'Nilai berhasil diperbarui.' : 'Nilai berhasil dikirim.';
+
+        Notification::create([
+            'user_id' => $user->id,
+            'title' => $notifTitle,
+            'message' => $notifMsg,
+            'type' => 'success',
+            'url' => route('guru.nilai', ['mengajar' => $mengajar, 'kelas' => $kelasId, 'mapel' => $mapelId, 'semester' => $request->semester]),
+        ]);
+
+        $admins = User::whereIn('role', ['admin', 'super_admin'])->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'title' => $notifTitle,
+                'message' => "{$user->nama} mengirim nilai {$mapelNama} untuk kelas {$kelasNama} Semester {$request->semester}",
+                'type' => 'success',
+                'url' => route('admin.guru.index'),
+            ]);
+        }
+
+        return redirect()->route('guru.nilai', [
+            'mengajar' => $mengajar,
+            'kelas' => $kelasId,
+            'mapel' => $mapelId,
+            'semester' => $request->semester,
+        ])->with('success', $flashMsg);
     }
 
     public function daftarRapor()
     {
-        $guru = $this->getCurrentGuru();
-        if (!$guru) {
-            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
-        }
-
-        $guruMengajar = $this->getGuruMengajar($guru->id);
-        $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
-
-        $siswaList = collect();
-        if ($kelasIds->isNotEmpty()) {
-            $siswaList = \App\Models\Siswa::with('kelas')
-                ->whereIn('kelas_id', $kelasIds)
-                ->get()
-                ->map(function($s) {
-                    return (object) [
-                        'id' => $s->id,
-                        'nis' => $s->nis,
-                        'nama' => $s->nama,
-                        'jenis_kelamin' => $s->jenis_kelamin,
-                        'kelas_nama' => $s->kelas ? $s->kelas->nama_kelas : '-',
-                    ];
-                });
-        }
-
+        $user = $this->getCurrentUser();
         return view('guru.daftar_rapor', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
-            'siswaList' => $siswaList,
+            'id' => $user->id,
+            'namaGuru' => $user->nama,
+            'siswaList' => $this->nilaiService->getRaporSiswaList($user->id),
         ]);
     }
 
     public function lihatRapor($siswaId)
     {
-        $guru = $this->getCurrentGuru();
-        if (!$guru) {
-            return redirect()->route('login')->with('error', 'Guru tidak ditemukan.');
-        }
-
-        $guruMengajar = $this->getGuruMengajar($guru->id);
-        $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
-
-        $siswa = \App\Models\Siswa::with('kelas')
-            ->where('id', $siswaId)
-            ->whereIn('kelas_id', $kelasIds)
-            ->first();
-
-        if (!$siswa) {
-            return redirect()->route('guru.rapor')->with('error', 'Siswa tidak ditemukan.');
-        }
-
-        $semester = request('semester', '1');
-        $mapelIds = $guruMengajar->pluck('mapel_id')->unique();
-
-        $nilaiList = \App\Models\Nilai::with('mapel')
-            ->where('siswa_id', $siswaId)
-            ->whereIn('mapel_id', $mapelIds)
-            ->where('semester', $semester)
-            ->get()
-            ->map(function($n) {
-                $kkm = $n->mapel->kkm ?? 75;
-                $status = $n->nilai_akhir !== null
-                    ? ($n->nilai_akhir >= $kkm ? 'Lulus' : 'Tidak Lulus')
-                    : '-';
-                return (object) [
-                    'mapel_nama' => $n->mapel->nama_mapel ?? '-',
-                    'kkm' => $kkm,
-                    'harian' => $n->harian ?? '-',
-                    'uts' => $n->uts ?? '-',
-                    'uas' => $n->uas ?? '-',
-                    'nilai_akhir' => $n->nilai_akhir ?? '-',
-                    'status' => $status,
-                ];
-            });
-
-        $rata_rata = $nilaiList->where('nilai_akhir', '!=', '-')->avg('nilai_akhir');
-        $rata_rata = $rata_rata ? round($rata_rata, 2) : '-';
-
-        return view('guru.rapor_lihat', [
-            'id' => $guru->id,
-            'namaGuru' => $guru->nama,
-            'siswa' => (object) [
-                'id' => $siswa->id,
-                'nis' => $siswa->nis,
-                'nama' => $siswa->nama,
-                'jenis_kelamin' => $siswa->jenis_kelamin,
-                'tahun_ajaran' => $siswa->tahun_ajaran ?? '-',
-                'kelas_nama' => $siswa->kelas ? $siswa->kelas->nama_kelas : '-',
-                'izin' => $siswa->izin ?? 0,
-                'sakit' => $siswa->sakit ?? 0,
-                'alpha' => $siswa->alpha ?? 0,
-            ],
-            'nilaiList' => $nilaiList,
-            'rata_rata' => $rata_rata,
-            'semester' => $semester,
-            'semesterList' => ['1' => 'Ganjil', '2' => 'Genap'],
-        ]);
+        $user = $this->getCurrentUser();
+        $data = $this->nilaiService->getRaporData($siswaId, $user->id, request('semester', '1'));
+        if (!$data) return redirect()->route('guru.rapor')->with('error', 'Siswa tidak ditemukan.');
+        $data['id'] = $user->id;
+        $data['namaGuru'] = $user->nama;
+        return view('guru.rapor_lihat', $data);
     }
 }

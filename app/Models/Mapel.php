@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mapel extends Model
 {
-    use HasFactory;
-
     protected $table = 'mapel';
 
     protected $fillable = [
@@ -28,7 +25,7 @@ class Mapel extends Model
 
     public function guru(): BelongsToMany
     {
-        return $this->belongsToMany(Guru::class, 'kelas_mapel', 'mapel_id', 'guru_id');
+        return $this->belongsToMany(User::class, 'kelas_mapel', 'mapel_id', 'guru_id');
     }
 
     public function kelasMapel(): HasMany

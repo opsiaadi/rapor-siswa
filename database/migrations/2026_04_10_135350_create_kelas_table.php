@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_kelas');
             $table->string('tingkat');
-            $table->foreignId('wali_kelas_id')->nullable()->constrained('guru')->onDelete('set null');
+            $table->foreignId('wali_kelas_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
     }
