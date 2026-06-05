@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Login;
+namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use App\Enums\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LoginController extends Controllers
+class LoginController extends Controller
 {
     public function index(Request $request)
     {
