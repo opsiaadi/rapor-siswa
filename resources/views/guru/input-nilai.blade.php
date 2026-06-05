@@ -26,7 +26,7 @@
                 <option value="">-- Pilih Mengajar --</option>
                 @forelse($guruMengajar as $mengajar)
                     <option value="{{ $mengajar->id }}" {{ $mengajarId == $mengajar->id ? 'selected' : '' }}>
-                        {{ $mengajar->mapel_nama }} - Kelas {{ $mengajar->kelas_nama }} (Semester {{ $mengajar->semester }})
+                        {{ $mengajar->mapel_nama }} - Kelas {{ $mengajar->kelas_nama }} 
                     </option>
                 @empty
                     <option value="">(Tidak ada data mengajar)</option>
