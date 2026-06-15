@@ -25,6 +25,10 @@ class MapelController extends Controller
             'kode_mapel' => 'required|unique:mapel,kode_mapel',
             'nama_mapel' => 'required',
             'kkm' => 'required|integer|min:0|max:100',
+        ], [
+            'kode_mapel.unique' => 'Kode mapel sudah digunakan.',
+            'kkm.min' => 'KKM minimal 0.',
+            'kkm.max' => 'KKM maksimal 100.',
         ]);
 
         Mapel::create([
@@ -50,6 +54,10 @@ class MapelController extends Controller
             'kode_mapel' => 'required|unique:mapel,kode_mapel,' . $id,
             'nama_mapel' => 'required',
             'kkm' => 'required|integer|min:0|max:100',
+        ], [
+            'kode_mapel.unique' => 'Kode mapel sudah digunakan.',
+            'kkm.min' => 'KKM minimal 0.',
+            'kkm.max' => 'KKM maksimal 100.',
         ]);
 
         $mapel->update([

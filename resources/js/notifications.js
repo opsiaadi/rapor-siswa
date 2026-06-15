@@ -83,6 +83,17 @@ window.markAllRead = async function() {
     } catch (e) {}
 }
 
+window.clearAllNotifications = async function() {
+    if (!confirm('Hapus semua notifikasi?')) return;
+    try {
+        await fetch(`${NOTIF.readUrl}/clear-all`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': NOTIF.csrf, 'Accept': 'application/json' }
+        });
+        loadNotifications();
+    } catch (e) {}
+}
+
 function timeAgo(dateString) {
     const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
     if (diff < 60) return 'Baru saja';

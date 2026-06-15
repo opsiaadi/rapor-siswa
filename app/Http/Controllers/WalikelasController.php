@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Semester;
+use App\Models\Ekstrakurikuler;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Nilai;
@@ -135,6 +136,7 @@ class WalikelasController extends Controller
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
             'mode' => 'tambah',
+            'kegiatanList' => Ekstrakurikuler::aktif()->pluck('nama'),
         ]);
     }
 
@@ -152,6 +154,7 @@ class WalikelasController extends Controller
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
             'mode' => 'edit',
+            'kegiatanList' => Ekstrakurikuler::aktif()->pluck('nama'),
         ]);
     }
 

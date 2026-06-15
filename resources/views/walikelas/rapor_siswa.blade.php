@@ -6,9 +6,8 @@ $breadcrumb = $isEdit
     ? 'Finalisasi > Edit ' . ($siswa->nama ?? 'Siswa')
     : 'Rapor > ' . ($siswa->nama ?? 'Siswa');
 
-$kegiatanOptions = ['Pramuka', 'Paskibra', 'PMR', 'OSIS', 'Ekstra Olahraga', 'Ekstra Seni'];
 $kegiatanVal = old('kegiatan', $siswa->kegiatan ?? '');
-$isCustomKegiatan = $kegiatanVal && !in_array($kegiatanVal, $kegiatanOptions);
+$isCustomKegiatan = $kegiatanVal && !in_array($kegiatanVal, $kegiatanList->toArray());
 
 $ketKegiatanOptions = ['Aktif', 'Cukup Aktif', 'Tidak Aktif'];
 $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
@@ -82,7 +81,7 @@ $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
                         <select id="kegiatan_select" onchange="syncKegiatan()"
                             class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500">
                             <option value="">-- Pilih Ekstrakurikuler --</option>
-                            @foreach($kegiatanOptions as $opt)
+                            @foreach($kegiatanList as $opt)
                             <option value="{{ $opt }}" {{ !$isCustomKegiatan && $kegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
                             @endforeach
                             <option value="__other__" {{ $isCustomKegiatan ? 'selected' : '' }}>Lainnya</option>

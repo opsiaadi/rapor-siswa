@@ -22,8 +22,15 @@ class ProfileController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6|confirmed',
+            'password' => 'nullable|min:8|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'email.unique'      => 'Email sudah digunakan.',
+            'password.min'      => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'foto.image'        => 'File harus berupa gambar.',
+            'foto.mimes'        => 'Format gambar harus JPEG, PNG, atau JPG.',
+            'foto.max'          => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         $user->nama = $request->nama;

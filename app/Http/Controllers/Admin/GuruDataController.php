@@ -27,7 +27,12 @@ class GuruDataController extends Controller
             'nik' => 'required|unique:users,nik',
             'nama' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ], [
+            'nik.unique'          => 'Nik sudah digunakan',
+            'email.unique'        => 'Email sudah digunakan.',
+            'password.min'        => 'Password minimal 8 karakter.',
+            'password.confirmed'  => 'Konfirmasi password tidak cocok.',
         ]);
 
         $user = User::create([
@@ -61,6 +66,11 @@ class GuruDataController extends Controller
             'nik' => 'required|unique:users,nik,' . $id,
             'nama' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:8',
+        ], [
+            'nik.unique'      => 'NIK sudah digunakan.',
+            'email.unique'    => 'Email sudah digunakan.',
+            'password.min'    => 'Password minimal 8 karakter.',
         ]);
 
         $data = [

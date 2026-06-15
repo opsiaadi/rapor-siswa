@@ -16,7 +16,7 @@ class GuruController extends Controller
     public function __construct(
         private NilaiMapperService $nilaiMapperService,
         private NilaiService $nilaiService,
-    ) {}
+    ){}
 
     public function nama($id = null, $namaGuru = null)
     {
@@ -92,7 +92,7 @@ class GuruController extends Controller
 
         return $this->notifyNilai($request->input('action', 'kirim'), $user, $kelasId, $mapelId, $request->semester);
     }
-
+    // menampilkan seluruh siswa yang memiliki rapor
     public function daftarRapor()
     {
         $user = $this->getCurrentUser();
@@ -113,6 +113,7 @@ class GuruController extends Controller
         return view('guru.rapor_lihat', $data);
     }
 
+    // notifikasi buat nilai/nilai diperbarui nilai
     private function notifyNilai(string $action, $user, int $kelasId, int $mapelId, string $semester): RedirectResponse
     {
         $mengajar = $this->nilaiService->findMengajarId($kelasId, $mapelId, $user->id);
@@ -125,7 +126,7 @@ class GuruController extends Controller
             'mapel' => $mapelId,
             'semester' => $semester,
         ]);
-
+    // notifikasi ke admin berupa nilai yang terkirim dan nilai yang diperbarui
         $notificationClass = $isUpdate ? NilaiDiperbarui::class : NilaiTerkirim::class;
 
         $user->notify(new $notificationClass($mapelNama, $kelasNama, $semester, $redirectUrl));

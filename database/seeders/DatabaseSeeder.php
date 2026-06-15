@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Siswa;
+use App\Models\User;
+use App\Models\Mapel;
+use App\Models\Kelas;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

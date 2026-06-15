@@ -67,4 +67,16 @@ class NotificationController extends Controller
 
         return response()->json(['unread_count' => 0]);
     }
+
+    public function clearAll(): JsonResponse
+    {
+        $user = $this->getCurrentUser();
+        if (!$user) {
+            return response()->json(['unread_count' => 0], 401);
+        }
+
+        $user->notifications()->delete();
+
+        return response()->json(['unread_count' => 0]);
+    }
 }

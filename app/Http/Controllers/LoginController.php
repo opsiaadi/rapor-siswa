@@ -24,7 +24,7 @@ class LoginController extends Controller
             $request->validate([
                 'role' => 'required|in:admin,guru,walikelas',
                 'nik' => 'required|string',
-                'password' => 'required|string|min:6',
+                'password' => 'required|string|min:8',
             ]);
 
             $role = $request->input('role');
@@ -38,8 +38,10 @@ class LoginController extends Controller
                 $user = Auth::user();
 
                 if ($user->role->value !== $role) {
-                    Auth::logout();
-                    $success = false;
+                    if (!($role === 'walikelas' && $user->role->value === 'guru' && Kelas::where('wali_kelas_id', $user->id)->exists())) {
+                        Auth::logout();
+                        $success = false;
+                    }
                 }
 
                 if ($success && $role === 'walikelas') {

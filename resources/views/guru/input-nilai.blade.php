@@ -15,7 +15,7 @@
                 <option value="">-- Pilih Mengajar --</option>
                 @foreach($guruMengajar as $mengajar)
                 <option value="{{ $mengajar->id }}" {{ isset($filter['mengajarId']) && $filter['mengajarId'] == $mengajar->id ? 'selected' : '' }}>
-                    {{ $mengajar->mapel_nama }} - Kelas {{ $mengajar->kelas_nama }} (Semester {{ $mengajar->semester }})
+                    {{ $mengajar->mapel_nama }} - Kelas {{ $mengajar->kelas_nama }}
                 </option>
                 @endforeach
                 @if($guruMengajar->isEmpty())
@@ -160,7 +160,7 @@
             <div class="flex gap-3">
                 <a href="{{ route('guru.nilai.edit', ['kelasId' => $filter['kelasId'], 'mapelId' => $filter['mapelId'], 'semester' => $filter['semester']]) }}"
                     class="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/30">
-                    Edit
+                    Masukkan nilai
                 </a>
                 <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/30">
                     Kirim
