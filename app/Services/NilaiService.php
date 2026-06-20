@@ -65,8 +65,14 @@ class NilaiService
             $uas = isset($nilaiData['uas'][$siswaId]) && $nilaiData['uas'][$siswaId] !== '' ? floatval($nilaiData['uas'][$siswaId]) : null;
 
             $nilai_akhir = null;
-            if ($harian !== null && $uts !== null && $uas !== null) {
-                $nilai_akhir = round(($harian * 0.4) + ($uts * 0.3) + ($uas * 0.3), 1);
+            $component = [];
+
+            if ($harian !== null) $component[] = $harian * 0.4;
+            if ($uts !== null) $component[] = $uts * 0.3;
+            if ($uas !== null) $component[] = $uas * 0.3;
+
+            if (!empty($component)) {
+                $nilai_akhir = round(array_sum($component), 1);
             }
 
             Nilai::updateOrCreate(

@@ -58,9 +58,9 @@
         @csrf
         <input type="hidden" name="action" value="kirim">
         <input type="hidden" name="mengajar" value="{{ $filter['mengajarId'] ?? '' }}">
-        <input type="hidden" name="kelas" value="{{ $filter['kelasId'] ?? '' }}">
+        <input type="hidden" name="kelas_id" value="{{ $filter['kelasId'] ?? '' }}">
         <input type="hidden" name="semester" value="{{ $filter['semester'] ?? '' }}">
-        <input type="hidden" name="mapel" value="{{ $filter['mapelId'] ?? '' }}">
+        <input type="hidden" name="mapel_id" value="{{ $filter['mapelId'] ?? '' }}">
         
         <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-sm">
@@ -158,7 +158,7 @@
         @if(!$siswaList->isEmpty())
         <div class="flex justify-between mt-6 pt-4 border-t border-gray-200">
             <div class="flex gap-3">
-                <a href="{{ route('guru.nilai.edit', ['kelasId' => $filter['kelasId'], 'mapelId' => $filter['mapelId'], 'semester' => $filter['semester']]) }}"
+                <a href="{{ route('guru.nilai', ['kelas_id' => $filter['kelasId'], 'mapel_id' => $filter['mapelId'], 'semester' => $filter['semester']]) }}"
                     class="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/30">
                     Masukkan nilai
                 </a>

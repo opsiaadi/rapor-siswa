@@ -99,7 +99,7 @@ class WalikelasController extends Controller
         ]);
     }
     
-    public function simpanKeterangan(Request $request, $siswaId)
+    public function simpanRapor(Request $request, $siswaId)
     {
         $kelas = $this->kelas();
         $sw = $this->getSiswa($siswaId, $kelas);
@@ -190,6 +190,7 @@ class WalikelasController extends Controller
         return view('walikelas.rapor_lihat', $data);
     }
 
+    // notifikasi finalisasi rapor ke admin
     private function notifyFinalisasi(Siswa $siswa): void
     {
         $waliUser = $this->getCurrentUser();
