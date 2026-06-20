@@ -75,20 +75,30 @@ class NilaiService
                 $nilai_akhir = round(array_sum($component), 1);
             }
 
+            $existing = Nilai::where('siswa_id', $siswaId)
+                ->where('mapel_id', $mapelId)
+                ->where('semester', $semester)
+                ->first();
+
+            if ($existing && $existing->status === 'dikirim') {
+                continue;
+            }
+
             Nilai::updateOrCreate(
                 [
                     'siswa_id' => $siswaId,
                     'mapel_id' => $mapelId,
                     'semester' => $semester,
-                ],
-                [
+            ],
+            [
                     'guru_id' => $user->id,
+                    'status' => 'draft',
                     'harian' => $harian,
                     'uts' => $uts,
                     'uas' => $uas,
                     'nilai_akhir' => $nilai_akhir,
-                ]
-            );
+         ]
+    );
         }
     }
 
