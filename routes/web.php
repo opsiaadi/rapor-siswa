@@ -1,13 +1,14 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\GuruDataController;
 use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\Admin\MapelController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SiswaController;
+use App\Http\Controllers\Admin\EskulController;
 use App\Http\Controllers\GuruController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WalikelasController;
 use Illuminate\Support\Facades\Route;
@@ -37,22 +38,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('/guru', GuruDataController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     Route::resource('/kelas', KelasController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     Route::resource('/siswa', SiswaController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('/eskul', EskulController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications', [NotificationController::class, 'handleAction'])->name('notifications.action');
 });
 
 Route::middleware(['auth', 'role:guru,walikelas'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard/{id?}/{namaGuru?}', [GuruController::class, 'nama'])->name('dashboard');
     Route::get('/nilai', [GuruController::class, 'nilai'])->name('nilai');
     Route::post('/nilai', [GuruController::class, 'kirimNilai'])->name('nilai.post');
-    Route::get('/nilai/edit/{kelasId}/{mapelId}/{semester?}', [GuruController::class, 'editNilai'])->name('nilai.edit');
     Route::get('/rapor', [GuruController::class, 'daftarRapor'])->name('rapor');
     Route::get('/rapor/{siswaId}', [GuruController::class, 'lihatRapor'])->name('rapor.lihat');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications', [NotificationController::class, 'handleAction'])->name('notifications.action');
 });
 
 Route::middleware(['auth', 'role:walikelas'])->prefix('walikelas')->name('walikelas.')->group(function () {

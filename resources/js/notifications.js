@@ -62,9 +62,10 @@ function renderNotifications(notifications) {
 
 window.markAsRead = async function(id, url) {
     try {
-        await fetch(`${NOTIF.readUrl}/${id}/read`, {
+        await fetch(NOTIF.readUrl, {
             method: 'POST',
-            headers: { 'X-CSRF-TOKEN': NOTIF.csrf, 'Accept': 'application/json' }
+            headers: { 'X-CSRF-TOKEN': NOTIF.csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'read', id: id })
         });
         loadNotifications();
         if (url) window.location.href = url;
@@ -73,12 +74,25 @@ window.markAsRead = async function(id, url) {
 
 window.markAllRead = async function() {
     try {
-        const res = await fetch(`${NOTIF.readUrl}/read-all`, {
+        const res = await fetch(NOTIF.readUrl, {
             method: 'POST',
-            headers: { 'X-CSRF-TOKEN': NOTIF.csrf, 'Accept': 'application/json' }
+            headers: { 'X-CSRF-TOKEN': NOTIF.csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'read-all' })
         });
         const data = await res.json();
         updateBadge(data.unread_count);
+        loadNotifications();
+    } catch (e) {}
+}
+
+window.clearAllNotifications = async function() {
+    if (!confirm('Hapus semua notifikasi?')) return;
+    try {
+        await fetch(NOTIF.readUrl, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': NOTIF.csrf, 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'clear-all' })
+        });
         loadNotifications();
     } catch (e) {}
 }

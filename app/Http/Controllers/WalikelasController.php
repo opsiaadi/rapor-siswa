@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Semester;
+use App\Models\Ekstrakurikuler;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Nilai;
@@ -98,7 +99,7 @@ class WalikelasController extends Controller
         ]);
     }
     
-    public function simpanKeterangan(Request $request, $siswaId)
+    public function simpanRapor(Request $request, $siswaId)
     {
         $kelas = $this->kelas();
         $sw = $this->getSiswa($siswaId, $kelas);
@@ -135,6 +136,7 @@ class WalikelasController extends Controller
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
             'mode' => 'tambah',
+            'kegiatanList' => Ekstrakurikuler::aktif()->pluck('nama'),
         ]);
     }
 
@@ -152,6 +154,7 @@ class WalikelasController extends Controller
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
             'mode' => 'edit',
+            'kegiatanList' => Ekstrakurikuler::aktif()->pluck('nama'),
         ]);
     }
 
@@ -187,6 +190,7 @@ class WalikelasController extends Controller
         return view('walikelas.rapor_lihat', $data);
     }
 
+    // notifikasi finalisasi rapor ke admin
     private function notifyFinalisasi(Siswa $siswa): void
     {
         $waliUser = $this->getCurrentUser();
