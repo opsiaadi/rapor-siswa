@@ -12,4 +12,3 @@ abstract class Controller
         return Auth::user();
     }
 }
-
