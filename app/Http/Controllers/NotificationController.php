@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
 class NotificationController extends Controller
@@ -43,40 +44,22 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function markAsRead($id): JsonResponse
+    public function handleAction(Request $request): JsonResponse
     {
         $user = $this->getCurrentUser();
         if (!$user) {
             return response()->json(['unread_count' => 0], 401);
         }
 
-        $notification = $user->notifications()->findOrFail($id);
-        $notification->markAsRead();
+        $action = $request->input('action');
+
+        match ($action) {
+            'read-all' => $user->unreadNotifications()->update(['read_at' => now()]),
+            'clear-all' => $user->notifications()->delete(),
+            'read' => $user->notifications()->findOrFail($request->input('id'))->markAsRead(),
+            default => abort(400),
+        };
 
         return response()->json(['unread_count' => $user->unreadNotifications()->count()]);
-    }
-
-    public function markAllRead(): JsonResponse
-    {
-        $user = $this->getCurrentUser();
-        if (!$user) {
-            return response()->json(['unread_count' => 0], 401);
-        }
-
-        $user->unreadNotifications()->update(['read_at' => now()]);
-
-        return response()->json(['unread_count' => 0]);
-    }
-
-    public function clearAll(): JsonResponse
-    {
-        $user = $this->getCurrentUser();
-        if (!$user) {
-            return response()->json(['unread_count' => 0], 401);
-        }
-
-        $user->notifications()->delete();
-
-        return response()->json(['unread_count' => 0]);
     }
 }
