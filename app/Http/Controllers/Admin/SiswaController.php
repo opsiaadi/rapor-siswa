@@ -11,7 +11,7 @@ class SiswaController extends Controller
 {
     public function index()
     {
-        $data = Siswa::with(['kelas', 'kelas.waliKelas'])->get();
+        $data = Siswa::with(['kelas', 'kelas.walikelas'])->get();
         return view('admin.siswa.index', compact('data'));
     }
 
@@ -24,11 +24,15 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nis' => 'required|unique:siswa,nis',
+            'nis' => 'required|numeric|unique:siswa,nis',
             'nama' => 'required',
             'jenis_kelamin' => 'required|in:L,P',
             'tahun_ajaran' => 'required',
             'kelas_id' => 'required|exists:kelas,id',
+        ], 
+        [
+            'nis.unique' => 'NIS sudah digunakan.',
+            'nis.numeric' => 'NIS harus berupa angka.',
         ]);
 
         Siswa::create([
@@ -37,7 +41,6 @@ class SiswaController extends Controller
             'jenis_kelamin' => $request->jenis_kelamin,
             'tahun_ajaran' => $request->tahun_ajaran,
             'kelas_id' => $request->kelas_id,
-            'status_rapor' => 'belum',
         ]);
 
         return redirect()->route('admin.siswa.index')->with('success', 'Data siswa berhasil ditambahkan.');
@@ -55,11 +58,14 @@ class SiswaController extends Controller
         $siswa = Siswa::findOrFail($id);
 
         $request->validate([
-            'nis' => 'required|unique:siswa,nis,' . $id,
+            'nis' => 'required|numeric|unique:siswa,nis,' . $id,
             'nama' => 'required',
             'jenis_kelamin' => 'required|in:L,P',
             'tahun_ajaran' => 'required',
             'kelas_id' => 'required|exists:kelas,id',
+        ], [
+            'nis.unique' => 'NIS sudah digunakan.',
+            'nis.numeric' => 'NIS harus berupa angka.',
         ]);
 
         $siswa->update([

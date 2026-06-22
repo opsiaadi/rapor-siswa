@@ -6,9 +6,8 @@ $breadcrumb = $isEdit
     ? 'Finalisasi > Edit ' . ($siswa->nama ?? 'Siswa')
     : 'Rapor > ' . ($siswa->nama ?? 'Siswa');
 
-$kegiatanOptions = ['Pramuka', 'Paskibra', 'PMR', 'OSIS', 'Ekstra Olahraga', 'Ekstra Seni'];
 $kegiatanVal = old('kegiatan', $siswa->kegiatan ?? '');
-$isCustomKegiatan = $kegiatanVal && !in_array($kegiatanVal, $kegiatanOptions);
+$isCustomKegiatan = $kegiatanVal && !in_array($kegiatanVal, $kegiatanList->toArray());
 
 $ketKegiatanOptions = ['Aktif', 'Cukup Aktif', 'Tidak Aktif'];
 $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
@@ -77,34 +76,35 @@ $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
                     <p class="text-xs text-gray-400">Kegiatan di luar jam pelajaran yang diikuti siswa beserta tingkat keaktifannya.</p>
                 </div>
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {{-- Input Nama Kegiatan (Menggunakan Tom Select) --}}
                     <div>
                         <label for="kegiatan_select" class="mb-2 block text-sm font-medium text-gray-700">Nama Kegiatan</label>
                         <select id="kegiatan_select" onchange="syncKegiatan()"
                             class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500">
                             <option value="">-- Pilih Ekstrakurikuler --</option>
-                            @foreach($kegiatanOptions as $opt)
+                            @foreach($kegiatanList as $opt)
                             <option value="{{ $opt }}" {{ !$isCustomKegiatan && $kegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
                             @endforeach
                             <option value="__other__" {{ $isCustomKegiatan ? 'selected' : '' }}>Lainnya</option>
-                        </select>
-                        <input type="text" id="kegiatan_custom" value="{{ $isCustomKegiatan ? $kegiatanVal : '' }}"
-                            oninput="syncKegiatan()"
-                            placeholder="Tulis nama kegiatan..."
-                            class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500"
-                            style="{{ $isCustomKegiatan ? 'display:block' : 'display:none' }}">
-                        <input type="hidden" name="kegiatan" id="kegiatan" value="{{ $kegiatanVal }}">
-                    </div>
-                    <div>
-                        <label for="ket_kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Keaktifan</label>
-                        <select id="ket_kegiatan" name="ket_kegiatan"
-                            class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-red-500 focus:ring-red-500">
-                            <option value="">-- Pilih Keaktifan --</option>
-                            @foreach($ketKegiatanOptions as $opt)
-                            <option value="{{ $opt }}" {{ $ketKegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                            @endforeach
+                        <select id="kegiatan_select" name="kegiatan"
+                           class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                           <option value="">-- Pilih atau Ketik Ekstrakurikuler --</option>
+                           @foreach($kegiatanOptions as $opt)
+                           <option value="{{ $opt }}" {{ $kegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                           @endforeach
                         </select>
                     </div>
-                </div>
+
+            {{-- Input Keaktifan (Menggunakan Tom Select) --}}
+            <div>
+                <label for="ket_kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Keaktifan</label>
+                <select id="ket_kegiatan" name="ket_kegiatan"
+                   class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                   <option value="">-- Pilih Keaktifan --</option>
+                   @foreach($ketKegiatanOptions as $opt)
+                   <option value="{{ $opt }}" {{ $ketKegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                   @endforeach
+                </select>
             </div>
 
             {{-- Section: Absensi --}}
@@ -163,23 +163,19 @@ $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
 @endsection
 
 @push('scripts')
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.tailwind.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
 <script>
-function syncKegiatan() {
-    const select = document.getElementById('kegiatan_select');
-    const custom = document.getElementById('kegiatan_custom');
-    const hidden = document.getElementById('kegiatan');
-
-    if (select.value === '__other__') {
-        custom.style.display = 'block';
-        hidden.value = custom.value;
-    } else {
-        custom.style.display = 'none';
-        hidden.value = select.value;
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    syncKegiatan();
+    new TomSelect('#kegiatan_select', {
+        create: true,
+        sortField: { field: 'text', direction: 'asc' }
+    });
+
+    new TomSelect('#ket_kegiatan', {
+        controlInput: null
+    });
 });
 </script>
 @endpush

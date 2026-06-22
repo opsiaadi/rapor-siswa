@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Semester;
+use App\Models\Ekstrakurikuler;
 use App\Models\Kelas;
-use App\Models\Notification;
 use App\Models\Siswa;
 use App\Models\Nilai;
-use App\Models\User;
+use App\Notifications\RaporDifinalisasi;
 use App\Services\NilaiMapperService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -99,7 +99,7 @@ class WalikelasController extends Controller
         ]);
     }
     
-    public function simpanKeterangan(Request $request, $siswaId)
+    public function simpanRapor(Request $request, $siswaId)
     {
         $kelas = $this->kelas();
         $sw = $this->getSiswa($siswaId, $kelas);
@@ -117,18 +117,8 @@ class WalikelasController extends Controller
 
         $sw->update([...$validated, 'status_rapor' => 'sudah']);
 
-        $admins = User::whereIn('role', ['admin', 'super_admin'])->get();
-        $waliUser = $this->getCurrentUser();
-        foreach ($admins as $admin) {
-            Notification::create([
-                'user_id' => $admin->id,
-                'title' => 'Rapor Difinalisasi',
-                'message' => "{$waliUser->nama} memfinalisasi rapor {$sw->nama} di kelas " . ($sw->kelas?->nama_kelas ?? '-'),
-                'type' => 'success',
-                'url' => route('admin.siswa.index'),
-            ]);
-        }
-        
+        $this->notifyFinalisasi($sw);
+
         return redirect()->route('walikelas.finalisasi')->with('success', 'Keterangan berhasil disimpan.');
     }
 
@@ -146,6 +136,7 @@ class WalikelasController extends Controller
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
             'mode' => 'tambah',
+            'kegiatanList' => Ekstrakurikuler::aktif()->pluck('nama'),
         ]);
     }
 
@@ -163,6 +154,7 @@ class WalikelasController extends Controller
             'siswa' => $sw,
             'kelasUtama' => $this->kelasUtama($kelas),
             'mode' => 'edit',
+            'kegiatanList' => Ekstrakurikuler::aktif()->pluck('nama'),
         ]);
     }
 
@@ -196,5 +188,13 @@ class WalikelasController extends Controller
         $data['kelasUtama'] = $this->kelasUtama($kelas);
 
         return view('walikelas.rapor_lihat', $data);
+    }
+
+    // notifikasi finalisasi rapor ke admin
+    private function notifyFinalisasi(Siswa $siswa): void
+    {
+        $waliUser = $this->getCurrentUser();
+        $kelasNama = $siswa->kelas?->nama_kelas ?? '-';
+        NotificationController::notifyAdmins(new RaporDifinalisasi($waliUser->nama, $siswa->nama, $kelasNama));
     }
 }

@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Siswa;
+use App\Models\User;
+use App\Models\Mapel;
+use App\Models\Kelas;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin Utama',
             'email' => 'admin@example.com',
             'password' => 'password',
-            'role' => 'super_admin',
+            'role' => 'admin',
             'status' => 'aktif',
         ]);
 

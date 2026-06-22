@@ -71,26 +71,6 @@
                         placeholder="Contoh: 198501012010011001" required>
                 </div>
 
-                <!-- Nama -->
-                <div>
-                    <label for="nama" class="block mb-2.5 text-sm font-medium text-heading ">
-                        Nama Guru <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="nama" id="nama" value="{{ old('nama') }}"
-                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body    "
-                        placeholder="Masukkan nama lengkap" required>
-                </div>
-
-                <!-- Email -->
-                <div>
-                    <label for="email" class="block mb-2.5 text-sm font-medium text-heading ">
-                        Email <span class="text-red-500">*</span>
-                    </label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}"
-                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body    "
-                        placeholder="guru@sekolah.sch.id" required>
-                </div>
-
                 <!-- Password -->
                 <div>
                     <label for="password" class="block mb-2.5 text-sm font-medium text-heading ">
@@ -109,10 +89,48 @@
                         </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Mata Pelajaran -->
-            <div class="p-6 border-t border-gray-100  bg-gradient-to-r from-indigo-50 to-purple-50  ">
+                <!-- Nama -->
+                <div>
+                    <label for="nama" class="block mb-2.5 text-sm font-medium text-heading ">
+                        Nama Guru <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="nama" id="nama" value="{{ old('nama') }}"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body    "
+                        placeholder="Masukkan nama lengkap" required>
+                </div>
+
+                <!-- Konfirmasi Password -->
+                <div>
+                    <label for="password_confirmation" class="block mb-2.5 text-sm font-medium text-heading ">
+                        Konfirmasi Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password_confirmation" id="password_confirmation"
+                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 pr-10 shadow-xs placeholder:text-body"
+                            placeholder="Ulangi password" required>
+                        <button type="button" onclick="togglePassword('password_confirmation', this)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block mb-2.5 text-sm font-medium text-heading ">
+                        Email <span class="text-red-500">*</span>
+                    </label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}"
+                        class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body    "
+                        placeholder="guru@sekolah.sch.id" required>
+                </div>
+
+                <!-- Mata Pelajaran -->
+                <div class="md:col-span-2 p-6 border-t border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-lg bg-amber-300 flex items-center justify-center text-white">
                         <svg class="w-6 h-6 text-amber-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -143,6 +161,7 @@
                 @error('mapel_ids')
                 <p class="mt-2 text-sm text-red-600 ">{{ $message }}</p>
                 @enderror
+                </div>
             </div>
 
             <div class="px-6 py-4 bg-gray-50  border-t border-gray-100  flex items-center justify-end gap-3">

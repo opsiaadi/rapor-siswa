@@ -46,7 +46,10 @@
                         <div id="notif-panel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden">
                             <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
                                 <h3 class="text-sm font-semibold text-gray-800">Notifikasi</h3>
-                                <button type="button" onclick="markAllRead()" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Tandai semua dibaca</button>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="markAllRead()" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Tandai semua dibaca</button>
+                                    <button type="button" onclick="clearAllNotifications()" class="text-xs text-red-500 hover:text-red-700 font-medium">Hapus semua</button>
+                                </div>
                             </div>
                             <div id="notif-list" class="max-h-80 overflow-y-auto divide-y divide-gray-100">
                                 <p class="px-4 py-6 text-center text-sm text-gray-400">Memuat notifikasi...</p>

@@ -14,7 +14,7 @@ class LoginController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             return match ($user->role) {
-                UserRole::Admin, UserRole::SuperAdmin => redirect()->route('admin.dashboard', ['id' => $user->id, 'nama' => $user->nama]),
+                UserRole::Admin => redirect()->route('admin.dashboard', ['id' => $user->id, 'nama' => $user->nama]),
                 UserRole::Walikelas => redirect()->route('walikelas.dashboard'),
                 default => redirect()->route('guru.dashboard', ['id' => $user->id, 'namaGuru' => $user->nama]),
             };
@@ -24,7 +24,7 @@ class LoginController extends Controller
             $request->validate([
                 'role' => 'required|in:admin,guru,walikelas',
                 'nik' => 'required|string',
-                'password' => 'required|string|min:6',
+                'password' => 'required|string|min:8',
             ]);
 
             $role = $request->input('role');
@@ -32,25 +32,36 @@ class LoginController extends Controller
             $password = $request->input('password');
             $field = $role === 'admin' ? 'email' : 'nik';
 
-            if (Auth::attempt([$field => $credential, 'password' => $password])) {
+            $success = Auth::attempt([$field => $credential, 'password' => $password]);
+
+            if ($success) {
                 $user = Auth::user();
 
-                if ($role === 'walikelas') {
-                    $isWalikelas = Kelas::where('wali_kelas_id', $user->id)->exists();
-                    if (!$isWalikelas) {
+                if ($user->role->value !== $role) {
+                    if (!($role === 'walikelas' && $user->role->value === 'guru' && Kelas::where('wali_kelas_id', $user->id)->exists())) {
                         Auth::logout();
-                        return back()->with('error', 'Anda tidak terdaftar sebagai wali kelas.');
+                        $success = false;
                     }
                 }
 
-                return match ($role) {
-                    'admin' => redirect()->route('admin.dashboard', ['id' => $user->id, 'nama' => $user->nama]),
-                    'walikelas' => redirect()->route('walikelas.dashboard'),
-                    default => redirect()->route('guru.dashboard', ['id' => $user->id, 'namaGuru' => $user->nama]),
-                };
+                if ($success && $role === 'walikelas') {
+                    $isWalikelas = Kelas::where('wali_kelas_id', $user->id)->exists();
+                    if (!$isWalikelas) {
+                        Auth::logout();
+                        $success = false;
+                    }
+                }
+
+                if ($success) {
+                    return match ($role) {
+                        'admin' => redirect()->route('admin.dashboard', ['id' => $user->id, 'nama' => $user->nama]),
+                        'walikelas' => redirect()->route('walikelas.dashboard'),
+                        default => redirect()->route('guru.dashboard', ['id' => $user->id, 'namaGuru' => $user->nama]),
+                    };
+                }
             }
 
-            return back()->with('error', 'NIK/Email atau password salah.')->withInput();
+            return back()->with('error', 'NIK/Email/Role atau password salah.')->withInput();
         }
 
         return view('login');
