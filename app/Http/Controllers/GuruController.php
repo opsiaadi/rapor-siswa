@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use App\Models\Mapel;
+use App\Models\Nilai;
 use App\Notifications\NilaiDiperbarui;
 use App\Notifications\NilaiTerkirim;
 use App\Services\NilaiMapperService;
