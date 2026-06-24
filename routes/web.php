@@ -60,7 +60,7 @@ Route::middleware(['auth', 'role:walikelas'])->prefix('walikelas')->name('walike
     Route::get('/siswa', [WalikelasController::class, 'siswa'])->name('siswa');
     Route::get('/rapor/{siswaId}', [WalikelasController::class, 'rapor'])->name('rapor');
     Route::get('/rapor/{siswaId}/edit', [WalikelasController::class, 'editRapor'])->name('rapor.edit');
-    Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanKeterangan'])->name('rapor.simpan');
+    Route::post('/rapor/{siswaId}', [WalikelasController::class, 'simpanRapor'])->name('rapor.simpan');
     Route::get('/rapor-lihat/{siswaId}', [WalikelasController::class, 'lihatRapor'])->name('rapor-lihat');
     Route::get('/cetak/{siswaId}', [WalikelasController::class, 'lihatRapor'])->name('cetak.rapor');
 });

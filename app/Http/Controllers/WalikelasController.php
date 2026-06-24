@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware;
 use App\Enums\Semester;
 use App\Models\Ekstrakurikuler;
 use App\Models\Kelas;
