@@ -95,7 +95,7 @@
                 Kembali
             </a>
             <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/30">
-                Update Nilai
+                Perbarui Nilai
             </button>
         </div>
         @endif
