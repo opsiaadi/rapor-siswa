@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kelas;
 use App\Enums\UserRole;
+use App\Models\Kelas;
+use App\Models\user;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,6 +14,7 @@ class LoginController extends Controller
     {
         if (Auth::check()) {
             $user = Auth::user();
+
             return match ($user->role) {
                 UserRole::Admin => redirect()->route('admin.dashboard', ['id' => $user->id, 'nama' => $user->nama]),
                 UserRole::Walikelas => redirect()->route('walikelas.dashboard'),
@@ -25,6 +27,11 @@ class LoginController extends Controller
                 'role' => 'required|in:admin,guru,walikelas',
                 'nik' => 'required|string',
                 'password' => 'required|string|min:8',
+            ], [
+                'nik.required' => 'wajib isi username',
+                'password.required' => 'wajib isi password',
+                'password.min' => 'Password minimal 8 karakter',
+                'role.required' => 'wajib pilih role',
             ]);
 
             $role = $request->input('role');
@@ -38,7 +45,7 @@ class LoginController extends Controller
                 $user = Auth::user();
 
                 if ($user->role->value !== $role) {
-                    if (!($role === 'walikelas' && $user->role->value === 'guru' && Kelas::where('wali_kelas_id', $user->id)->exists())) {
+                    if (! ($role === 'walikelas' && $user->role->value === 'guru' && Kelas::where('wali_kelas_id', $user->id)->exists())) {
                         Auth::logout();
                         $success = false;
                     }
@@ -46,7 +53,7 @@ class LoginController extends Controller
 
                 if ($success && $role === 'walikelas') {
                     $isWalikelas = Kelas::where('wali_kelas_id', $user->id)->exists();
-                    if (!$isWalikelas) {
+                    if (! $isWalikelas) {
                         Auth::logout();
                         $success = false;
                     }
@@ -60,6 +67,11 @@ class LoginController extends Controller
                     };
                 }
             }
+            $usernotExists = User::where('nik', $credential)
+                ->orWhere('email', $credential)->exists();
+            if (! $usernotExists) {
+                return redirect()->back()->with('error', 'Akun tidak terdaftar.')->withInput();
+            }
 
             return back()->with('error', 'NIK/Email/Role atau password salah.')->withInput();
         }
@@ -72,6 +84,7 @@ class LoginController extends Controller
         Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
+
         return redirect('/login');
     }
 }

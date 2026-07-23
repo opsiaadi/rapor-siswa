@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Kelas;
+use App\Models\Mapel;
 use App\Models\Siswa;
 use App\Models\User;
-use App\Models\Mapel;
-use App\Models\Kelas;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             ['kode_mapel' => 'BIG', 'nama_mapel' => 'Bahasa Inggris', 'kkm' => 75],
             ['kode_mapel' => 'IPA', 'nama_mapel' => 'Ilmu Pengetahuan Alam', 'kkm' => 75],
             ['kode_mapel' => 'IPS', 'nama_mapel' => 'Ilmu Pengetahuan Sosial', 'kkm' => 75],
-            ['kode_mapel' => 'PJK', 'nama_mapel' => 'Pendidikan Jasmani', 'kkm' => 70],
+            ['kode_mapel' => 'PJK', 'nama_mapel' => 'Pendidikan Jasmani', 'kkm' => 75],
             ['kode_mapel' => 'TIK', 'nama_mapel' => 'Teknologi Informasi', 'kkm' => 75],
         ];
         $mapels = collect();
@@ -66,10 +66,12 @@ class DatabaseSeeder extends Seeder
             ['nama_kelas' => 'XII-MM 3', 'tingkat' => 'XII'],
         ];
         $kelas = collect();
+        $availableGurus = $gurus->shuffle();
         foreach ($kelasData as $data) {
+            $wali = $availableGurus->isNotEmpty() ? $availableGurus->pop()->id : null;
             $kelas->push(Kelas::create([
                 ...$data,
-                'wali_kelas_id' => $gurus->random()->id,
+                'wali_kelas_id' => $wali,
             ]));
         }
 

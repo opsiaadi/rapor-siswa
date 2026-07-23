@@ -90,9 +90,9 @@ table.absensi td { padding: 2px 8px; }
 <h2>Absensi</h2>
 <table class="absensi">
 <tr>
-<td>Izin: <strong>{{ $siswa->izin ?? 0 }}</strong> hari</td>
-<td>Sakit: <strong>{{ $siswa->sakit ?? 0 }}</strong> hari</td>
-<td>Tanpa Keterangan: <strong>{{ $siswa->alpha ?? 0 }}</strong> hari</td>
+<td>Izin: <strong>{{ $absensi['izin'] ?? 0 }}</strong> hari</td>
+<td>Sakit: <strong>{{ $absensi['sakit'] ?? 0 }}</strong> hari</td>
+<td>Tanpa Keterangan: <strong>{{ $absensi['alpha'] ?? 0 }}</strong> hari</td>
 </tr>
 </table>
 

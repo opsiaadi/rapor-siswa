@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Enums\UserRole;
 
 class User extends Authenticatable
 {
@@ -53,8 +54,8 @@ class User extends Authenticatable
         return $this->hasMany(KelasMapel::class, 'guru_id');
     }
 
-    public function waliKelas(): HasMany
+    public function waliKelas(): HasOne
     {
-        return $this->hasMany(Kelas::class, 'wali_kelas_id');
+        return $this->hasOne(Kelas::class, 'wali_kelas_id');
     }
 }

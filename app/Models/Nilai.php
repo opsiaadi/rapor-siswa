@@ -12,16 +12,16 @@ class Nilai extends Model
     protected $table = 'nilai';
 
     protected $fillable = [
-    'siswa_id',
-    'mapel_id',
-    'guru_id',
-    'semester',
-    'status',
-    'harian',
-    'uts',
-    'uas',
-    'nilai_akhir',
-];
+        'siswa_id',
+        'mapel_id',
+        'guru_id',
+        'semester',
+        'status',
+        'harian',
+        'uts',
+        'uas',
+        'nilai_akhir',
+    ];
 
     protected function casts(): array
     {

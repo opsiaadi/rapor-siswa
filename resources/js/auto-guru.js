@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const guruSelect = document.getElementById('guru_mapel_' + mapelId);
 
         if (checkbox.checked) {
-            if (mapelGuruMap[mapelId] && mapelGuruMap[mapelId].length > 0) {
+            if (!guruSelect.value && mapelGuruMap[mapelId] && mapelGuruMap[mapelId].length > 0) {
                 guruSelect.value = mapelGuruMap[mapelId][0];
             }
         } else {

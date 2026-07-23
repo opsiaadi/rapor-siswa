@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ekstrakurikuler;
+use App\Notifications\EskulNotification;
 use Illuminate\Http\Request;
 
 class EskulController extends Controller
@@ -11,6 +12,7 @@ class EskulController extends Controller
     public function index()
     {
         $data = Ekstrakurikuler::all();
+
         return view('admin.eskul.index', compact('data'));
     }
 
@@ -32,12 +34,16 @@ class EskulController extends Controller
             'is_aktif' => $request->boolean('is_aktif', true),
         ]);
 
+        $user = $this->getCurrentUser();
+        $user->notify(new EskulNotification('tambah', $request->nama, route('admin.eskul.index')));
+
         return redirect()->route('admin.eskul.index')->with('success', 'Ekstrakurikuler berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
         $eskul = Ekstrakurikuler::findOrFail($id);
+
         return view('admin.eskul.edit', compact('eskul'));
     }
 
@@ -46,7 +52,7 @@ class EskulController extends Controller
         $eskul = Ekstrakurikuler::findOrFail($id);
 
         $request->validate([
-            'nama' => 'required|string|max:255|unique:ekstrakurikuler,nama,' . $id,
+            'nama' => 'required|string|max:255|unique:ekstrakurikuler,nama,'.$id,
         ], [
             'nama.unique' => 'Nama eskul sudah digunakan.',
         ]);
@@ -56,6 +62,9 @@ class EskulController extends Controller
             'is_aktif' => $request->boolean('is_aktif', true),
         ]);
 
+        $user = $this->getCurrentUser();
+        $user->notify(new EskulNotification('ubah', $eskul->nama, route('admin.eskul.index')));
+
         return redirect()->route('admin.eskul.index')->with('success', 'Ekstrakurikuler berhasil diperbarui.');
     }
 
@@ -63,6 +72,9 @@ class EskulController extends Controller
     {
         $eskul = Ekstrakurikuler::findOrFail($id);
         $eskul->delete();
+
+        $user = $this->getCurrentUser();
+        $user->notify(new EskulNotification('hapus', $eskul->nama, route('admin.eskul.index')));
 
         return redirect()->route('admin.eskul.index')->with('success', 'Ekstrakurikuler berhasil dihapus.');
     }

@@ -1,9 +1,9 @@
 @php
 $isEdit = ($mode ?? 'tambah') === 'edit';
-$formTitle = $isEdit ? 'Edit Keterangan' : 'Tambah Keterangan';
+$formTitle = $isEdit ? 'Ubah Keterangan' : 'Tambah Keterangan';
 $pageTitle = $formTitle . ' - ' . ($siswa->nama ?? 'Siswa');
 $breadcrumb = $isEdit
-    ? 'Finalisasi > Edit ' . ($siswa->nama ?? 'Siswa')
+    ? 'Finalisasi > Ubah ' . ($siswa->nama ?? 'Siswa')
     : 'Rapor > ' . ($siswa->nama ?? 'Siswa');
 
 $kegiatanVal = old('kegiatan', $siswa->kegiatan ?? '');
@@ -56,6 +56,20 @@ $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
 
         <form action="{{ route('walikelas.rapor.simpan', ['siswaId' => $siswa->id]) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
+            <input type="hidden" name="semester" value="{{ $semester ?? '2' }}">
+
+            {{-- Section: Semester --}}
+            <div class="border-b border-gray-100 pb-5">
+                <div class="mb-3">
+                    <h4 class="text-sm font-semibold text-gray-800">Semester</h4>
+                    <p class="text-xs text-gray-400">Pilih semester yang sedang diisi.</p>
+                </div>
+                <select id="semester_select" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" onchange="window.location.href=this.options[this.selectedIndex].value">
+                    @foreach($semesterList as $key => $val)
+                    <option value="{{ route('walikelas.rapor' . ($isEdit ? '.edit' : ''), ['siswaId' => $siswa->id, 'semester' => $key]) }}" {{ $semester == $key ? 'selected' : '' }}>{{ $val }}</option>
+                    @endforeach
+                </select>
+            </div>
 
             {{-- Section: Deskripsi Siswa --}}
             <div class="border-b border-gray-100 pb-5">
@@ -74,17 +88,27 @@ $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
                 <div class="mb-3">
                     <h4 class="text-sm font-semibold text-gray-800">Ekstrakurikuler</h4>
                     <p class="text-xs text-gray-400">Kegiatan di luar jam pelajaran yang diikuti siswa beserta tingkat keaktifannya.</p>
-            </div>
-            
-            {{-- Input Keaktifan (Menggunakan Tom Select) --}}
-            <div>
-                <label for="ket_kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Keaktifan</label>
-                <select id="ket_kegiatan" name="ket_kegiatan" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
-                    <option value="">-- Pilih Keaktifan --</option>
-                    @foreach($kegiatanList as $opt)
-                    <option value="{{ $opt }}" {{ $ketKegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                    @endforeach
-                </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Ekstrakurikuler</label>
+                    <select id="kegiatan_select" name="kegiatan" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                        <option value="">-- Pilih Ekstrakurikuler --</option>
+                        @foreach($kegiatanList as $opt)
+                        <option value="{{ $opt }}" {{ $kegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="ket_kegiatan" class="mb-2 block text-sm font-medium text-gray-700">Keaktifan</label>
+                    <select id="ket_kegiatan" name="ket_kegiatan" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
+                        <option value="">-- Pilih Keaktifan --</option>
+                        @foreach($ketKegiatanOptions as $opt)
+                        <option value="{{ $opt }}" {{ $ketKegiatanVal == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             {{-- Section: Absensi --}}
@@ -96,15 +120,15 @@ $ketKegiatanVal = old('ket_kegiatan', $siswa->ket_kegiatan ?? '');
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div>
                         <label for="izin" class="mb-2 block text-sm font-medium text-gray-700">Izin</label>
-                        <input id="izin" type="number" min="0" name="izin" value="{{ old('izin', $siswa->izin ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
+                        <input id="izin" type="number" min="0" name="izin" value="{{ old('izin', $absensi['izin'] ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
                     </div>
                     <div>
                         <label for="sakit" class="mb-2 block text-sm font-medium text-gray-700">Sakit</label>
-                        <input id="sakit" type="number" min="0" name="sakit" value="{{ old('sakit', $siswa->sakit ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
+                        <input id="sakit" type="number" min="0" name="sakit" value="{{ old('sakit', $absensi['sakit'] ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
                     </div>
                     <div>
                         <label for="alpha" class="mb-2 block text-sm font-medium text-gray-700">Tanpa Keterangan</label>
-                        <input id="alpha" type="number" min="0" name="alpha" value="{{ old('alpha', $siswa->alpha ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
+                        <input id="alpha" type="number" min="0" name="alpha" value="{{ old('alpha', $absensi['alpha'] ?? 0) }}" class="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="0">
                     </div>
                 </div>
             </div>

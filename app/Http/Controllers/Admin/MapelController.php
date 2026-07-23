@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Mapel;
+use App\Notifications\MapelNotification;
 use Illuminate\Http\Request;
 
 class MapelController extends Controller
@@ -11,6 +12,7 @@ class MapelController extends Controller
     public function index()
     {
         $data = Mapel::all();
+
         return view('admin.mapel.index', compact('data'));
     }
 
@@ -37,12 +39,16 @@ class MapelController extends Controller
             'kkm' => $request->kkm,
         ]);
 
+        $user = $this->getCurrentUser();
+        $user->notify(new MapelNotification('tambah', $request->nama_mapel, route('admin.mapel.index')));
+
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
         $mapel = Mapel::findOrFail($id);
+
         return view('admin.mapel.edit', compact('mapel'));
     }
 
@@ -51,7 +57,7 @@ class MapelController extends Controller
         $mapel = Mapel::findOrFail($id);
 
         $request->validate([
-            'kode_mapel' => 'required|unique:mapel,kode_mapel,' . $id,
+            'kode_mapel' => 'required|unique:mapel,kode_mapel,'.$id,
             'nama_mapel' => 'required',
             'kkm' => 'required|integer|min:0|max:100',
         ], [
@@ -66,6 +72,9 @@ class MapelController extends Controller
             'kkm' => $request->kkm,
         ]);
 
+        $user = $this->getCurrentUser();
+        $user->notify(new MapelNotification('ubah', $mapel->nama_mapel, route('admin.mapel.index')));
+
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
 
@@ -73,6 +82,9 @@ class MapelController extends Controller
     {
         $mapel = Mapel::findOrFail($id);
         $mapel->delete();
+
+        $user = $this->getCurrentUser();
+        $user->notify(new MapelNotification('hapus', $mapel->nama_mapel, route('admin.mapel.index')));
 
         return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil dihapus.');
     }

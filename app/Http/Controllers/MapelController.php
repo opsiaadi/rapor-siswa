@@ -14,7 +14,7 @@ class MapelController extends Controller
 
         return view('mapel.index', [
             'daftarMapel' => $daftarMapel,
-            'totalMapel' => $totalMapel
+            'totalMapel' => $totalMapel,
         ]);
     }
 
@@ -28,13 +28,14 @@ class MapelController extends Controller
         $validated = $request->validate([
             'nama_mapel' => 'required|string|max:100',
             'kode_mapel' => 'required|string|max:20|unique:mapels,kode_mapel',
-            'kkm'        => 'required|integer|min:0|max:100',
-            ]);
-            
-            Mapel::create($validated);
-            
-            return redirect()->route('mapel.index')->with('success', 'Mata pelajaran baru berhasil ditambahkan!');
+            'kkm' => 'required|integer|min:0|max:100',
+        ]);
+
+        Mapel::create($validated);
+
+        return redirect()->route('mapel.index')->with('success', 'Mata pelajaran baru berhasil ditambahkan!');
     }
+
     public function edit(Mapel $mapel)
     {
         return view('mapel.edit', compact('mapel'));
@@ -44,8 +45,8 @@ class MapelController extends Controller
     {
         $validated = $request->validate([
             'nama_mapel' => 'required|string|max:100',
-            'kode_mapel' => 'required|string|max:20|unique:mapels,kode_mapel,' . $mapel->id,
-            'kkm'        => 'required|integer|min:0|max:100',
+            'kode_mapel' => 'required|string|max:20|unique:mapels,kode_mapel,'.$mapel->id,
+            'kkm' => 'required|integer|min:0|max:100',
         ]);
 
         $mapel->update($validated);

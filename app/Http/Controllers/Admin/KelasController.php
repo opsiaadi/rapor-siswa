@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Kelas;
-use App\Models\Mapel;
 use App\Models\KelasMapel;
+use App\Models\Mapel;
+use App\Models\User;
+use App\Notifications\KelasNotification;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -14,6 +15,7 @@ class KelasController extends Controller
     public function index()
     {
         $data = Kelas::with('waliKelas')->get();
+
         return view('admin.kelas.index', compact('data'));
     }
 
@@ -31,7 +33,10 @@ class KelasController extends Controller
         })->toArray();
 
         $currentMapelGuru = [];
-        return view('admin.kelas.create', compact('guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap'));
+
+        $waliTerpakai = Kelas::whereNotNull('wali_kelas_id')->pluck('wali_kelas_id');
+
+        return view('admin.kelas.create', compact('guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap', 'waliTerpakai'));
     }
 
     public function edit($id)
@@ -51,7 +56,11 @@ class KelasController extends Controller
             return $group->pluck('guru_id')->toArray();
         })->toArray();
 
-        return view('admin.kelas.edit', compact('kelas', 'siswaList', 'guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap'));
+        $waliTerpakai = Kelas::whereNotNull('wali_kelas_id')
+            ->where('id', '!=', $kelas->id)
+            ->pluck('wali_kelas_id');
+
+        return view('admin.kelas.edit', compact('kelas', 'siswaList', 'guruList', 'mapelList', 'currentMapelGuru', 'mapelGuruMap', 'waliTerpakai'));
     }
 
     public function store(Request $request)
@@ -59,6 +68,9 @@ class KelasController extends Controller
         $request->validate([
             'nama_kelas' => 'required',
             'tingkat' => 'required',
+            'wali_kelas_id' => 'nullable|unique:kelas,wali_kelas_id',
+        ], [
+            'wali_kelas_id.unique' => 'Guru tersebut sudah menjadi wali kelas pada kelas lain.',
         ]);
 
         $kelas = Kelas::create([
@@ -80,6 +92,9 @@ class KelasController extends Controller
             }
         }
 
+        $user = $this->getCurrentUser();
+        $user->notify(new KelasNotification('tambah', $kelas->nama_kelas, route('admin.kelas.index')));
+
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
     }
 
@@ -90,6 +105,9 @@ class KelasController extends Controller
         $request->validate([
             'nama_kelas' => 'required',
             'tingkat' => 'required',
+            'wali_kelas_id' => 'nullable|unique:kelas,wali_kelas_id,'.$kelas->id,
+        ], [
+            'wali_kelas_id.unique' => 'Guru tersebut sudah menjadi wali kelas pada kelas lain.',
         ]);
 
         $kelas->update([
@@ -113,6 +131,9 @@ class KelasController extends Controller
             }
         }
 
+        $user = $this->getCurrentUser();
+        $user->notify(new KelasNotification('ubah', $kelas->nama_kelas, route('admin.kelas.index')));
+
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diperbarui.');
     }
 
@@ -121,6 +142,9 @@ class KelasController extends Controller
         $kelas = Kelas::findOrFail($id);
         KelasMapel::where('kelas_id', $id)->delete();
         $kelas->delete();
+
+        $user = $this->getCurrentUser();
+        $user->notify(new KelasNotification('hapus', $kelas->nama_kelas, route('admin.kelas.index')));
 
         return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }

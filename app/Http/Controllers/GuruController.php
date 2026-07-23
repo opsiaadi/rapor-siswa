@@ -17,11 +17,12 @@ class GuruController extends Controller
     public function __construct(
         private NilaiMapperService $nilaiMapperService,
         private NilaiService $nilaiService,
-    ){}
+    ) {}
 
     public function nama($id = null, $namaGuru = null)
     {
         $user = $this->getCurrentUser();
+
         return view('guru.dashboard_guru', [
             'id' => $user->id,
             'namaGuru' => $user->nama,
@@ -29,7 +30,7 @@ class GuruController extends Controller
         ]);
     }
 
-    public function tampilNilai($kelasId, $mapelId, $semester = '1')
+    public function tampilNilai($kelasId, $mapelId, $semester)
     {
         return redirect()->route('guru.nilai', [
             'kelas_id' => $kelasId,
@@ -44,14 +45,14 @@ class GuruController extends Controller
         $guruMengajar = $this->nilaiService->getGuruMengajar($user->id);
         $filter = $this->nilaiService->resolveFilter($request, $guruMengajar);
 
-        $kelasId = $request->input('kelas_id', $filter['kelasId']);
         $mapelId = $request->input('mapel_id', $filter['mapelId']);
+        $kelasId = $request->input('kelas_id', $filter['kelasId']);
         $semester = $request->input('semester', $filter['semester']);
         $editMode = $request->has('kelas_id');
 
         if ($kelasId && $mapelId && $editMode) {
-            if (!in_array((int) $kelasId, $guruMengajar->pluck('kelas_id')->toArray())) {
-                return redirect()->route('guru.nilai')->with('error', 'data nilai belum dimasukkan');
+            if (! in_array((int) $kelasId, $guruMengajar->pluck('kelas_id')->toArray())) {
+                return redirect()->route('guru.nilai');
             }
         }
 
@@ -73,10 +74,10 @@ class GuruController extends Controller
             'guruMengajar' => $guruMengajar,
             'kelasList' => $this->nilaiService->getKelasDropdownList($guruMengajar),
             'filter' => $filter,
-            'kelasId' => $kelasId,
+            'kelas' => $kelasId,
             'mapelId' => $mapelId,
+            'kelasId' => $kelasId,
             'semester' => $semester,
-            'isLocked' => $isLocked,
         ]);
     }
 
@@ -86,41 +87,52 @@ class GuruController extends Controller
         $mapelId = (int) $request->mapel_id;
         $kelasId = (int) $request->kelas_id;
 
-        $request->validate(array_merge(NilaiService::nilaiFieldRules(), [
+        $nilaiData = $request->input('nilai', []);
+        $rules = array_merge(NilaiService::nilaiFieldRules(), [
             'semester' => 'required|in:1,2',
             'mapel_id' => 'required|integer',
             'kelas_id' => 'required|integer',
-        ]));
 
-        $this->nilaiService->saveNilaiBatch(
-            $request->input('nilai', []),
-            $mapelId,
-            $request->semester,
-            $user
-        );
+        ]);
+        $allEmpty = true;
+        foreach ($nilaiData['harian'] ?? [] as $siswaId => $value) {
+            if (! empty($value) || ! empty($nilaiData['uts'][$siswaId]) || ! empty($nilaiData['uas'][$siswaId])) {
+                $allEmpty = false;
+                break;
+            }
+        }
+        if ($allEmpty) {
+            return back()->withErrors(['nilai' => 'Nilai tidak boleh kosong.'])->withInput();
+        }
+        $this->nilaiService->saveNilaiBatch($nilaiData, $mapelId, $request->semester, $user);
 
         return $this->notifyNilai($request->input('action', 'kirim'), $user, $kelasId, $mapelId, $request->semester);
     }
 
-    // menampilkan seluruh siswa yang memiliki rapor
-    public function daftarRapor()
+    // menampilkan daftar nilai/nama siswa
+    public function daftarNilai()
     {
         $user = $this->getCurrentUser();
-        return view('guru.daftar_rapor', [
+
+        return view('guru.daftar_nilai', [
             'id' => $user->id,
             'namaGuru' => $user->nama,
             'siswaList' => $this->nilaiService->getRaporSiswaList($user->id),
         ]);
     }
 
-    public function lihatRapor($siswaId)
+    // lihat nilai siswa
+    public function lihatNilai($siswaId)
     {
         $user = $this->getCurrentUser();
-        $data = $this->nilaiService->getRaporData($siswaId, $user->id, request('semester', '1'));
-        if (!$data) return redirect()->route('guru.rapor')->with('error', 'Siswa tidak ditemukan.');
+        $data = $this->nilaiService->getRaporData($siswaId, $user->id, request('semester', '2'));
+        if (! $data) {
+            return redirect()->route('guru.nilai.daftar');
+        }
         $data['id'] = $user->id;
         $data['namaGuru'] = $user->nama;
-        return view('guru.rapor_lihat', $data);
+
+        return view('guru.lihat_nilai', $data);
     }
 
     // notifikasi tambah nilai/nilai diperbarui ke guru
@@ -136,7 +148,7 @@ class GuruController extends Controller
             'mapel' => $mapelId,
             'semester' => $semester,
         ]);
-    // notifikasi ke admin berupa nilai yang terkirim dan nilai yang diperbarui guru
+        // notifikasi ke admin berupa nilai yang terkirim dan nilai yang diperbarui guru
         $notificationClass = $isUpdate ? NilaiDiperbarui::class : NilaiTerkirim::class;
 
         $user->notify(new $notificationClass($mapelNama, $kelasNama, $semester, $redirectUrl));

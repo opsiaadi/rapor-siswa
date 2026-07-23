@@ -1,7 +1,7 @@
 @extends('layouts.guru', [
-    'title' => 'Daftar Rapor Siswa',
-    'pageTitle' => 'Daftar Rapor Siswa',
-    'breadcrumb' => 'Lihat Rapor',
+    'title' => 'Daftar Nilai Siswa',
+    'pageTitle' => 'Daftar Nilai Siswa',
+    'breadcrumb' => 'Lihat Nilai',
     'id' => $id ?? 1,
     'namaGuru' => $namaGuru ?? 'Guru Mapel',
 ])
@@ -9,8 +9,8 @@
 @section('content')
 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
     <div class="bg-gray-800 px-6 py-4">
-        <h2 class="text-lg font-bold text-white">Rapor Siswa</h2>
-        <p class="text-sm text-gray-300">Pilih siswa untuk melihat rapor</p>
+        <h2 class="text-lg font-bold text-white">Nilai Siswa</h2>
+        <p class="text-sm text-gray-300">Pilih siswa untuk melihat nilai</p>
     </div>
 
     <div class="p-6">
@@ -42,12 +42,12 @@
                             <td class="py-3 px-4 font-medium text-gray-900">{{ $siswa->nama }}</td>
                             <td class="py-3 px-4 text-gray-600">{{ $siswa->kelas_nama }}</td>
                             <td class="py-3 px-4 text-center">
-                                <a href="{{ route('guru.rapor.lihat', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full border border-blue-300 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-100 transition-all">
+                                <a href="{{ route('guru.nilai.lihat', ['siswaId' => $siswa->id]) }}" class="inline-flex items-center gap-1.5 rounded-full border border-blue-300 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-100 transition-all">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
-                                    Lihat Rapor
+                                    Lihat Nilai
                                 </a>
                             </td>
                         </tr>

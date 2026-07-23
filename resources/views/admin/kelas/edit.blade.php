@@ -26,9 +26,26 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Kolom Kiri: Form (Identitas + Mapel) -->
         <div class="lg:col-span-1">
-            <form action="{{ route('admin.kelas.update', $kelas->id) }}" method="POST" class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+            <form action="{{ route('admin.kelas.update', $kelas->id) }}" method="POST" class="bg-white rounded-lg border border-gray-200 shadow-sm">
                 @csrf
                 @method('PUT')
+                @if ($errors->any())
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <h4 class="text-sm font-medium text-red-800">Terdapat kesalahan:</h4>
+                            <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 <!-- Identitas Kelas (samain bg kayak mapel) -->
                 <div class="p-4 border-b border-gray-100  bg-gradient-to-r from-teal-50 to-cyan-50  ">
@@ -64,14 +81,15 @@
 
                     <div>
                         <label for="wali_kelas_id" class="block text-xs font-medium text-gray-700  mb-1">Wali Kelas</label>
-                        <select name="wali_kelas_id" id="wali_kelas_id" class="w-full px-3 py-2 border border-gray-300  rounded-lg text-sm bg-white ">
+                        <select name="wali_kelas_id" id="wali_kelas_id" class="w-full px-3 py-2 border border-gray-300  rounded-lg text-sm bg-white " onchange="document.getElementById('wali-warning').classList.toggle('hidden', !this.options[this.selectedIndex].text.includes('(Walikelas)'))">
                             <option value="">-- Pilih --</option>
                             @forelse ($guruList as $guru)
-                            <option value="{{ $guru->id }}" {{ old('wali_kelas_id', $kelas->wali_kelas_id) == $guru->id ? 'selected' : '' }}>{{ $guru->nama }}</option>
+                            <option value="{{ $guru->id }}" {{ old('wali_kelas_id', $kelas->wali_kelas_id) == $guru->id ? 'selected' : '' }}>{{ $guru->nama }}{{ $waliTerpakai->contains($guru->id) ? ' (Walikelas)' : '' }}</option>
                             @empty
                             <option disabled>Belum ada guru</option>
                             @endforelse
                         </select>
+                        <p id="wali-warning" class="hidden mt-1 text-xs font-medium text-red-600">Guru ini sudah menjadi wali kelas pada kelas lain. Harap ganti.</p>
                     </div>
                 </div>
 
@@ -90,6 +108,9 @@
                     </div>
 
                     <div class="space-y-2">
+                        @php
+                            $checkedMapelIds = old('mapel_ids', $kelas->kelasMapels->pluck('mapel_id')->toArray());
+                        @endphp
                         @forelse ($mapelList as $mapel)
                         @php
                             $guruId = $currentMapelGuru[$mapel->id] ?? null;
@@ -97,7 +118,7 @@
                         @endphp
                         <div class="flex items-start gap-2 p-2 rounded-lg border border-gray-200  bg-white ">
                             <input type="checkbox" name="mapel_ids[]" value="{{ $mapel->id }}" id="mapel_{{ $mapel->id }}"
-                                {{ $kelas->kelasMapels->pluck('mapel_id')->contains($mapel->id) ? 'checked' : '' }}
+                                {{ in_array($mapel->id, $checkedMapelIds) ? 'checked' : '' }}
                                 class="mt-0.5 w-4 h-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500">
                             <div class="flex-1">
                                 <label for="mapel_{{ $mapel->id }}" class="text-xs font-medium text-gray-900  cursor-pointer">

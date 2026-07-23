@@ -1,35 +1,41 @@
-export function initLogin() {
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            const btn = document.getElementById('loginBtn');
-            if (btn && !btn.classList.contains('btn-loading')) {
-                btn.classList.add('btn-loading');
-                btn.textContent = '';
-            }
-        });
-    }
+document.addEventListener('DOMContentLoaded', function () {
+    var loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
 
-    const inputs = document.querySelectorAll('.input-animate');
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.value && this.checkValidity()) {
-                this.style.borderColor = '#10b981';
-            } else if (this.value && !this.checkValidity()) {
-                this.style.borderColor = '#ef4444';
-            } else {
-                this.style.borderColor = '';
-            }
-        });
+    var nik = document.getElementById('nik');
+    var password = document.getElementById('password');
+    var role = document.getElementById('roleSelect');
 
-        input.addEventListener('input', function() {
-            if (this.value) {
-                this.style.borderColor = '';
-            }
-        });
+    loginForm.addEventListener('submit', function (e) {
+        var nikVal = nik.value.trim();
+        var passVal = password.value.trim();
+        var roleVal = role.value.trim();
 
-        input.addEventListener('focus', function() {
-            this.style.borderColor = '#2563eb';
-        });
+        var allEmpty = !nikVal && !passVal && !roleVal;
+        if (allEmpty) {
+            e.preventDefault();
+            alert('Warning semua field wajib diisi');
+            nik.focus();
+            return false;
+        }
+
+        if (!nikVal) {
+            e.preventDefault();
+            alert('Warning username wajib diisi');
+            nik.focus();
+            return false;
+        }
+        if (!passVal) {
+            e.preventDefault();
+            alert('Warning wajib isi password');
+            password.focus();
+            return false;
+        }
+        if (!roleVal) {
+            e.preventDefault();
+            alert('Warning wajib pilih role');
+            role.focus();
+            return false;
+        }
     });
-}
+});

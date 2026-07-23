@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SiRapor</title>
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/login.js'])
 </head>
 
 <body class="min-h-screen flex items-center justify-center p-4" style="background: url('{{ asset('images/backgrounds/yurt9.jpg') }}') center/cover no-repeat;">
@@ -23,42 +23,47 @@
             </div>
 
             <!-- Form Login -->
-            <form action="{{ route('login') }}" method="POST" class="space-y-4">
+            <form action="{{ route('login') }}" method="POST" id="loginForm" novalidate class="space-y-4">
                 @csrf
                 @if(session('error'))
                     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
                         <span class="block sm:inline">{{ session('error') }}</span>
                     </div>
                 @endif
+                @if($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                        @foreach($errors->all() as $error)
+                            <span class="block sm:inline">{{ $error }}</span>
+                        @endforeach
+                    </div>
+                @endif
 
                 <div class="space-y-1.5">
                     <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-600 ml-1">NIK / Email</label>
-                    <input type="text" name="nik" value="{{ old('nik') }}" 
+                    <input type="text" name="nik" id="nik" value="{{ old('nik') }}" 
                         class="block w-full px-3.5 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 transition-all duration-300 hover:bg-white hover:border-blue-400 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                        placeholder="Masukkan NIK atau Email"
-                        required>
+                        placeholder="Masukkan NIK atau Email">
                 </div>
                 
                 <div class="space-y-1.5">
                     <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-600 ml-1">Kata Sandi</label>
-                    <input type="password" name="password" 
+                    <input type="password" name="password" id="password"
                         class="block w-full px-3.5 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 transition-all duration-300 hover:bg-white hover:border-blue-400 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                        placeholder="Masukkan kata sandi"
-                        required>
+                        placeholder="Masukkan kata sandi">
                 </div>
                 
                 <div class="space-y-1.5">
                     <label class="block text-[11px] font-bold uppercase tracking-widest text-gray-600 ml-1">Role Akun</label>
                     <select name="role" id="roleSelect" 
-                            class="block w-full px-3.5 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl text-sm text-gray-900 appearance-none cursor-pointer transition-all duration-300 hover:bg-white hover:border-blue-400 hover:shadow-md focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-200"
-                            required>
+                            class="block w-full px-3.5 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl text-sm text-gray-900 appearance-none cursor-pointer transition-all duration-300 hover:bg-white hover:border-blue-400 hover:shadow-md focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-200">
+                        <option value="">-- Pilih Role --</option>
                         <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin TU</option>
                         <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru Pengampu</option>
                         <option value="walikelas" {{ old('role') == 'walikelas' ? 'selected' : '' }}>Wali Kelas</option>
                     </select>
                 </div>
                 
-<button type="submit" 
+                <button type="submit" 
                         class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/30 uppercase tracking-[0.1em] text-sm mt-4">
                     MASUK
                 </button>
