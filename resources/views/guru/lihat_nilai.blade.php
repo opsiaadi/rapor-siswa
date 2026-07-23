@@ -10,7 +10,7 @@
 <div class="space-y-6">
     {{-- Semester Selector & Back --}}
     <div class="flex items-center justify-between">
-        <form method="GET" action="{{ route('guru.rapor.lihat', ['siswaId' => $siswa->id]) }}" class="flex items-center gap-3">
+        <form method="GET" action="{{ route('guru.nilai.lihat', ['siswaId' => $siswa->id]) }}" class="flex items-center gap-3">
             <label for="semester" class="text-sm font-medium text-gray-700">Semester:</label>
             <select name="semester" id="semester" onchange="this.form.submit()" class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500">
                 @foreach($semesterList as $key => $val)
@@ -18,7 +18,7 @@
                 @endforeach
             </select>
         </form>
-        <a href="{{ route('guru.rapor') }}" class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
+        <a href="{{ route('guru.nilai.daftar') }}" class="inline-flex items-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
@@ -30,7 +30,7 @@
     <div class="rounded-3xl border-2 border-gray-800 bg-white shadow-xl overflow-hidden">
         {{-- Header --}}
         <div class="bg-gray-800 px-8 py-6 text-white">
-            <h1 class="text-2xl font-bold text-center tracking-wide">RAPOR SISWA</h1>
+            <h1 class="text-2xl font-bold text-center tracking-wide">Nilai SISWA</h1>
             <p class="text-center text-gray-300 mt-1">SDN 1 - Tahun Ajaran {{ $siswa->tahun_ajaran }}</p>
         </div>
 
@@ -126,15 +126,15 @@
             <div class="flex flex-wrap gap-4 sm:gap-8">
                 <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm">Izin:</span>
-                    <span class="font-semibold text-gray-900">{{ $siswa->izin ?? 0 }} hari</span>
+                    <span class="font-semibold text-gray-900">{{ $absensi['izin'] ?? 0 }} hari</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm">Sakit:</span>
-                    <span class="font-semibold text-gray-900">{{ $siswa->sakit ?? 0 }} hari</span>
+                    <span class="font-semibold text-gray-900">{{ $absensi['sakit'] ?? 0 }} hari</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm">Tanpa Keterangan:</span>
-                    <span class="font-semibold text-gray-900">{{ $siswa->alpha ?? 0 }} hari</span>
+                    <span class="font-semibold text-gray-900">{{ $absensi['alpha'] ?? 0 }} hari</span>
                 </div>
             </div>
         </div>

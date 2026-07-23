@@ -25,16 +25,6 @@
         </div>
 
         <div class="w-full sm:w-auto">
-            <label class="text-xs font-semibold text-gray-500 uppercase">Kelas</label>
-            <select name="kelas" class="block w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">-- Pilih Kelas --</option>
-                @foreach($kelasList as $kelas)
-                <option value="{{ $kelas->id }}" {{ isset($filter['kelasId']) && $filter['kelasId'] == $kelas->id ? 'selected' : '' }}>{{ $kelas->nama_kelas }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="w-full sm:w-auto">
             <label class="text-xs font-semibold text-gray-500 uppercase">Semester</label>
             <select name="semester" class="block w-full bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 <option value="1" {{ isset($filter['semester']) && $filter['semester'] == 1 ? 'selected' : '' }}>Semester 1</option>
@@ -163,7 +153,7 @@
                     Masukkan nilai
                 </a>
                 <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/30">
-                    Kirim
+                    Simpan Nilai
                 </button>
             </div>
         </div>
@@ -172,7 +162,7 @@
 </div>
 @else
 <div class="bg-gray-50 p-4 rounded-xl text-center text-gray-500">
-    Silakan pilih data mengajar untuk mulai input nilai.
+    Silakan pilih data mengajar untuk mulai masukin dan edit nilai.
 </div>
 @endif
 <script>

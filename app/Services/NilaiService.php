@@ -18,7 +18,7 @@ class NilaiService
 
     public function getGuruMengajar(int $guruId): BaseCollection
     {
-        return KelasMapel::findByGuruId($guruId)->map(function($m) {
+        return KelasMapel::findByGuruId($guruId)->map(function ($m) {
             return (object) [
                 'id' => $m->id,
                 'mapel_id' => $m->mapel_id,
@@ -53,7 +53,7 @@ class NilaiService
     public function getKelasDropdownList(BaseCollection $guruMengajar): BaseCollection
     {
         return $guruMengajar->pluck('kelas_nama', 'kelas_id')
-            ->map(fn($nama, $id) => (object) ['id' => $id, 'nama_kelas' => $nama])
+            ->map(fn ($nama, $id) => (object) ['id' => $id, 'nama_kelas' => $nama])
             ->values();
     }
 
@@ -66,13 +66,23 @@ class NilaiService
 
             $nilai_akhir = null;
             $component = [];
+            $totalBobot = 0;
 
-            if ($harian !== null) $component[] = $harian * 0.4;
-            if ($uts !== null) $component[] = $uts * 0.3;
-            if ($uas !== null) $component[] = $uas * 0.3;
+            if ($harian !== null) {
+                $component[] = $harian * 0.4;
+                $totalBobot += 0.4;
+            }
+            if ($uts !== null) {
+                $component[] = $uts * 0.3;
+                $totalBobot += 0.3;
+            }
+            if ($uas !== null) {
+                $component[] = $uas * 0.3;
+                $totalBobot += 0.3;
+            }
 
-            if (!empty($component)) {
-                $nilai_akhir = round(array_sum($component), 1);
+            if ($totalBobot > 0) {
+                $nilai_akhir = round(array_sum($component) / $totalBobot, 1);
             }
 
             $existing = Nilai::where('siswa_id', $siswaId)
@@ -89,22 +99,24 @@ class NilaiService
                     'siswa_id' => $siswaId,
                     'mapel_id' => $mapelId,
                     'semester' => $semester,
-            ],
-            [
+                ],
+                [
                     'guru_id' => $user->id,
                     'status' => 'draft',
                     'harian' => $harian,
                     'uts' => $uts,
                     'uas' => $uas,
                     'nilai_akhir' => $nilai_akhir,
-         ]
-    );
+                ]
+            );
         }
     }
 
     public function getSiswaNilaiForEdit(?string $kelasId, ?string $mapelId, string $semester): BaseCollection
     {
-        if (!$kelasId || !$mapelId) return collect();
+        if (! $kelasId || ! $mapelId) {
+            return collect();
+        }
 
         $mapel = Mapel::find($mapelId);
         $kkm = $mapel?->kkm ?? 75;
@@ -114,9 +126,10 @@ class NilaiService
             ->get()
             ->keyBy('siswa_id');
 
-        return Siswa::findByKelasId((int) $kelasId)->map(function($siswa) use ($nilai, $kkm) {
+        return Siswa::findByKelasId((int) $kelasId)->map(function ($siswa) use ($nilai, $kkm) {
             $n = $nilai->get($siswa->id);
             $nilai_akhir = $n?->nilai_akhir ?? null;
+
             return (object) [
                 'id' => $siswa->id,
                 'nama' => $siswa->nama,
@@ -145,10 +158,12 @@ class NilaiService
         $guruMengajar = $this->getGuruMengajar($guruId);
         $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
 
-        if ($kelasIds->isEmpty()) return collect();
+        if ($kelasIds->isEmpty()) {
+            return collect();
+        }
 
         return Siswa::findWithKelasByKelasIds($kelasIds->toArray())
-            ->map(fn($s) => Siswa::toDaftar($s));
+            ->map(fn ($s) => Siswa::toDaftar($s));
     }
 
     public function getRaporData(int $siswaId, int $guruId, string $semester): ?array
@@ -157,15 +172,20 @@ class NilaiService
         $kelasIds = $guruMengajar->pluck('kelas_id')->unique();
         $siswa = Siswa::findByIdInKelasIds($siswaId, $kelasIds->toArray());
 
-        if (!$siswa) return null;
+        if (! $siswa) {
+            return null;
+        }
 
         $mapelIds = $guruMengajar->pluck('mapel_id')->unique();
         $nilaiModels = Nilai::findBySiswaMapelSemester($siswaId, $mapelIds->toArray(), $semester);
         $nilaiList = $this->nilaiMapperService->mapNilaiList($nilaiModels);
         $rata_rata = $this->nilaiMapperService->calculateRataRata($nilaiList);
 
+        $absensi = $siswa->getAbsensi($semester);
+
         return [
-            'siswa' => Siswa::toRaporDetail($siswa),
+            'siswa' => Siswa::toRaporDetail($siswa, $semester),
+            'absensi' => $absensi,
             'nilaiList' => $nilaiList,
             'rata_rata' => $rata_rata,
             'semester' => $semester,

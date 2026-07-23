@@ -9,8 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Siswa extends Model
 {
     const L = 'L';
+
     const P = 'P';
+
     const RAPOR_BELUM = 'belum';
+
     const RAPOR_SUDAH = 'sudah';
 
     protected $table = 'siswa';
@@ -76,8 +79,29 @@ class Siswa extends Model
         ];
     }
 
-    public static function toRaporDetail(self $siswa): object
+    public function getAbsensi(string $semester): array
     {
+        $extra = is_string($this->keterangan_extra) ? json_decode($this->keterangan_extra, true) : ($this->keterangan_extra ?? []);
+        $absensi = $extra['absensi'] ?? [];
+
+        return $absensi[$semester] ?? ['izin' => 0, 'sakit' => 0, 'alpha' => 0];
+    }
+
+    public function setAbsensi(string $semester, int $izin, int $sakit, int $alpha): void
+    {
+        $extra = is_string($this->keterangan_extra) ? json_decode($this->keterangan_extra, true) : ($this->keterangan_extra ?? []);
+        if (! is_array($extra)) {
+            $extra = [];
+        }
+        $extra['absensi'][$semester] = ['izin' => $izin, 'sakit' => $sakit, 'alpha' => $alpha];
+        $this->update(['keterangan_extra' => json_encode($extra)]);
+    }
+
+    public static function toRaporDetail(self $siswa, string $semester = '2'): object
+    {
+        $abs = $siswa->getAbsensi($semester);
+        $extra = is_string($siswa->keterangan_extra) ? json_decode($siswa->keterangan_extra, true) : ($siswa->keterangan_extra ?? []);
+
         return (object) [
             'id' => $siswa->id,
             'nis' => $siswa->nis,
@@ -86,12 +110,12 @@ class Siswa extends Model
             'tahun_ajaran' => $siswa->tahun_ajaran ?? '-',
             'kelas_nama' => $siswa->kelas ? $siswa->kelas->nama_kelas : '-',
             'keterangan' => $siswa->keterangan ?? '',
-            'keterangan_extra' => $siswa->keterangan_extra ?? '',
+            'keterangan_extra' => $extra['catatan_lain'] ?? '',
             'kegiatan' => $siswa->kegiatan ?? '',
             'ket_kegiatan' => $siswa->ket_kegiatan ?? '',
-            'izin' => $siswa->izin ?? 0,
-            'sakit' => $siswa->sakit ?? 0,
-            'alpha' => $siswa->alpha ?? 0,
+            'izin' => $abs['izin'],
+            'sakit' => $abs['sakit'],
+            'alpha' => $abs['alpha'],
         ];
     }
 

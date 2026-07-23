@@ -12,6 +12,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = $this->getCurrentUser();
+
         return view('admin.profile', compact('user'));
     }
 
@@ -21,16 +22,16 @@ class ProfileController extends Controller
 
         $request->validate([
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'password' => 'nullable|min:8|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
-            'email.unique'      => 'Email sudah digunakan.',
-            'password.min'      => 'Password minimal 8 karakter.',
+            'email.unique' => 'Email sudah digunakan.',
+            'password.min' => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'foto.image'        => 'File harus berupa gambar.',
-            'foto.mimes'        => 'Format gambar harus JPEG, PNG, atau JPG.',
-            'foto.max'          => 'Ukuran gambar maksimal 2MB.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus JPEG, PNG, atau JPG.',
+            'foto.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
         $user->nama = $request->nama;
@@ -60,6 +61,7 @@ class ProfileController extends Controller
             $user->foto = null;
             $user->save();
         }
+
         return redirect()->route('admin.profile.index')->with('success', 'Foto profil berhasil dihapus.');
     }
 }

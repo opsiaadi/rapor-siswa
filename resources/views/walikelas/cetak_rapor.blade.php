@@ -113,9 +113,9 @@
         <div class="px-8 py-5 border-b border-gray-200">
             <h2 class="text-base font-bold text-gray-800 mb-3">Absensi</h2>
             <div class="flex gap-8 text-sm">
-                <span class="text-gray-600">Izin: <strong class="text-gray-900">{{ $siswa->izin ?? 0 }}</strong> hari</span>
-                <span class="text-gray-600">Sakit: <strong class="text-gray-900">{{ $siswa->sakit ?? 0 }}</strong> hari</span>
-                <span class="text-gray-600">Tanpa Keterangan: <strong class="text-gray-900">{{ $siswa->alpha ?? 0 }}</strong> hari</span>
+                <span class="text-gray-600">Izin: <strong class="text-gray-900">{{ $absensi['izin'] ?? 0 }}</strong> hari</span>
+                <span class="text-gray-600">Sakit: <strong class="text-gray-900">{{ $absensi['sakit'] ?? 0 }}</strong> hari</span>
+                <span class="text-gray-600">Tanpa Keterangan: <strong class="text-gray-900">{{ $absensi['alpha'] ?? 0 }}</strong> hari</span>
             </div>
         </div>
 

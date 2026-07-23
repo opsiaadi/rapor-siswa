@@ -130,15 +130,15 @@
             <div class="flex flex-wrap gap-4 sm:gap-8">
                 <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm">Izin:</span>
-                    <span class="font-semibold text-gray-900">{{ $siswa->izin ?? 0 }} hari</span>
+                    <span class="font-semibold text-gray-900">{{ $absensi['izin'] ?? 0 }} hari</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm">Sakit:</span>
-                    <span class="font-semibold text-gray-900">{{ $siswa->sakit ?? 0 }} hari</span>
+                    <span class="font-semibold text-gray-900">{{ $absensi['sakit'] ?? 0 }} hari</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-gray-600 text-sm">Tanpa Keterangan:</span>
-                    <span class="font-semibold text-gray-900">{{ $siswa->alpha ?? 0 }} hari</span>
+                    <span class="font-semibold text-gray-900">{{ $absensi['alpha'] ?? 0 }} hari</span>
                 </div>
             </div>
         </div>

@@ -18,7 +18,7 @@ class NotificationController extends Controller
     public function index(): JsonResponse
     {
         $user = $this->getCurrentUser();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['notifications' => [], 'unread_count' => 0]);
         }
 
@@ -26,7 +26,7 @@ class NotificationController extends Controller
             ->latest()
             ->limit(20)
             ->get()
-            ->map(fn($n) => [
+            ->map(fn ($n) => [
                 'id' => $n->id,
                 'title' => $n->data['title'] ?? '',
                 'message' => $n->data['message'] ?? '',
@@ -47,7 +47,7 @@ class NotificationController extends Controller
     public function handleAction(Request $request): JsonResponse
     {
         $user = $this->getCurrentUser();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['unread_count' => 0], 401);
         }
 

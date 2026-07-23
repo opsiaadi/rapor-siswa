@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Mapel;
+use App\Models\User;
+use App\Notifications\GuruNotification;
 use Illuminate\Http\Request;
 
 class GuruDataController extends Controller
@@ -12,12 +13,14 @@ class GuruDataController extends Controller
     public function index()
     {
         $data = User::whereIn('role', ['guru', 'walikelas'])->with('mapels')->get();
+
         return view('admin.guru.index', compact('data'));
     }
 
     public function create()
     {
         $mapelList = Mapel::all();
+
         return view('admin.guru.create', compact('mapelList'));
     }
 
@@ -29,10 +32,10 @@ class GuruDataController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
         ], [
-            'nik.unique'          => 'Nik sudah digunakan',
-            'email.unique'        => 'Email sudah digunakan.',
-            'password.min'        => 'Password minimal 8 karakter.',
-            'password.confirmed'  => 'Konfirmasi password tidak cocok.',
+            'nik.unique' => 'Nik sudah digunakan',
+            'email.unique' => 'Email sudah digunakan.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $user = User::create([
@@ -48,6 +51,9 @@ class GuruDataController extends Controller
             $user->mapels()->sync($request->mapel_ids);
         }
 
+        $admin = $this->getCurrentUser();
+        $admin->notify(new GuruNotification('tambah', $user->nama, route('admin.guru.index')));
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil ditambahkan.');
     }
 
@@ -55,6 +61,7 @@ class GuruDataController extends Controller
     {
         $user = User::with('mapels')->findOrFail($id);
         $mapelList = Mapel::all();
+
         return view('admin.guru.edit', compact('user', 'mapelList'));
     }
 
@@ -63,14 +70,14 @@ class GuruDataController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'nik' => 'required|unique:users,nik,' . $id,
+            'nik' => 'required|unique:users,nik,'.$id,
             'nama' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'nullable|min:8',
         ], [
-            'nik.unique'      => 'NIK sudah digunakan.',
-            'email.unique'    => 'Email sudah digunakan.',
-            'password.min'    => 'Password minimal 8 karakter.',
+            'nik.unique' => 'NIK sudah digunakan.',
+            'email.unique' => 'Email sudah digunakan.',
+            'password.min' => 'Password minimal 8 karakter.',
         ]);
 
         $data = [
@@ -92,6 +99,9 @@ class GuruDataController extends Controller
             $user->mapels()->sync([]);
         }
 
+        $admin = $this->getCurrentUser();
+        $admin->notify(new GuruNotification('ubah', $user->nama, route('admin.guru.index')));
+
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil diperbarui.');
     }
 
@@ -99,6 +109,9 @@ class GuruDataController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
+
+        $admin = $this->getCurrentUser();
+        $admin->notify(new GuruNotification('hapus', $user->nama, route('admin.guru.index')));
 
         return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus.');
     }

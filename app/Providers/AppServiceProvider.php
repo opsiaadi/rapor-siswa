@@ -9,14 +9,12 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 
     public function boot(): void
     {
         RateLimiter::for('login', function (Request $request) {
-            $key = $request->input('role', '') . '|' . $request->input('nik', $request->ip());
+            $key = $request->input('role', '').'|'.$request->input('nik', $request->ip());
 
             return Limit::perMinute(5)->by($key);
         });

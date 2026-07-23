@@ -27,8 +27,26 @@
         @csrf
         <!-- Grid 2 Kolom -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            @if ($errors->any())
+            <div class="lg:col-span-2 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                        <h4 class="text-sm font-medium text-red-800">Terdapat kesalahan:</h4>
+                        <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Kiri: Identitas Kelas -->
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
                 <div class="p-6 border-b border-gray-100  bg-gradient-to-r from-emerald-50 to-teal-50  ">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg bg-teal-300 flex items-center justify-center text-white">
@@ -85,14 +103,15 @@
                     <!-- Wali Kelas -->
                     <div>
                         <label for="wali_kelas_id" class="block text-sm font-medium text-gray-700  mb-1.5">Wali Kelas <span class="text-red-500">*</span></label>
-                        <select name="wali_kelas_id" id="wali_kelas_id" class="w-full px-3 py-2.5 border border-gray-300  rounded-lg text-gray-900  bg-white  focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm">
+                        <select name="wali_kelas_id" id="wali_kelas_id" class="w-full px-3 py-2.5 border border-gray-300  rounded-lg text-gray-900  bg-white  focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" onchange="document.getElementById('wali-warning').classList.toggle('hidden', !this.options[this.selectedIndex].text.includes('(Walikelas)'))">
                             <option value="">-- Pilih Wali Kelas --</option>
                             @forelse ($guruList as $guru)
-                            <option value="{{ $guru->id }}" {{ old('wali_kelas_id') == $guru->id ? 'selected' : '' }}>{{ $guru->nama }}</option>
+                            <option value="{{ $guru->id }}" {{ old('wali_kelas_id') == $guru->id ? 'selected' : '' }}>{{ $guru->nama }}{{ $waliTerpakai->contains($guru->id) ? ' (Walikelas)' : '' }}</option>
                             @empty
                             <option value="" disabled>Belum ada data guru</option>
                             @endforelse
                         </select>
+                        <p id="wali-warning" class="hidden mt-1.5 text-xs font-medium text-red-600">Guru ini sudah menjadi wali kelas pada kelas lain. Harap ganti.</p>
                     </div>
                 </div>
 
@@ -109,7 +128,7 @@
             </div>
             
             <!-- Kanan: Mata Pelajaran -->
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
                 <div class="p-6 border-b border-gray-100  bg-gradient-to-r from-emerald-50 to-teal-50  ">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-lg bg-amber-300 flex items-center justify-center text-white">
