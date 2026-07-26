@@ -68,30 +68,5 @@
         Ekstrakurikuler
     </a>
 
-    <div class="pt-4 mt-4 border-t border-gray-100">
-        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-3">Lainnya</p>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-                Logout
-            </button>
-        </form>
     </div>
 </nav>
-
-<a href="{{ route('admin.profile.index') }}" class="block p-4 shrink-0 hover:bg-gray-50 transition-colors">
-    @php $authUser = Auth::user(); @endphp
-    <div class="flex items-center gap-1">
-        <div class="w-16 h-16 rounded-full overflow-hidden ring-2 ring-white/30">
-            <img src="{{ $authUser && $authUser->foto ? Storage::disk('public')->url($authUser->foto) : asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover">
-        </div>
-        <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-gray-700 truncate">{{ $authUser->nama ?? ($userName ?? 'Admin') }}</p>
-            <p class="text-xs text-gray-500 truncate">Admin TU</p>
-        </div>
-    </div>
-</a>

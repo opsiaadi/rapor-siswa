@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Dashboard Wali Kelas' }} - Sistem Pengolahan Rapor Siswa</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/notifications.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .icon-gradient {
             stroke: url(#iconGradient);
@@ -43,17 +43,43 @@
                     <h1 class="text-xl font-bold text-white">{{ $pageTitle ?? 'Dashboard Wali Kelas' }}</h1>
                     <p class="text-sm" style="color: rgba(165, 243, 252, 0.9);">{{ $breadcrumb ?? 'Kelola finalisasi rapor dan data kelas perwalian.' }}</p>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-1 pl-4 border-l border-white/20">
-                        <div class="w-14 h-14 rounded-full overflow-hidden">
-                            <img src="{{ asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover"> 
-                        </div>
-                        <div>
-                            <p class="text-sm font-semibold text-white">{{ $namaGuru ?? 'Wali Kelas' }}</p>
-                            <p class="text-xs text-cyan-200">Wali Kelas</p>
-                        </div>
-                    </div>
-                </div>
+<div class="flex items-center gap-4">
+                         <div class="relative" id="profile-dropdown">
+                             <button type="button" onclick="toggleProfileDropdown()" class="flex items-center pl-4 border-l border-white/20 hover:bg-white/10 rounded-lg px-2 py-1 transition-colors">
+                                 <div class="relative w-14 h-14 rounded-full overflow-hidden">
+                                     <img src="{{ asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover">
+                                 </div>
+                             </button>
+                             <div id="profile-panel" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden">
+                                 <div class="px-4 py-3 border-b border-gray-100">
+                                     <div class="flex items-center gap-3">
+                                         <div class="w-10 h-10 rounded-full overflow-hidden">
+                                             <img src="{{ asset('images/users-avatar-svgrepo-com.svg') }}" class="h-full w-full object-cover">
+                                         </div>
+                                         <div>
+                                             <p class="text-sm font-semibold text-gray-800">{{ $namaGuru ?? 'Wali Kelas' }}</p>
+                                             <p class="text-xs text-gray-500">Wali Kelas</p>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="py-2">
+                                     <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                         Profil
+                                     </a>
+                                 </div>
+                                 <div class="border-t border-gray-100 py-2">
+                                     <form method="POST" action="{{ route('logout') }}">
+                                         @csrf
+                                         <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                             Logout
+                                         </button>
+                                     </form>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
             </header>
 
             <main class="flex-1 p-4 lg:p-6">
@@ -75,11 +101,18 @@
     </div>
     <div id="toast-container" class="fixed top-4 right-4 z-[100] flex flex-col gap-2"></div>
 
-    <script>
-    window.__notif = {
-        @if (session('success')) flashSuccess: '{{ session("success") }}', @endif
-        @if (session('error')) flashError: '{{ session("error") }}', @endif
-    };
+<script>
+    function toggleProfileDropdown() {
+        const panel = document.getElementById('profile-panel');
+        panel.classList.toggle('hidden');
+    }
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('profile-dropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            const panel = document.getElementById('profile-panel');
+            if (panel) panel.classList.add('hidden');
+        }
+    });
     </script>
     @stack('scripts')
 </body>
