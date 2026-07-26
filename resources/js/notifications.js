@@ -1,18 +1,5 @@
 const NOTIF = window.__notif || {};
 
-window.toggleNotifDropdown = function() {
-    const panel = document.getElementById('notif-panel');
-    panel.classList.toggle('hidden');
-    if (!panel.classList.contains('hidden')) loadNotifications();
-}
-
-document.addEventListener('click', function (e) {
-    const dropdown = document.getElementById('notif-dropdown');
-    if (!dropdown.contains(e.target)) {
-        document.getElementById('notif-panel').classList.add('hidden');
-    }
-});
-
 async function loadNotifications() {
     try {
         const res = await fetch(NOTIF.url, { headers: { 'Accept': 'application/json' } });
@@ -20,13 +7,15 @@ async function loadNotifications() {
         updateBadge(data.unread_count);
         renderNotifications(data.notifications);
     } catch (e) {
-        document.getElementById('notif-list').innerHTML =
-            '<p class="px-4 py-6 text-center text-sm text-red-400">Gagal memuat notifikasi.</p>';
+        const errorHtml = '<p class="px-4 py-6 text-center text-sm text-red-400">Gagal memuat histori.</p>';
+        const list = document.getElementById('hist-list');
+        if (list) list.innerHTML = errorHtml;
     }
 }
 
 function updateBadge(count) {
-    const badge = document.getElementById('notif-badge');
+    const badge = document.getElementById('profile-hist-badge');
+    if (!badge) return;
     if (count > 0) {
         badge.textContent = count > 99 ? '99+' : count;
         badge.classList.remove('hidden');
@@ -36,9 +25,10 @@ function updateBadge(count) {
 }
 
 function renderNotifications(notifications) {
-    const list = document.getElementById('notif-list');
+    const list = document.getElementById('hist-list');
+    if (!list) return;
     if (!notifications.length) {
-        list.innerHTML = '<p class="px-4 py-6 text-center text-sm text-gray-400">Tidak ada notifikasi</p>';
+        list.innerHTML = '<p class="px-4 py-6 text-center text-sm text-gray-400">Tidak ada histori</p>';
         return;
     }
     list.innerHTML = notifications.map(n => `
@@ -86,7 +76,7 @@ window.markAllRead = async function() {
 }
 
 window.clearAllNotifications = async function() {
-    if (!confirm('Hapus semua notifikasi?')) return;
+    if (!confirm('Hapus semua histori?')) return;
     try {
         await fetch(NOTIF.readUrl, {
             method: 'POST',
@@ -107,6 +97,7 @@ function timeAgo(dateString) {
 
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
+    if (!container) return;
     const toast = document.createElement('div');
     const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
     const icon = type === 'success'
