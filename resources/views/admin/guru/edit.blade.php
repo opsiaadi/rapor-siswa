@@ -98,7 +98,7 @@
                         Password <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
-                        <input type="password" name="password" id="password"
+                        <input type="password" name="password" id="password" autocomplete="new-password"
                             class="w-full px-3 py-2.5 pr-10 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                             placeholder="Minimal 8 karakter">
                         <button type="button" onclick="togglePassword('password', this)"

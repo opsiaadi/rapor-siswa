@@ -77,7 +77,7 @@
                         Password <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
-                        <input type="password" name="password" id="password"
+                        <input type="password" name="password" id="password" autocomplete="new-password"
                             class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 pr-10 shadow-xs placeholder:text-body"
                             placeholder="Minimal 8 karakter" required>
                         <button type="button" onclick="togglePassword('password', this)"
@@ -107,6 +107,7 @@
                     </label>
                     <div class="relative">
                         <input type="password" name="password_confirmation" id="password_confirmation"
+                            autocomplete="new-password"
                             class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 pr-10 shadow-xs placeholder:text-body"
                             placeholder="Ulangi password" required>
                         <button type="button" onclick="togglePassword('password_confirmation', this)"
